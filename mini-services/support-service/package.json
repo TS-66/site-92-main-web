@@ -1,0 +1,17 @@
+{
+  "name": "scipnet-support-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.5",
+    "discord.js": "^14.14.1",
+    "better-sqlite3": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/bun": "^1.1.0"
+  }
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Precipice — Site-92</title>
+<link rel="icon" type="image/png" href="site92-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#030504;font-family:'Inter',sans-serif;color:#f0f7f5;overflow:hidden}
+.bg-glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,rgba(0,255,204,.06) 0%,transparent 60%)}
+.container{text-align:center;max-width:560px;padding:40px 32px;position:relative;z-index:1}
+.logo-wrap{width:140px;height:140px;margin:0 auto 32px;animation:float 4s ease-in-out infinite}
+.logo-wrap img{width:100%;height:100%;object-fit:contain;border-radius:8px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:rgba(0,255,204,.08);border:1px solid rgba(0,255,204,.25);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#00ffcc;letter-spacing:2px;margin-bottom:24px;animation:pulse 3s infinite}
+.badge svg{width:16px;height:16px}
+h1{font-size:28px;font-weight:800;margin-bottom:12px;letter-spacing:-0.5px;line-height:1.2}
+h1 span{color:#00ffcc}
+p{font-size:15px;color:#8aa39d;line-height:1.7;max-width:420px;margin:0 auto 28px}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#00ffcc,transparent);margin:0 auto 28px;border-radius:1px}
+.credits{display:flex;flex-direction:column;gap:12px;align-items:center}
+.credit-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#5a706b}
+.credit-item strong{color:#f0f7f5;font-weight:600}
+.credit-item .dot{width:4px;height:4px;border-radius:50%;background:#00ffcc;opacity:.6}
+.footer-text{margin-top:40px;font-size:11px;color:#3a4a46;letter-spacing:1px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,204,.2)}50%{box-shadow:0 0 0 10px rgba(0,255,204,0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.container>*{animation:fadeUp .6s ease both}
+.container>*:nth-child(2){animation-delay:.1s}
+.container>*:nth-child(3){animation-delay:.2s}
+.container>*:nth-child(4){animation-delay:.3s}
+.container>*:nth-child(5){animation-delay:.4s}
+.container>*:nth-child(6){animation-delay:.5s}
+.container>*:nth-child(7){animation-delay:.6s}
+.container>*:nth-child(8){animation-delay:.7s}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="container">
+  <div class="logo-wrap">
+    <img src="site92-logo.png" alt="The Precipice — Site-92 Logo">
+  </div>
+  <div class="badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    BUILT WITH AI
+  </div>
+  <h1>The <span>Precipice</span></h1>
+  <p>This entire website was designed, built, and powered by artificial intelligence. Every page, every interaction, every line of code — crafted by AI.</p>
+  <div class="divider"></div>
+  <div class="credits">
+    <div class="credit-item"><strong>doudoustar01</strong> — Founder & Vision</div>
+    <div class="dot"></div>
+    <div class="credit-item"><strong>Duck</strong> — Lead Developer</div>
+    <div class="dot"></div>
+    <div class="credit-item"><strong>The Duck Devs</strong> — AI Engineering</div>
+  </div>
+  <div class="footer-text">THE PRECIPICE // SITE-92 // SCiPNET</div>
+</div>
+</body>
+</html>

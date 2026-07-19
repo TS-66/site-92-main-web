@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Credential {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  username  String   @unique
+  password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
-model Post {
+model Ticket {
+  id        String          @id @default(cuid())
+  ticketId  String          @unique
+  username  String
+  status    String          @default("OPEN")
+  subject   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  messages  TicketMessage[]
+}
+
+model TicketMessage {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [ticketId])
+  sender    String
+  text      String
   createdAt DateTime @default(now())
+}
+
+// ---- ADMIN PANEL MODELS ----
+
+model AdminAccount {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model SiteScp {
+  id          String   @id @default(cuid())
+  scpId       String
+  name        String
+  objectClass String
+  threat      String
+  zone        String   @default("STANDARD")
+  description String
+  addedBy     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TestLog {
+  id          String   @id @default(cuid())
+  scpRef      String
+  title       String
+  researchers String
+  result      String
+  severity    String   @default("MINOR")
+  addedBy     String
+  createdAt   DateTime @default(now())
+}
+
+model SiteProtocol {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  target      String   @default("SITE-WIDE")
+  status      String   @default("STANDBY")
+  assignedTo  String   @default("N/A")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteStatus {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
   updatedAt DateTime @updatedAt
 }
