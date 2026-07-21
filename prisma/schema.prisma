@@ -3,19 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Credential {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
 }
 
 model Ticket {
-  id        String          @id @default(cuid())
+  id        String          @id @default(cuid()) @map("_id")
   ticketId  String          @unique
   username  String
   status    String          @default("OPEN")
@@ -26,7 +26,7 @@ model Ticket {
 }
 
 model TicketMessage {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   ticketId  String
   ticket    Ticket   @relation(fields: [ticketId], references: [ticketId])
   sender    String
@@ -37,14 +37,14 @@ model TicketMessage {
 // ---- ADMIN PANEL MODELS ----
 
 model AdminAccount {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
 }
 
 model SiteScp {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   scpId       String
   name        String
   objectClass String
@@ -57,7 +57,7 @@ model SiteScp {
 }
 
 model TestLog {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   scpRef      String
   title       String
   researchers String
@@ -68,7 +68,7 @@ model TestLog {
 }
 
 model SiteProtocol {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   code        String   @unique
   name        String
   target      String   @default("SITE-WIDE")
@@ -80,7 +80,7 @@ model SiteProtocol {
 }
 
 model SiteStatus {
-  id    String @id @default(cuid())
+  id    String @id @default(cuid()) @map("_id")
   key   String @unique
   value String
   updatedAt DateTime @updatedAt
