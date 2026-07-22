@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "postinstall": "prisma generate",
-    "build": "NODE_OPTIONS='--stack-trace-limit=1000 --unhandled-rejections=strict' next build --webpack || (echo '=== BUILD FAILED — DIAGNOSTIC DUMP ==='; find .next -type f -name '*.log' -exec echo '--- {} ---' \\; -exec cat {} \\; ; echo '=== END DUMP ==='; exit 1)",
+    "build": "next build",
     "build:standalone": "next build --webpack && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "start": "NODE_ENV=production node .next/standalone/server.js",
     "lint": "eslint .",
