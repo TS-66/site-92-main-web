@@ -916,6 +916,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <p>Unauthorized access will be prosecuted. You've been warned.</p>
 <p>Your IP is logged and biometric data is recorded.</p>
 <p style="margin-top:15px"><a href="#" id="openSupportBtn" class="support-link">[ Report a Bug / Request Access ]</a></p>
+<p><a href="#" id="openKeyGenBtn" class="support-link">[ Generate Terminal Key ]</a></p>
+</div>
+
+<div class="keygen-panel" id="keyGenPanel" style="display:none">
+<div style="background:var(--b2);border:1px solid var(--bd);border-radius:8px;padding:20px;max-width:360px;margin:0 auto">
+<div style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:1px;color:var(--ac);margin-bottom:6px">GENERATE TERMINAL KEY</div>
+<p style="font-size:10px;color:var(--t3);line-height:1.6;margin-bottom:14px">No Discord? Enter a callsign to generate a terminal login. Use the same callsign next time to retrieve your existing key — no duplicates.</p>
+<div class="fg" style="margin-bottom:12px">
+<label class="fl">Callsign</label>
+<div class="fi-wrap"><input class="fi" type="text" id="keyGenCallsign" placeholder="e.g. smith" spellcheck="false"><iconify-icon icon="lucide:user"></iconify-icon></div>
+</div>
+<div id="keyGenMsg" style="font-size:10px;min-height:14px;margin-bottom:10px;color:var(--t3)"></div>
+<div id="keyGenResult" style="display:none;background:var(--b3);border:1px solid var(--gn);border-radius:4px;padding:12px;margin-bottom:12px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.8"></div>
+<button class="login-btn" type="button" onclick="generateWebKey()" style="width:100%;margin-bottom:8px">GENERATE KEY<div class="sp"><div class="sp-r"></div></div></button>
+<button type="button" onclick="closeKeyGen()" style="background:none;border:none;color:var(--t3);font-size:10px;cursor:none;letter-spacing:1px;width:100%">[ CLOSE ]</button>
+</div>
 </div>
 </div>
 </div>
@@ -1572,6 +1588,47 @@ document.getElementById('openSupportBtn').addEventListener('click', (e) => {
     document.getElementById('supportCode').value = '';
     supportGoStep(1);
 });
+
+// --- Generate Terminal Key (web fallback for users without Discord) ---
+document.getElementById('openKeyGenBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('keyGenPanel').style.display = 'block';
+    document.getElementById('keyGenMsg').textContent = '';
+    document.getElementById('keyGenResult').style.display = 'none';
+    document.getElementById('keyGenCallsign').value = '';
+    document.getElementById('keyGenCallsign').focus();
+});
+
+function closeKeyGen() {
+    document.getElementById('keyGenPanel').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+}
+
+async function generateWebKey() {
+    const callsign = document.getElementById('keyGenCallsign').value.trim();
+    const msg = document.getElementById('keyGenMsg');
+    const result = document.getElementById('keyGenResult');
+    if (!callsign) { msg.textContent = 'Enter a callsign first.'; msg.style.color = 'var(--rd)'; return; }
+    msg.textContent = 'Generating...'; msg.style.color = 'var(--ac)';
+    result.style.display = 'none';
+    try {
+        const res = await fetch('/api/request-key', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ callsign })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            msg.textContent = data.message; msg.style.color = 'var(--gn)';
+            result.style.display = 'block';
+            result.innerHTML = '<div style="color:var(--t3);font-size:9px;letter-spacing:1px">USERNAME</div><div style="color:var(--ac);font-size:14px;margin-bottom:6px">' + data.username.replace(/</g,'&lt;') + '</div><div style="color:var(--t3);font-size:9px;letter-spacing:1px">PASSWORD</div><div style="color:var(--gn);font-size:14px">' + data.password.replace(/</g,'&lt;') + '</div>';
+            // Refresh the credential cache so the login form recognizes the new key immediately.
+            await fetchCreds();
+        } else {
+            msg.textContent = data.error || 'Failed to generate key.'; msg.style.color = 'var(--rd)';
+        }
+    } catch(e) { msg.textContent = 'Connection failed.'; msg.style.color = 'var(--rd)'; }
+}
 
 function closeSupport() {
     document.getElementById('supportPanel').classList.remove('active');

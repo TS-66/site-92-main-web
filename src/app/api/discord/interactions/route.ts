@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyKey } from 'discord-interactions';
 import { waitUntil } from '@vercel/functions';
+import { getOrCreateCredential } from '@/lib/credentials';
 
 const PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY;
 const DISCORD_API = 'https://discord.com/api/v10';
@@ -8,20 +9,6 @@ const DISCORD_API = 'https://discord.com/api/v10';
 // The custom_id our "Generate Key" button uses. Must match the button
 // created in /api/discord/post-panel.
 const GENERATE_KEY_CUSTOM_ID = 'generate_key';
-
-function randomUsername(): string {
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `AGENT-${num}`;
-}
-
-function randomPassword(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-  let out = '';
-  for (let i = 0; i < 12; i++) {
-    out += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return out;
-}
 
 async function editOriginalResponse(applicationId: string, token: string, content: string) {
   await fetch(`${DISCORD_API}/webhooks/${applicationId}/${token}/messages/@original`, {
@@ -33,33 +20,20 @@ async function editOriginalResponse(applicationId: string, token: string, conten
 
 async function generateAndRespond(applicationId: string, token: string, discordUserId: string | null) {
   try {
-    // Loaded here (not at module top) so Prisma's initialization never
-    // delays the instant "thinking..." response Discord requires within 3s.
-    const { db } = await import('@/lib/db');
-
-    if (discordUserId) {
-      const existing = await db.credential.findUnique({ where: { discordUserId } });
-      if (existing) {
-        await editOriginalResponse(
-          applicationId,
-          token,
-          `You already have a terminal login:\n\`\`\`\nUsername: ${existing.username}\nPassword: ${existing.password}\n\`\`\``
-        );
-        return;
-      }
+    if (!discordUserId) {
+      await editOriginalResponse(applicationId, token, 'Could not identify your Discord account. Please try again.');
+      return;
     }
 
-    const username = randomUsername();
-    const password = randomPassword();
+    // Atomic get-or-create — guaranteed no duplicates even under concurrent
+    // requests (double-clicks, multiple serverless instances).
+    const { credential, isNew } = await getOrCreateCredential(discordUserId);
 
-    await db.credential.create({
-      data: { username, password, discordUserId: discordUserId || undefined },
-    });
-
+    const header = isNew ? 'New terminal login generated:' : 'You already have a terminal login:';
     await editOriginalResponse(
       applicationId,
       token,
-      `New terminal login generated:\n\`\`\`\nUsername: ${username}\nPassword: ${password}\n\`\`\``
+      `${header}\n\`\`\`\nUsername: ${credential.username}\nPassword: ${credential.password}\n\`\`\``
     );
   } catch (err) {
     console.error('[discord-interactions] Failed to create credential:', err);
