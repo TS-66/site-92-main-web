@@ -62,6 +62,38 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PUT /api/admin/scps  body: { id, scpId?, name?, objectClass?, threat?, zone?, description? }
+export async function PUT(request: NextRequest) {
+  try {
+    if (!requireAdmin(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const body = await request.json();
+    const { id } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 });
+    }
+
+    const data: Record<string, string> = {};
+    if (body.scpId !== undefined) data.scpId = body.scpId;
+    if (body.name !== undefined) data.name = body.name;
+    if (body.objectClass !== undefined) data.objectClass = body.objectClass;
+    if (body.threat !== undefined) data.threat = body.threat;
+    if (body.zone !== undefined) data.zone = body.zone;
+    if (body.description !== undefined) data.description = body.description;
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    }
+
+    const scp = await db.siteScp.update({ where: { id }, data });
+    return NextResponse.json(scp);
+  } catch (error) {
+    console.error('Admin PUT SCP error:', error);
+    return NextResponse.json({ error: 'Failed to update SCP' }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     if (!requireAdmin(request)) {

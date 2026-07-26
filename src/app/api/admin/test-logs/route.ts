@@ -31,11 +31,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { scpRef, title, researchers, result, severity, addedBy } = body;
+    // Accept both `scpRef` (DB field) and `scpReference` (legacy client field).
+    const scpRef = (body.scpRef || body.scpReference || '').toString().trim();
+    const { title, researchers, result, severity, addedBy } = body;
 
     if (!scpRef || !title || !researchers || !result) {
       return NextResponse.json(
-        { error: 'Missing required fields: scpRef, title, researchers, result, addedBy' },
+        { error: 'Missing required fields: scpRef (or scpReference), title, researchers, result' },
         { status: 400 }
       );
     }
@@ -58,6 +60,37 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to create test log' },
       { status: 500 }
     );
+  }
+}
+
+// PUT /api/admin/test-logs  body: { id, scpRef?, scpReference?, title?, researchers?, result?, severity? }
+export async function PUT(request: NextRequest) {
+  try {
+    if (!requireAdmin(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const body = await request.json();
+    const { id } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 });
+    }
+
+    const data: Record<string, string> = {};
+    if (body.scpRef || body.scpReference) data.scpRef = (body.scpRef || body.scpReference).toString().trim();
+    if (body.title !== undefined) data.title = body.title;
+    if (body.researchers !== undefined) data.researchers = body.researchers;
+    if (body.result !== undefined) data.result = body.result;
+    if (body.severity !== undefined) data.severity = body.severity;
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    }
+
+    const log = await db.testLog.update({ where: { id }, data });
+    return NextResponse.json(log);
+  } catch (error) {
+    console.error('Admin PUT test log error:', error);
+    return NextResponse.json({ error: 'Failed to update test log' }, { status: 500 });
   }
 }
 

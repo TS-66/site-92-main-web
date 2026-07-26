@@ -24,3 +24,25 @@ Stage Summary:
 - Verified via Agent Browser: terminal login -> admin login (admin-0157) -> Site Status tab loads 8 rows (no "Failed to load") -> edited C-3=CRITICAL -> "Saved 1 change(s)" -> persisted (curl confirms) -> asked Ducky bot "status of C-3?" -> bot replied "C-3 is currently in CRITICAL status". After reset, bot replies "WARNING".
 - Lint clean; no runtime errors in dev.log; footer present on desktop + mobile (375x812).
 - Files changed: prisma/schema.prisma, next.config.ts, src/app/api/admin/site-status/route.ts, src/app/api/admin/protocols/route.ts, src/app/api/stream/route.ts, public/index.html, package.json (deps). Added mini-services/support-service.
+
+---
+Task ID: 2
+Agent: Z.ai Code (orchestrator, direct execution)
+Task: Fix test-log publish + SCP database display; add admin panel functions (edit/create/delete, stats)
+
+Work Log:
+- Bug 1 (test logs won't publish): frontend addTestLog() sent {scpReference} but backend read body.scpRef -> 400 Missing required fields -> silent fail. Fixed backend to accept both scpRef and scpReference; added PUT for editing. Frontend now sends scpRef + shows "Test log published." feedback.
+- Bug 2 (SCPs don't show in database): public Anomaly Database page (#page-objects) was entirely hardcoded HTML; no JS fetched /api/public/scps. Replaced with a dynamic container (#dbScpGrid) + loadDatabase() that fetches from API, merges with 15 curated fallback SCPs (deduped by scpId), groups by class (SAFE/EUCLID/KETER), adds a search box, and tags admin-added entries with an "ADMIN" badge. Wired into go('objects').
+- Admin enhancements:
+  - Stats overview bar at top of admin panel (live counts: SCPs, Test Logs, Protocols, Status Keys).
+  - Reusable editor modal (#editorModal) for editing SCPs, test logs, and protocols (all fields, not just status).
+  - SCP EDIT button + PUT /api/admin/scps.
+  - Test Log EDIT button + PUT /api/admin/test-logs.
+  - Protocol CREATE form + POST /api/admin/protocols; Protocol DELETE + DELETE /api/admin/protocols?code=; full protocol EDIT (name/target/status/assignedTo/description) replacing the old single-status prompt.
+  - Feedback messages (#scpMsg/#tlMsg/#protoMsg) on every add/edit/delete with success/error text.
+  - HTML-escaping (escHtml/escAttr) on all dynamic table content to prevent injection.
+
+Stage Summary:
+- Verified via Agent Browser: admin login -> Test Logs tab -> added "Immobility Verification" -> "Test log published." (table + stats updated). SCPs tab -> added SCP-3008 "The Infinite IKEA" -> "SCP SCP-3008 added to database." -> navigated to public Database page -> SCP-3008 appears with ADMIN tag (count 18->19). Edited SCP-3008 via editor modal (changed name) -> "SCP updated." -> table + DB persisted the new name -> Database page reflects "Infinite IKEA (Updated)". Created protocol EPSILON-4 -> appeared -> deleted -> "Protocol EPSILON-4 deleted." Test-log edit (severity MINOR->SEVERE) -> "Test log updated."
+- Lint clean; no runtime errors; test data cleaned up.
+- Files changed: src/app/api/admin/test-logs/route.ts, src/app/api/admin/scps/route.ts, src/app/api/admin/protocols/route.ts, public/index.html (dynamic DB page, stats bar, editor modal, feedback, protocol create/delete form).
