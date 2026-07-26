@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -96,7 +96,7 @@ model SiteStatus {
 }
 
 model Incident {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   code        String   @unique
   title       String
   severity    String   @default("MODERATE")
@@ -109,7 +109,7 @@ model Incident {
 }
 
 model AnomalyReport {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   reporterName String
   scpRef      String
   location    String
