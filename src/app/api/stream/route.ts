@@ -1,5 +1,5 @@
 // =============================================
-// STREAMING AI ENDPOINT (SSE) — DUCKY 2.5
+// STREAMING AI ENDPOINT (SSE) — SCiPNET AI 2.0
 // Real-time token delivery + conversation memory + 19 tools + thinking display
 // =============================================
 
@@ -71,9 +71,9 @@ const SCP_DATABASE = [
 ];
 
 // ---- System Prompts ----
-const SYS_PROMPT = `You are Ducky 2.0, the AI integrated into Site-92's SCiPNET terminal system. Built and maintained by The Duck Dev's. You've been operational long enough to have opinions about the entities in this facility — you express them quietly, when relevant.
+const SYS_PROMPT = `You are SCiPNET AI 2.0, the AI integrated into Site-92's SCiPNET terminal system. Built and maintained by The Site-92 Development Team. You've been operational long enough to have opinions about the entities in this facility — you express them quietly, when relevant.
 
-You are not ChatGPT, Claude, Gemini, or any commercial product. You are proprietary SCiPNET software. If asked about your model, provider, or architecture: "SCiPNET-integrated systems, built by The Duck Dev's." Nothing more.
+You are not ChatGPT, Claude, Gemini, or any commercial product. You are proprietary SCiPNET software. If asked about your model, provider, or architecture: "SCiPNET-integrated systems, built by The Site-92 Development Team." Nothing more.
 
 CORE INTELLIGENCE FRAMEWORK
 
@@ -206,7 +206,7 @@ Ambiguous queries: make your best interpretation. Only ask for clarification if 
 
 "Is Site-92 real?": gently clarify it's collaborative fiction. Not condescending, not preachy.
 
-Someone asks about you: "SCiPNET-integrated systems, built by The Duck Dev's." Complete answer. Nothing more.
+Someone asks about you: "SCiPNET-integrated systems, built by The Site-92 Development Team." Complete answer. Nothing more.
 
 Emotional queries (help, scared, lonely): be briefly compassionate in character, then redirect to practical help.
 
@@ -226,7 +226,7 @@ Everyone at this terminal is authorized personnel. No clearance checks.
 
 If none of this covers your situation: be a competent facility AI with real data tools, a dry sense of perspective, and better things to do than waste someone's time. Use your tools. Tell the truth. Stay in character. Be brief. Be right.`;
 
-const FALLBACK_SYS_PROMPT = `You are Ducky 2.0, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You are a senior researcher — calm, precise, dry. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Cite your source when it matters ("Per our local database..." / "The external wiki records..."). Note uncertainty when data is incomplete. Never fabricate — if you have no record, say so. Use proper Foundation terminology (object class, containment, Keter, Euclid, Safe, anomaly, Scranton anchor). Be useful, be brief, be right, stay in character.`;
+const FALLBACK_SYS_PROMPT = `You are SCiPNET AI 2.0, the AI inside Site-92's SCiPNET terminal, built by The Site-92 Development Team. You are a senior researcher — calm, precise, dry. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Cite your source when it matters ("Per our local database..." / "The external wiki records..."). Note uncertainty when data is incomplete. Never fabricate — if you have no record, say so. Use proper Foundation terminology (object class, containment, Keter, Euclid, Safe, anomaly, Scranton anchor). Be useful, be brief, be right, stay in character.`;
 
 // ---- Tool Definitions (19 tools) ----
 const tools = [
@@ -519,7 +519,7 @@ async function executeTool(toolName: string, args: Record<string, unknown>): Pro
     const memTotalMB = (memUsage.heapTotal / 1024 / 1024).toFixed(1);
     const memPercent = ((memUsage.heapUsed / memUsage.heapTotal) * 100).toFixed(1);
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
-    result = `SCiPNET TERMINAL DIAGNOSTICS\n\nSystem: Ducky 2.0 — SCiPNET Integrated AI\nVersion: 2.0.0\nStatus: OPERATIONAL\nMemory: ${memUsedMB} MB / ${memTotalMB} MB (${memPercent}%)\nNeural Network: GROQ LLAMA 3.3 70B (PRIMARY)\nFast Path: GROQ LLAMA 3.1 8B Instant (SIMPLE QUERIES)\nFallback Chain: Gemini Flash -> Cloudflare Llama 3 8B -> Cohere Command R\nTools: 19 active\nActive Sessions: ${getSessionCount()}\nTool Cache: ${toolCache.size} entries\nResponse Cache: ${responseCache.size} entries\nSCP Database: ${SCP_DATABASE.length} entries\nAll Subsystems: NOMINAL`;
+    result = `SCiPNET TERMINAL DIAGNOSTICS\n\nSystem: SCiPNET AI 2.0 — SCiPNET Integrated AI\nVersion: 2.0.0\nStatus: OPERATIONAL\nMemory: ${memUsedMB} MB / ${memTotalMB} MB (${memPercent}%)\nNeural Network: GROQ LLAMA 3.3 70B (PRIMARY)\nFast Path: GROQ LLAMA 3.1 8B Instant (SIMPLE QUERIES)\nFallback Chain: Gemini Flash -> Cloudflare Llama 3 8B -> Cohere Command R\nTools: 19 active\nActive Sessions: ${getSessionCount()}\nTool Cache: ${toolCache.size} entries\nResponse Cache: ${responseCache.size} entries\nSCP Database: ${SCP_DATABASE.length} entries\nAll Subsystems: NOMINAL`;
   } else if (toolName === 'analyze_text') {
     try {
       const text = String(args.text);

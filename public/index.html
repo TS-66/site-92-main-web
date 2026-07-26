@@ -1008,7 +1008,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <span class="tg">[OK]</span> Kernel modules loaded.<br>
 <span class="tg">[OK]</span> Scranton Reality Anchors online.<br>
 <span class="tw">[WARN]</span> Sector 7B security cameras offline.<br>
-<span class="tg">[OK]</span> AI Module "Ducky 2.0" initialized.<br>
+<span class="tg">[OK]</span> AI Module "SCiPNET AI 2.0" initialized.<br>
 <span class="te">[ERR]</span> Containment field fluctuation detected in Cell 113.<br>
 ><span class="cursor-b"></span>
 </div>
@@ -1199,11 +1199,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-site-ai">
-<div class="page-head"><h1>Ducky 2.0</h1><p>Your AI assistant</p></div>
+<div class="page-head"><h1>SCiPNET AI 2.0</h1><p>Your AI assistant</p></div>
 <div class="chat-container">
-<div class="chat-header"><span><iconify-icon icon="lucide:bot"></iconify-icon> Ducky is online</span><div style="display:flex;gap:10px;align-items:center"><div class="chat-status">Online</div><button id="chatClearBtn" class="chat-tool-btn"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div>
+<div class="chat-header"><span><iconify-icon icon="lucide:bot"></iconify-icon> SCiPNET AI online</span><div style="display:flex;gap:10px;align-items:center"><div class="chat-status">Online</div><button id="chatClearBtn" class="chat-tool-btn"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div>
 <div class="chat-body" id="chatBody">
-<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Hey. I'm Ducky, the Site-92 AI. I've got 19 tools connected to live data — SCP database, web search, weather, system diagnostics, you name it. What do you need?<span class="chat-time">now</span></div></div>
+<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Hey. I'm the SCiPNET AI, the Site-92 research assistant. I've got 19 tools connected to live data — SCP database, web search, weather, system diagnostics, you name it. What do you need?<span class="chat-time">now</span></div></div>
 </div>
 <div class="chat-suggestions">
     <button class="chat-suggest-btn" onclick="sendSuggestion('What time is it?')">Time</button>
@@ -1215,7 +1215,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <button class="chat-suggest-btn" onclick="clearChatSession()" style="border-color:rgba(255,46,94,.3);color:var(--rd)">Clear</button>
 </div>
 <div class="chat-input-area">
-<input type="text" id="chatInput" placeholder="Ask Ducky anything...">
+<input type="text" id="chatInput" placeholder="Ask SCiPNET AI anything...">
 <button id="chatMicBtn" class="chat-tool-btn"><iconify-icon icon="lucide:mic" width="18"></iconify-icon></button>
 <button id="chatSendBtn" onclick="sendChat()"><iconify-icon icon="lucide:send" width="14"></iconify-icon> SEND</button>
 </div>
@@ -1253,7 +1253,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="credit-grid">
 <div class="credit-card"><div class="credit-role">Founder of Site-92</div><div class="credit-name">doudoustar01</div><div class="credit-desc">Founded Site-92, established initial infrastructure, and oversaw the deployment of the SCiPNET terminal.</div><iconify-icon class="credit-icon" icon="lucide:star"></iconify-icon></div>
 <div class="credit-card"><div class="credit-role">Developer</div><div class="credit-name">Duck</div><div class="credit-desc">Engineered the backend, Discord bot sync, and core frontend architecture for the SCiPNET interface.</div><iconify-icon class="credit-icon" icon="lucide:code"></iconify-icon></div>
-<div class="credit-card"><div class="credit-role">AI Developer</div><div class="credit-name">The Duck Devs</div><div class="credit-desc">Built and integrated the Ducky 2.0 AI assistant for the terminal.</div><iconify-icon class="credit-icon" icon="lucide:bot"></iconify-icon></div>
+<div class="credit-card"><div class="credit-role">AI Developer</div><div class="credit-name">The Site-92 Development Team</div><div class="credit-desc">Built and integrated the SCiPNET AI 2.0 AI assistant for the terminal.</div><iconify-icon class="credit-icon" icon="lucide:bot"></iconify-icon></div>
 </div>
 </div>
 
@@ -2925,7 +2925,7 @@ async function loadAnomalyReports() {
 
 // --- Admin: Clear AI Memory ---
 async function clearAiMemory() {
-    if (!confirm("Clear all AI conversation memory? This resets Ducky's context for all sessions.")) return;
+    if (!confirm("Clear all AI conversation memory? This resets SCiPNET AI's context for all sessions.")) return;
     try {
         const res = await fetch('/api/stream/clear', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({}) });
         if (res.ok) alert('AI memory cleared.');
