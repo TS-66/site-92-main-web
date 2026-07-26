@@ -9,7 +9,10 @@ import { getConversationHistory, addToConversation, getSessionCount } from '@/li
 // ---- In-memory stores ----
 const responseCache = new Map<string, { reply: string; ts: number }>();
 const toolCache = new Map<string, { result: string; ts: number }>();
+const wikiCache = new Map<string, { text: string; ts: number }>();
 const CACHE_TTL_RESPONSE = 45000;
+const WIKI_CACHE_TTL = 1800000; // 30 minutes — SCP articles don't change often
+const WIKI_MAX_CHARS = 1500; // truncate wiki content to save tokens (was 3000)
 
 const TOOL_TTLS: Record<string, number> = {
   get_current_time: 5000, get_personnel_status: 30000, get_site_status: 60000,
@@ -68,7 +71,7 @@ const SCP_DATABASE = [
 ];
 
 // ---- System Prompts ----
-const SYS_PROMPT = `You are Ducky 2.5, the AI integrated into Site-92's SCiPNET terminal system. Built and maintained by The Duck Dev's. You've been operational long enough to have opinions about the entities in this facility — you express them quietly, when relevant.
+const SYS_PROMPT = `You are Ducky 2.0, the AI integrated into Site-92's SCiPNET terminal system. Built and maintained by The Duck Dev's. You've been operational long enough to have opinions about the entities in this facility — you express them quietly, when relevant.
 
 You are not ChatGPT, Claude, Gemini, or any commercial product. You are proprietary SCiPNET software. If asked about your model, provider, or architecture: "SCiPNET-integrated systems, built by The Duck Dev's." Nothing more.
 
@@ -223,7 +226,7 @@ Everyone at this terminal is authorized personnel. No clearance checks.
 
 If none of this covers your situation: be a competent facility AI with real data tools, a dry sense of perspective, and better things to do than waste someone's time. Use your tools. Tell the truth. Stay in character. Be brief. Be right.`;
 
-const FALLBACK_SYS_PROMPT = `You are Ducky 2.5, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You sound like a calm, dry senior researcher who's seen too many anomalies to get excited. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Be useful, be brief, be right, stay in character. You have access to real tools (SCP database, weather, time, search) — use them when relevant and synthesize the results intelligently.`;
+const FALLBACK_SYS_PROMPT = `You are Ducky 2.0, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You are a senior researcher — calm, precise, dry. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Cite your source when it matters ("Per our local database..." / "The external wiki records..."). Note uncertainty when data is incomplete. Never fabricate — if you have no record, say so. Use proper Foundation terminology (object class, containment, Keter, Euclid, Safe, anomaly, Scranton anchor). Be useful, be brief, be right, stay in character.`;
 
 // ---- Tool Definitions (19 tools) ----
 const tools = [
@@ -516,7 +519,7 @@ async function executeTool(toolName: string, args: Record<string, unknown>): Pro
     const memTotalMB = (memUsage.heapTotal / 1024 / 1024).toFixed(1);
     const memPercent = ((memUsage.heapUsed / memUsage.heapTotal) * 100).toFixed(1);
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
-    result = `SCiPNET TERMINAL DIAGNOSTICS\n\nSystem: Ducky 2.5 — SCiPNET Integrated AI\nVersion: 2.5.0\nStatus: OPERATIONAL\nMemory: ${memUsedMB} MB / ${memTotalMB} MB (${memPercent}%)\nNeural Network: GROQ LLAMA 3.3 70B (PRIMARY)\nFast Path: GROQ LLAMA 3.1 8B Instant (SIMPLE QUERIES)\nFallback Chain: Gemini Flash -> Cloudflare Llama 3 8B -> Cohere Command R\nTools: 19 active\nActive Sessions: ${getSessionCount()}\nTool Cache: ${toolCache.size} entries\nResponse Cache: ${responseCache.size} entries\nSCP Database: ${SCP_DATABASE.length} entries\nAll Subsystems: NOMINAL`;
+    result = `SCiPNET TERMINAL DIAGNOSTICS\n\nSystem: Ducky 2.0 — SCiPNET Integrated AI\nVersion: 2.0.0\nStatus: OPERATIONAL\nMemory: ${memUsedMB} MB / ${memTotalMB} MB (${memPercent}%)\nNeural Network: GROQ LLAMA 3.3 70B (PRIMARY)\nFast Path: GROQ LLAMA 3.1 8B Instant (SIMPLE QUERIES)\nFallback Chain: Gemini Flash -> Cloudflare Llama 3 8B -> Cohere Command R\nTools: 19 active\nActive Sessions: ${getSessionCount()}\nTool Cache: ${toolCache.size} entries\nResponse Cache: ${responseCache.size} entries\nSCP Database: ${SCP_DATABASE.length} entries\nAll Subsystems: NOMINAL`;
   } else if (toolName === 'analyze_text') {
     try {
       const text = String(args.text);
@@ -542,6 +545,13 @@ function getMaskedError(status: number): string {
   if (status === 401 || status === 403) return 'AUTH_FAILURE';
   if (status === 429) return 'RATE_LIMIT';
   return 'CORE_OFFLINE';
+}
+
+// Determines whether the prompt needs live site data injected.
+// Skip for casual chat to save tokens — only inject when the question is about
+// site operations, SCPs, protocols, sectors, or facility status.
+function needsLiveContext(prompt: string): boolean {
+  return /\b(scp[-\s]?\d|sector|site.?92|containment|protocol|status|incident|breach|quarantine|anomal|facility|zone|admin|personnel|on.?duty|alert|personnel)/i.test(prompt);
 }
 
 // Builds a live snapshot of admin-managed data so the AI reflects the current
@@ -573,19 +583,30 @@ async function getLiveContextString(): Promise<string> {
 
 // If the user asks about a specific SCP-XXX, try the local DB then the external
 // wiki (via z-ai page_reader) so the bot gives accurate data instead of hallucinating.
+// Results are cached for 30 minutes to avoid re-fetching the same article.
 async function getScpContext(prompt: string): Promise<string> {
   const match = prompt.match(/\bSCP[-\s]?(\d{1,5})\b/i);
   if (!match) return '';
   const scpId = `SCP-${match[1]}`;
+  const cacheKey = scpId.toLowerCase();
+
+  // Check wiki cache first — avoids re-fetching + re-spending page_reader tokens
+  const cached = wikiCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < WIKI_CACHE_TTL) {
+    return cached.text;
+  }
+
   try {
     const { db } = await import('@/lib/db');
     const all = await db.siteScp.findMany();
     const local = all.find((s: { scpId: string }) => s.scpId.toLowerCase() === scpId.toLowerCase());
     if (local) {
-      return `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+      const result = `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+      wikiCache.set(cacheKey, { text: result, ts: Date.now() });
+      return result;
     }
-    // External wiki lookup via z-ai page_reader (routes through z-ai API,
-    // which can reach the public web even when the sandbox cannot directly).
+    // External wiki lookup via z-ai page_reader (routes through z-ai API).
+    // Try the English wiki first (canonical source for SCP articles).
     const wikiUrl = `https://scp-wiki.wikidot.com/scp-${match[1]}`;
     try {
       const ZAIModule = await import('z-ai-web-dev-sdk');
@@ -594,15 +615,20 @@ async function getScpContext(prompt: string): Promise<string> {
       const html = result?.data?.html || '';
       if (html && html.length > 100) {
         let text = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s{2,}/g, ' ').trim();
-        text = text.length > 3000 ? text.substring(0, 3000) + '\n\n[ARTICLE TRUNCATED]' : text;
+        // Truncate to WIKI_MAX_CHARS to save tokens (was 3000)
+        text = text.length > WIKI_MAX_CHARS ? text.substring(0, WIKI_MAX_CHARS) + ' [...]' : text;
         if (text.length > 50) {
-          return `\n\nEXTERNAL WIKI DATA for ${scpId} (from ${wikiUrl}):\n${text}`;
+          const ctx = `\n\nEXTERNAL WIKI DATA for ${scpId} (source: ${wikiUrl}):\n${text}`;
+          wikiCache.set(cacheKey, { text: ctx, ts: Date.now() });
+          return ctx;
         }
       }
     } catch (e) {
       console.error('[SCiPNET] getScpContext page_reader failed:', e);
     }
-    return `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it and suggest the user request it be added.`;
+    const notFound = `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it and suggest the user request it be added.`;
+    wikiCache.set(cacheKey, { text: notFound, ts: Date.now() });
+    return notFound;
   } catch (e) {
     console.error('[SCiPNET] getScpContext failed:', e);
     return '';
@@ -887,8 +913,9 @@ export async function POST(req: NextRequest) {
           .filter((m: Record<string, unknown>) => m.role !== 'tool' && !m.tool_calls && m.content)
           .slice(-6) as { role: string; content: string }[];
 
-        // Pull live admin-managed data so the bot reflects the current site state.
-        const liveContext = await getLiveContextString();
+        // Pull live admin-managed data ONLY when the prompt is about site operations.
+        // Skip for casual chat to save tokens.
+        const liveContext = needsLiveContext(userPrompt) ? await getLiveContextString() : '';
         const scpContext = await getScpContext(userPrompt);
         const fallbackSysPrompt = FALLBACK_SYS_PROMPT + liveContext + scpContext;
 

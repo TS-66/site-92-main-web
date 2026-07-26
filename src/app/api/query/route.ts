@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConversationHistory, addToConversation } from '@/lib/ai-memory';
 
-const FALLBACK_SYS_PROMPT = `You are Ducky 2.5, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You sound like a calm, dry senior researcher who's seen too many anomalies to get excited. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Be useful, be brief, be right, stay in character. You have access to real tools (SCP database, weather, time, search) — use them when relevant and synthesize the results intelligently.`;
+const FALLBACK_SYS_PROMPT = `You are Ducky 2.0, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You are a senior researcher — calm, precise, dry. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis, no exclamation marks, no "great question," no "I'd be happy to help," no "here's what I found." Start with the answer. Never restate the question. Cite your source when it matters ("Per our local database..." / "The external wiki records..."). Note uncertainty when data is incomplete. Never fabricate — if you have no record, say so. Use proper Foundation terminology (object class, containment, Keter, Euclid, Safe, anomaly, Scranton anchor). Be useful, be brief, be right, stay in character.`;
+
+// Wiki lookup cache — avoids re-fetching the same SCP article on repeat questions.
+const wikiCache = new Map<string, { text: string; ts: number }>();
+const WIKI_CACHE_TTL = 1800000; // 30 minutes
+const WIKI_MAX_CHARS = 1500;
 
 function getMaskedError(status: number): string {
   if (status === 401 || status === 403) return 'AUTH_FAILURE';
   if (status === 429) return 'RATE_LIMIT';
   return 'CORE_OFFLINE';
+}
+
+// Determines whether the prompt needs live site data injected.
+// Skip for casual chat to save tokens.
+function needsLiveContext(prompt: string): boolean {
+  return /\b(scp[-\s]?\d|sector|site.?92|containment|protocol|status|incident|breach|quarantine|anomal|facility|zone|admin|personnel|on.?duty|alert|personnel)/i.test(prompt);
 }
 
 // Builds a live snapshot of admin-managed data so the AI reflects current site state.
@@ -36,20 +47,27 @@ async function getLiveContextString(): Promise<string> {
 }
 
 // If the user asks about a specific SCP-XXX, try the local DB then the external
-// wiki so the bot gives accurate data instead of hallucinating.
+// wiki (via z-ai page_reader) with caching to save tokens on repeat queries.
 async function getScpContext(prompt: string): Promise<string> {
   const match = prompt.match(/\bSCP[-\s]?(\d{1,5})\b/i);
   if (!match) return '';
   const scpId = `SCP-${match[1]}`;
+  const cacheKey = scpId.toLowerCase();
+
+  const cached = wikiCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < WIKI_CACHE_TTL) {
+    return cached.text;
+  }
+
   try {
     const { db } = await import('@/lib/db');
-    // Local DB lookup
     const all = await db.siteScp.findMany();
     const local = all.find((s: { scpId: string }) => s.scpId.toLowerCase() === scpId.toLowerCase());
     if (local) {
-      return `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+      const result = `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+      wikiCache.set(cacheKey, { text: result, ts: Date.now() });
+      return result;
     }
-    // External wiki lookup via z-ai page_reader (routes through z-ai API).
     const wikiUrl = `https://scp-wiki.wikidot.com/scp-${match[1]}`;
     try {
       const ZAIModule = await import('z-ai-web-dev-sdk');
@@ -58,15 +76,19 @@ async function getScpContext(prompt: string): Promise<string> {
       const html = result?.data?.html || '';
       if (html && html.length > 100) {
         let text = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s{2,}/g, ' ').trim();
-        text = text.length > 3000 ? text.substring(0, 3000) + '\n\n[ARTICLE TRUNCATED]' : text;
+        text = text.length > WIKI_MAX_CHARS ? text.substring(0, WIKI_MAX_CHARS) + ' [...]' : text;
         if (text.length > 50) {
-          return `\n\nEXTERNAL WIKI DATA for ${scpId} (from ${wikiUrl}):\n${text}`;
+          const ctx = `\n\nEXTERNAL WIKI DATA for ${scpId} (source: ${wikiUrl}):\n${text}`;
+          wikiCache.set(cacheKey, { text: ctx, ts: Date.now() });
+          return ctx;
         }
       }
     } catch (e) {
       console.error('[SCiPNET/query] getScpContext page_reader failed:', e);
     }
-    return `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it.`;
+    const notFound = `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it.`;
+    wikiCache.set(cacheKey, { text: notFound, ts: Date.now() });
+    return notFound;
   } catch (e) {
     console.error('[SCiPNET/query] SCP context lookup failed:', e);
     return '';
@@ -92,9 +114,9 @@ export async function POST(req: NextRequest) {
 
   const history = getConversationHistory(sessionId || null);
 
-  // Pull live context + SCP-specific data so the bot is accurate.
+  // Pull live context ONLY when the prompt is about site operations — skip for casual chat to save tokens.
   const [liveContext, scpContext] = await Promise.all([
-    getLiveContextString(),
+    needsLiveContext(prompt) ? getLiveContextString() : Promise.resolve(''),
     getScpContext(prompt),
   ]);
   const sysPrompt = FALLBACK_SYS_PROMPT + liveContext + scpContext;
