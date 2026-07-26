@@ -102,3 +102,29 @@ Work Log:
 Stage Summary:
 - Verified via Agent Browser: AI chat asked "what is SCP-7601?" -> bot returned accurate wiki-sourced data (Keter-class Peking Duck). Dynamic Incidents page shows 5 seeded incidents with filter buttons. Report Anomaly page form submits successfully ("Report submitted."). SCP detail modal opens on card click, watchlist adds items (1 item). Admin panel: stats bar shows all 6 counts; Incidents tab shows 5 rows; Reports tab shows 1 card; Site Alert broadcast shows banner instantly for all users; alert clears correctly. Footer present on desktop + mobile (375x812). Lint clean.
 - Files changed: src/app/api/query/route.ts, src/app/api/stream/route.ts, prisma/schema.prisma (subagent), 4 new route files (subagent), public/index.html (CSS + HTML + JS for all features).
+
+---
+Task ID: 7
+Agent: Z.ai Code (orchestrator, direct execution)
+Task: Add Remember Me login + speed up loading + fix all bugs
+
+Work Log:
+- Remember Me feature:
+  - Added a "Remember me on this terminal" checkbox to the login form (step 1).
+  - On successful login with checkbox checked: stores {user, pass} in localStorage under 'scipnet_remember'.
+  - On page load: if remembered creds exist, validates them and does instant login (skips boot screen + loader + bio scan + TFA entirely). Hardcoded creds (TEST/AGENT/ADMIN) validated immediately; DB creds wait for fetchCreds() to load (with 3s timeout fallback).
+  - If checkbox unchecked on login: clears any previously stored creds.
+  - Added a signOut() function (wired to the nav-user area / logoutBtn): clears localStorage + sessionStorage, reloads to login screen.
+- Faster loading:
+  - Boot screen: reduced per-message delay 250ms -> 90ms, post-boot delay 800ms -> 250ms (was ~2.5s, now ~0.9s).
+  - Loader: increased increment step (random*10 -> random*18), reduced interval 150ms -> 80ms, completion delay 500ms -> 200ms (was ~2s, now ~0.6s).
+  - Bio scan: increased step 2% -> 5%, reduced interval 50ms -> 30ms, post-scan delay 500ms -> 200ms (was ~3s, now ~0.8s).
+  - TFA transition: reduced 1000ms -> 500ms, access stamp 1500ms -> 800ms.
+  - restoreActiveTicket delay: 1500ms -> 300ms.
+  - With Remember Me: total load on return visits ~928ms (was ~8.5s) — 9x faster.
+- Removed Prisma query logging noise (src/lib/db.ts: log ['query'] -> ['warn','error'] in dev, [] in prod). Was cluttering dev.log with every SQL query.
+- Bug fixes: none needed beyond the above — all existing features verified working (6 admin stats load, database loads in 431ms, no console/runtime errors).
+
+Stage Summary:
+- Verified via Agent Browser: (1) First visit shows boot+loader+login normally (faster). (2) Login with Remember Me checked -> creds stored in localStorage. (3) Reload -> instant auto-login in 928ms (boot screen + login screen display=none, app shown, nav shows username). (4) Sign Out -> clears creds, returns to login. (5) Login WITHOUT Remember Me -> localStorage stays null, reload shows login (no auto-login). (6) Mobile 375x812: auto-login works, footer present. (7) Desktop footer pushed down naturally on long pages. (8) All 6 admin stats load (Scps=4, TestLogs=1, Protocols=7, Incidents=5, Reports=0, StatusKeys=8). (9) Database loads in 431ms. (10) Lint clean, no dev.log errors.
+- Files changed: src/lib/db.ts (Prisma logging), public/index.html (Remember Me checkbox, auto-login logic, signOut, faster boot/loader/bio/TFA animations, reduced delays).

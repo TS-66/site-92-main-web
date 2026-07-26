@@ -824,6 +824,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <form class="login-form" id="loginForm" autocomplete="off">
 <div class="fg"><label class="fl">Personnel ID</label><div class="fi-wrap"><input class="fi" type="text" id="inUser" placeholder="Enter your ID..." required spellcheck="false" autofocus><iconify-icon icon="lucide:fingerprint"></iconify-icon></div></div>
 <div class="fg"><label class="fl">Passphrase</label><div class="fi-wrap"><input class="fi has-toggle" type="password" id="inPass" placeholder="■■■■■■■■■■■■" required><iconify-icon icon="lucide:lock"></iconify-icon><button type="button" class="pw-toggle" id="pwToggle" tabindex="-1"><iconify-icon icon="lucide:eye" width="16"></iconify-icon></button></div></div>
+<div class="remember-row" style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:11px;color:var(--t3);letter-spacing:.5px;cursor:none;user-select:none">
+<input type="checkbox" id="rememberMe" style="width:14px;height:14px;accent-color:var(--ac);cursor:none"><label for="rememberMe" style="cursor:none">Remember me on this terminal (skip login next visit)</label>
+</div>
 <button class="login-btn" type="submit" id="loginBtn">SIGN IN<div class="sp"><div class="sp-r"></div></div></button>
 </form>
 </div>
@@ -1440,15 +1443,63 @@ function bootLoop() {
     if (bootIdx < bootMsgs.length) {
         bootBody.insertAdjacentHTML('beforeend', `<div>${bootMsgs[bootIdx]}</div>`);
         bootIdx++;
-        setTimeout(bootLoop, 250);
+        setTimeout(bootLoop, 90);
     } else {
         setTimeout(() => {
             document.getElementById('bootScreen').classList.add('hide');
             startLoader();
-        }, 800);
+        }, 250);
     }
 }
-bootLoop();
+
+// --- Remember Me: auto-login ---
+// If the user previously checked "Remember me", skip the boot animation, the
+// loader, and the 3-step login entirely — go straight into the app.
+function getRememberedCreds() {
+    try { return JSON.parse(localStorage.getItem('scipnet_remember') || 'null'); } catch { return null; }
+}
+function clearRememberedCreds() { localStorage.removeItem('scipnet_remember'); }
+function isValidCredential(u, p) {
+    if (!u || !p) return false;
+    return dynamicCreds[u] === p || (u === 'TEST' && p === 'TEST') || (u === 'AGENT' && p === 'DELTA9') || (u === 'ADMIN' && p === 'O5-X927');
+}
+
+function doInstantLogin(user) {
+    document.getElementById('bootScreen').style.display = 'none';
+    const loaderEl = document.getElementById('loader');
+    if (loaderEl) loaderEl.style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    const navUn = document.getElementById('navUn');
+    const navAv = document.getElementById('navAv');
+    if (navUn) navUn.textContent = user;
+    if (navAv) navAv.textContent = user.substring(0, 2).toUpperCase();
+    initApp();
+}
+
+// Check for remembered credentials. Defer validation until dynamicCreds loads
+// (it's fetched async below). Hardcoded creds can be validated immediately.
+let pendingAutoLogin = null;
+(function checkRemembered() {
+    const creds = getRememberedCreds();
+    if (!creds) { bootLoop(); return; }
+    // Hardcoded creds can be validated instantly (no need to wait for fetchCreds).
+    if ((creds.user === 'TEST' && creds.pass === 'TEST') ||
+        (creds.user === 'AGENT' && creds.pass === 'DELTA9') ||
+        (creds.user === 'ADMIN' && creds.pass === 'O5-X927')) {
+        doInstantLogin(creds.user);
+        return;
+    }
+    // DB credential — wait for fetchCreds to load, with a 3s timeout fallback.
+    pendingAutoLogin = creds;
+    bootLoop(); // start boot in parallel; will be interrupted if auto-login succeeds
+    setTimeout(() => {
+        if (pendingAutoLogin) {
+            // fetchCreds took too long — clear and let normal login proceed.
+            pendingAutoLogin = null;
+        }
+    }, 3000);
+})();
 
 function startLoader() {
     const loader = document.getElementById('loader');
@@ -1459,22 +1510,35 @@ function startLoader() {
     const statusEl = document.getElementById('loadStatus');
     const statuses = ["Unlocking database...", "Loading personnel...", "Calibrating reality anchors..."];
     let interval = setInterval(() => {
-        pct += Math.random() * 10;
+        pct += Math.random() * 18;
         if (pct >= 100) {
             pct = 100;
             clearInterval(interval);
             setTimeout(() => {
                 loader.classList.add('hide');
                 document.getElementById('loginScreen').classList.add('show');
-            }, 500);
+            }, 200);
         }
         bar.style.width = pct + '%';
         pctEl.textContent = Math.floor(pct) + '%';
         if (pct > 30 && pct < 60) statusEl.innerHTML = statuses[0] + '<span class="cursor"></span>';
         if (pct > 60 && pct < 90) statusEl.innerHTML = statuses[1] + '<span class="cursor"></span>';
         if (pct > 90) statusEl.innerHTML = statuses[2] + '<span class="cursor"></span>';
-    }, 150);
+    }, 80);
 }
+
+// --- Sign Out ---
+function signOut() {
+    if (!confirm('Sign out of SCiPNET? You will need to log in again.')) return;
+    clearRememberedCreds();
+    sessionStorage.removeItem('scipnet_session');
+    location.reload();
+}
+// Wire the nav-user area as a sign-out trigger
+document.addEventListener('DOMContentLoaded', () => {
+    const lo = document.getElementById('logoutBtn');
+    if (lo) { lo.title = 'Click to sign out'; lo.style.cursor = 'pointer'; lo.addEventListener('click', signOut); }
+});
 
 // ===== LIVE SUPPORT TICKET SYSTEM =====
 let selectedTicketType = '';
@@ -1813,6 +1877,17 @@ async function fetchCreds() {
         const res = await fetch('/api/credentials');
         dynamicCreds = await res.json();
     } catch(e) { console.error("Failed to fetch credentials"); }
+    // After creds load, check if there's a pending auto-login (remembered DB credential).
+    if (pendingAutoLogin && !document.getElementById('app').classList.contains('show')) {
+        if (isValidCredential(pendingAutoLogin.user, pendingAutoLogin.pass)) {
+            pendingAutoLogin = null;
+            doInstantLogin(getRememberedCreds().user);
+        } else {
+            // Invalid remembered creds — clear and let normal login proceed.
+            clearRememberedCreds();
+            pendingAutoLogin = null;
+        }
+    }
 }
 fetchCreds();
 
@@ -1822,9 +1897,16 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
     const u = document.getElementById('inUser').value;
     const p = document.getElementById('inPass').value;
     const err = document.getElementById('loginErr');
+    const remember = document.getElementById('rememberMe').checked;
     
     if (dynamicCreds[u] === p || (u === 'TEST' && p === 'TEST') || (u === 'AGENT' && p === 'DELTA9') || (u === 'ADMIN' && p === 'O5-X927')) {
         err.classList.remove('show');
+        // Store or clear remembered credentials.
+        if (remember) {
+            localStorage.setItem('scipnet_remember', JSON.stringify({ user: u, pass: p }));
+        } else {
+            clearRememberedCreds();
+        }
         document.getElementById('step1').classList.remove('active');
         document.getElementById('step2').classList.add('active');
         startBioScan();
@@ -1840,10 +1922,10 @@ function startBioScan() {
     const pctEl = document.getElementById('bioPct');
     const txt = document.getElementById('bioText');
     let interval = setInterval(() => {
-        pct += 2;
+        pct += 5;
         fill.style.width = pct + '%';
         pctEl.textContent = pct + '%';
-        if (pct === 50) txt.textContent = "Verifying neural pattern...";
+        if (pct >= 50) txt.textContent = "Verifying neural pattern...";
         if (pct >= 100) {
             clearInterval(interval);
             setTimeout(() => {
@@ -1851,9 +1933,9 @@ function startBioScan() {
                 document.getElementById('step3').classList.add('active');
                 document.getElementById('tfaCode').textContent = Math.floor(100000 + Math.random() * 900000);
                 startTfaTimer();
-            }, 500);
+            }, 200);
         }
-    }, 50);
+    }, 30);
 }
 function startTfaTimer() {
     let t = 30;
@@ -1870,12 +1952,12 @@ document.getElementById('tfaForm').addEventListener('submit', (e) => {
     document.getElementById('accessStamp').classList.add('show');
     setTimeout(() => {
         document.getElementById('accessStamp').classList.remove('show');
-    }, 1500);
+    }, 800);
     setTimeout(() => {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').classList.add('show');
         initApp();
-    }, 1000);
+    }, 500);
 });
 
 function initApp() {
@@ -1896,7 +1978,7 @@ function initApp() {
     setupCanvas();
     loadSiteAlert();
     // Auto-restore live chat if a ticket is still open
-    setTimeout(() => restoreActiveTicket(), 1500);
+    setTimeout(() => restoreActiveTicket(), 300);
 }
 
 function animateValue(id, start, end, duration) {
