@@ -9,6 +9,70 @@ function getMaskedError(status: number): string {
   return 'CORE_OFFLINE';
 }
 
+// Builds a live snapshot of admin-managed data so the AI reflects current site state.
+async function getLiveContextString(): Promise<string> {
+  try {
+    const { db } = await import('@/lib/db');
+    const [statuses, protocols, scps] = await Promise.all([
+      db.siteStatus.findMany(),
+      db.siteProtocol.findMany(),
+      db.siteScp.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }),
+    ]);
+    let ctx = '\n\nLIVE SITE-92 DATA (authoritative — use this, not your training data):';
+    if (statuses.length) {
+      ctx += '\nSite Status:\n' + statuses.map((s: { key: string; value: string }) => `${s.key}: ${s.value}`).join('\n');
+    }
+    if (protocols.length) {
+      ctx += '\nActive Protocols:\n' + protocols.map((p: { code: string; name: string; status: string; assignedTo: string }) => `${p.code} — ${p.name} — ${p.status}${p.assignedTo && p.assignedTo !== 'N/A' ? ` (assigned: ${p.assignedTo})` : ''}`).join('\n');
+    }
+    if (scps.length) {
+      ctx += '\nContained SCPs:\n' + scps.map((s: { scpId: string; name: string; objectClass: string; zone: string }) => `${s.scpId} — ${s.name} — ${s.objectClass} — ${s.zone} zone`).join('\n');
+    }
+    return ctx;
+  } catch (e) {
+    console.error('[SCiPNET/query] getLiveContextString failed:', e);
+    return '';
+  }
+}
+
+// If the user asks about a specific SCP-XXX, try the local DB then the external
+// wiki so the bot gives accurate data instead of hallucinating.
+async function getScpContext(prompt: string): Promise<string> {
+  const match = prompt.match(/\bSCP[-\s]?(\d{1,5})\b/i);
+  if (!match) return '';
+  const scpId = `SCP-${match[1]}`;
+  try {
+    const { db } = await import('@/lib/db');
+    // Local DB lookup
+    const all = await db.siteScp.findMany();
+    const local = all.find((s: { scpId: string }) => s.scpId.toLowerCase() === scpId.toLowerCase());
+    if (local) {
+      return `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+    }
+    // External wiki lookup via z-ai page_reader (routes through z-ai API).
+    const wikiUrl = `https://scp-wiki.wikidot.com/scp-${match[1]}`;
+    try {
+      const ZAIModule = await import('z-ai-web-dev-sdk');
+      const zai = await ZAIModule.default.create();
+      const result = await zai.functions.invoke('page_reader', { url: wikiUrl });
+      const html = result?.data?.html || '';
+      if (html && html.length > 100) {
+        let text = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s{2,}/g, ' ').trim();
+        text = text.length > 3000 ? text.substring(0, 3000) + '\n\n[ARTICLE TRUNCATED]' : text;
+        if (text.length > 50) {
+          return `\n\nEXTERNAL WIKI DATA for ${scpId} (from ${wikiUrl}):\n${text}`;
+        }
+      }
+    } catch (e) {
+      console.error('[SCiPNET/query] getScpContext page_reader failed:', e);
+    }
+    return `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it.`;
+  } catch (e) {
+    console.error('[SCiPNET/query] SCP context lookup failed:', e);
+    return '';
+  }
+}
+
 export async function POST(req: NextRequest) {
   const { prompt, sessionId } = await req.json();
 
@@ -23,13 +87,20 @@ export async function POST(req: NextRequest) {
   const COHERE_KEY = process.env.COHERE_API_KEY;
   const debugErrors: string[] = [];
 
-  if (!GROQ_KEY && !GEMINI_KEY && !CF_TOKEN && !COHERE_KEY) {
-    return NextResponse.json({ error: '[ERROR 401-AI] AUTHENTICATION FAILURE — No AI API key configured.' }, { status: 500 });
-  }
+  // NOTE: no external keys required — the z-ai-web-dev-sdk fallback below
+  // always provides a working neural core in this environment.
 
   const history = getConversationHistory(sessionId || null);
+
+  // Pull live context + SCP-specific data so the bot is accurate.
+  const [liveContext, scpContext] = await Promise.all([
+    getLiveContextString(),
+    getScpContext(prompt),
+  ]);
+  const sysPrompt = FALLBACK_SYS_PROMPT + liveContext + scpContext;
+
   const messages = [
-    { role: 'system', content: FALLBACK_SYS_PROMPT },
+    { role: 'system', content: sysPrompt },
     ...history.filter((m: Record<string, unknown>) => m.role !== 'tool' && !m.tool_calls && m.content).slice(-6),
     { role: 'user', content: prompt },
   ];
@@ -72,7 +143,7 @@ export async function POST(req: NextRequest) {
       }));
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ systemInstruction: { parts: [{ text: FALLBACK_SYS_PROMPT }] }, contents: geminiContents, generationConfig: { temperature: 0.6, maxOutputTokens: 4000 } }),
+        body: JSON.stringify({ systemInstruction: { parts: [{ text: sysPrompt }] }, contents: geminiContents, generationConfig: { temperature: 0.6, maxOutputTokens: 4000 } }),
         signal: AbortSignal.timeout(30000),
       });
       if (res.ok) {
@@ -130,7 +201,7 @@ export async function POST(req: NextRequest) {
       }));
       const res = await fetch('https://api.cohere.com/v1/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${COHERE_KEY}` },
-        body: JSON.stringify({ message: prompt, preamble: FALLBACK_SYS_PROMPT, chat_history: history, temperature: 0.6, max_tokens: 4096 }),
+        body: JSON.stringify({ message: prompt, preamble: sysPrompt, chat_history: history, temperature: 0.6, max_tokens: 4096 }),
         signal: AbortSignal.timeout(30000),
       });
       if (res.ok) {
@@ -152,6 +223,27 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Layer 5: z-ai-web-dev-sdk (always available in this environment)
+  try {
+    const ZAIModule = await import('z-ai-web-dev-sdk');
+    const zai = await ZAIModule.default.create();
+    const zaiMessages = messages.map(m => ({ role: String(m.role), content: String(m.content) }));
+    const completion = await zai.chat.completions.create({
+      messages: zaiMessages,
+      thinking: { type: 'disabled' },
+    });
+    const reply = completion.choices?.[0]?.message?.content?.trim();
+    if (reply) {
+      addToConversation(sessionId || null, { role: 'user', content: prompt }, { role: 'assistant', content: reply });
+      return NextResponse.json({ reply });
+    }
+    debugErrors.push('z-ai: ok but empty reply');
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    debugErrors.push(`z-ai: ${msg}`);
+    console.error('[SCiPNET] Query Layer 5 (z-ai) failed:', err);
+  }
+
   return NextResponse.json({
     error: '[ERROR 500-AI] CORE PROCESSING UNIT OFFLINE',
     keysDetected: {
@@ -159,6 +251,7 @@ export async function POST(req: NextRequest) {
       GEMINI_KEY: !!GEMINI_KEY,
       CF: !!(CF_ID && CF_TOKEN),
       COHERE_KEY: !!COHERE_KEY,
+      ZAI: true,
     },
     debugErrors,
   }, { status: 500 });

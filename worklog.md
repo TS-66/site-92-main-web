@@ -46,3 +46,59 @@ Stage Summary:
 - Verified via Agent Browser: admin login -> Test Logs tab -> added "Immobility Verification" -> "Test log published." (table + stats updated). SCPs tab -> added SCP-3008 "The Infinite IKEA" -> "SCP SCP-3008 added to database." -> navigated to public Database page -> SCP-3008 appears with ADMIN tag (count 18->19). Edited SCP-3008 via editor modal (changed name) -> "SCP updated." -> table + DB persisted the new name -> Database page reflects "Infinite IKEA (Updated)". Created protocol EPSILON-4 -> appeared -> deleted -> "Protocol EPSILON-4 deleted." Test-log edit (severity MINOR->SEVERE) -> "Test log updated."
 - Lint clean; no runtime errors; test data cleaned up.
 - Files changed: src/app/api/admin/test-logs/route.ts, src/app/api/admin/scps/route.ts, src/app/api/admin/protocols/route.ts, public/index.html (dynamic DB page, stats bar, editor modal, feedback, protocol create/delete form).
+
+---
+Task ID: 3
+Agent: Z.ai Code (general-purpose sub-agent)
+Task: Add Incident Reports (admin-managed, public-readable) + Anomaly Reports (user-submitted, admin-reviewable) backend to Site-92 SCiPNET.
+
+Work Log:
+- Read worklog (Tasks 1 & 2), prisma/schema.prisma, src/app/api/admin/scps/route.ts, src/app/api/public/scps/route.ts, src/lib/db.ts to understand existing patterns (NextRequest/NextResponse, `requireAdmin` helper checking `x-admin-token: site92-admin-authenticated`, try/catch + console.error style, `import { db } from '@/lib/db'`).
+- Appended two new Prisma models to `prisma/schema.prisma` (after SiteStatus): `Incident` (id, code @unique, title, severity default MODERATE, sector default UNKNOWN, description, status default ACTIVE, reportedBy default SYSTEM, createdAt, updatedAt) and `AnomalyReport` (id, reporterName, scpRef, location, description, contact default "", status default PENDING, createdAt, updatedAt). Both use plain `@id @default(cuid())` exactly as the task spec defined them (no @map), matching the model definitions in the instructions.
+- Ran `bun run db:push` -> "Your database is now in sync with your Prisma schema." + Prisma Client v6.19.2 generated. No data loss.
+- Created 4 route files matching the admin/scps pattern verbatim (same requireAdmin helper, same error messages/format, same response shapes, same `db` import):
+  * `src/app/api/public/incidents/route.ts` — GET (public, returns all incidents ordered createdAt desc).
+  * `src/app/api/admin/incidents/route.ts` — GET (all), POST (create, requires admin, validates code/title/description), PUT (update by id, requires admin), DELETE (?id=, requires admin).
+  * `src/app/api/public/anomaly-reports/route.ts` — GET (public, returns all ordered createdAt desc) AND POST (public submission, no auth, validates reporterName/scpRef/location/description non-empty, defaults status to PENDING).
+  * `src/app/api/admin/anomaly-reports/route.ts` — GET (all), PUT (update status/fields by id, requires admin), DELETE (?id=, requires admin). No POST — submissions only come through the public route.
+- Seeded 5 sample incidents via a temp `seed-incidents.ts` script (using `new PrismaClient()` directly as allowed) — codes INC-2025-0412 / -0407 / -0399 / -0394 / -0388, severities CRITICAL/HIGH/MODERATE/HIGH/LOW, varied sectors (HEAVY-CONTAINMENT, STORAGE-C, D-SECTOR, IT-INFRASTRUCTURE, CRYO-LAB), varied statuses (RESOLVED/ACTIVE/INVESTIGATING). Ran successfully ("Seeded 5 incidents."), then deleted the temp script file.
+- Ran `bun run lint` -> clean (no errors, no warnings) in any of the new/modified files.
+
+Stage Summary:
+- `bun run db:push` succeeded; Incident + AnomalyReport tables created in SQLite.
+- `bun run lint` clean (zero errors / warnings).
+- Files created:
+  * `src/app/api/public/incidents/route.ts`
+  * `src/app/api/admin/incidents/route.ts`
+  * `src/app/api/public/anomaly-reports/route.ts`
+  * `src/app/api/admin/anomaly-reports/route.ts`
+- Files modified:
+  * `prisma/schema.prisma` (appended Incident + AnomalyReport models)
+- Seeded 5 sample incidents (INC-2025-0412..0388) directly into the DB so the public incidents page will not be empty.
+- Did NOT touch `public/index.html`, `src/app/api/stream/route.ts`, or `src/app/api/query/route.ts` (per task rules). Frontend wiring for the new endpoints is left to other tasks/agents.
+
+---
+Task ID: 4+5+6
+Agent: Z.ai Code (orchestrator, direct execution)
+Task: Fix AI bot SCP error + add user features + add admin features
+
+Work Log:
+- AI FIX (Task 1+2): Root cause = /api/query fallback was missing the z-ai-web-dev-sdk layer, returning "[ERROR 401-AI] AUTHENTICATION FAILURE" whenever the stream endpoint failed/timed out. Added z-ai Layer 5 + getLiveContextString() + getScpContext() to /api/query. Added getScpContext() to /api/stream. getScpContext detects SCP-XXX in the prompt, checks local DB first, then fetches the official SCP wiki via z-ai page_reader (the sandbox can't reach the wiki directly, but z-ai API can). Result: SCP-7601 now returns accurate wiki data (Peking Duck anomaly) instead of an error or hallucination.
+- BACKEND (Task 3, subagent): Added Incident + AnomalyReport Prisma models, 4 new API routes (public + admin for each), seeded 5 sample incidents. Fixed Prisma client regeneration issue.
+- USER FEATURES (Task 4):
+  - SCP Detail Modal: click any SCP card on the Database page -> modal with full details (class, threat, zone, source, description).
+  - Personal Watchlist: add/remove SCPs to a localStorage watchlist, shown in a dedicated section on the Database page.
+  - Report Anomaly page (new "Report" nav link): form for users to submit anomaly sightings (reporterName, scpRef, location, description, contact) -> POST /api/public/anomaly-reports. Shows community reports list below.
+  - Dynamic Incidents page: replaced hardcoded HTML with live fetch from /api/public/incidents, with severity filter buttons (ALL/CRITICAL/HIGH/MODERATE/LOW) and timeAgo display.
+  - Site Alert Banner: reads SITE_ALERT key from site-status; shows a pulsing red banner at the top of the app for all users.
+- ADMIN FEATURES (Task 5):
+  - Incidents tab: full CRUD (add form + edit via reusable editor modal + delete). 6 stats now (SCPs, Test Logs, Protocols, Incidents, Reports, Status Keys).
+  - Reports tab: reviews user-submitted anomaly reports with status buttons (REVIEW/RESOLVE/DISMISS) + delete.
+  - Site Alert Broadcast: dedicated UI in Site Status tab to set/clear the SITE_ALERT key, instantly broadcasting to all users.
+  - Clear AI Memory button: calls /api/stream/clear to reset Ducky's conversation context.
+  - Incident editor: added 'incident' type to the reusable openEditor/submitEditor (title, severity, sector, status, description).
+- Fixed JS syntax error: clearAiMemory confirm() had Ducky\\'s which broke the string literal and halted the entire inline script (making sendChat undefined, which is why the AI chat didn't work in the browser).
+
+Stage Summary:
+- Verified via Agent Browser: AI chat asked "what is SCP-7601?" -> bot returned accurate wiki-sourced data (Keter-class Peking Duck). Dynamic Incidents page shows 5 seeded incidents with filter buttons. Report Anomaly page form submits successfully ("Report submitted."). SCP detail modal opens on card click, watchlist adds items (1 item). Admin panel: stats bar shows all 6 counts; Incidents tab shows 5 rows; Reports tab shows 1 card; Site Alert broadcast shows banner instantly for all users; alert clears correctly. Footer present on desktop + mobile (375x812). Lint clean.
+- Files changed: src/app/api/query/route.ts, src/app/api/stream/route.ts, prisma/schema.prisma (subagent), 4 new route files (subagent), public/index.html (CSS + HTML + JS for all features).

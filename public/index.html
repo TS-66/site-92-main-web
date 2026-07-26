@@ -725,6 +725,35 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .editor-row input:focus,.editor-row select:focus,.editor-row textarea:focus{outline:none;border-color:var(--ac3)}
 .editor-row textarea{min-height:70px;resize:vertical}
 .editor-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.site-alert{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--rd2);border:1px solid var(--rd);border-radius:2px;margin-bottom:12px;font-size:12px;letter-spacing:.5px;color:var(--t1);animation:pulseAlert 2s infinite}
+.site-alert.show{display:flex}
+.site-alert-icon{color:var(--rd);font-size:18px;flex-shrink:0}
+.site-alert-close{margin-left:auto;background:none;border:none;color:var(--t3);cursor:none;font-size:16px;padding:0 4px}
+@keyframes pulseAlert{0%,100%{box-shadow:0 0 0 0 rgba(255,80,80,.3)}50%{box-shadow:0 0 12px 2px rgba(255,80,80,.2)}}
+.report-form{max-width:640px;margin:0 auto}
+.report-form .fg{margin-bottom:14px}
+.rpt-card{background:var(--b2);border:1px solid var(--bd2);border-left:3px solid var(--ac);padding:14px 16px;margin-bottom:10px;border-radius:2px}
+.rpt-card.rpt-pending{border-left-color:var(--yl)}
+.rpt-card.rpt-resolved{border-left-color:var(--gn)}
+.rpt-card.rpt-dismissed{border-left-color:var(--t3);opacity:.6}
+.rpt-meta{font-size:10px;color:var(--t3);letter-spacing:.5px;margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
+.rpt-status{padding:1px 6px;border-radius:2px;font-size:9px;letter-spacing:1px}
+.rpt-status-PENDING{background:var(--yl);color:var(--b1)}
+.rpt-status-REVIEWED{background:var(--ac);color:var(--b1)}
+.rpt-status-RESOLVED{background:var(--gn);color:var(--b1)}
+.rpt-status-DISMISSED{background:var(--t3);color:var(--b1)}
+.watchlist-sec{margin-bottom:30px}
+.watchlist-empty{color:var(--t3);font-size:12px;padding:14px;text-align:center;background:var(--b3);border:1px dashed var(--bd2);border-radius:2px}
+.scp-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.scp-detail-modal.open{display:flex}
+.scp-detail-box{background:var(--b2);border:1px solid var(--bd2);max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:24px}
+.scp-detail-id{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--ac);margin-bottom:4px}
+.scp-detail-name{font-size:14px;color:var(--t2);margin-bottom:14px}
+.scp-detail-row{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.scp-detail-field{font-size:11px;color:var(--t3);letter-spacing:.5px}
+.scp-detail-field b{color:var(--t1);font-weight:400;display:block;font-size:13px;margin-top:2px}
+.scp-detail-desc{font-size:12px;line-height:1.7;color:var(--t2);margin:14px 0;padding:12px;background:var(--b3);border-radius:2px}
+.scp-detail-actions{display:flex;gap:10px;margin-top:16px}
 
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
@@ -893,6 +922,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="app" id="app">
 <div class="app-grid"></div><div class="app-scan"></div><div class="watermark">CLASSIFIED</div>
 <div class="topbar"><div class="topbar-l"><div class="live-dot"></div><span>SCiPNET v10.5</span><span style="color:var(--bd2)">|</span><span>AES-256</span><span style="color:var(--bd2)">|</span><span id="topTime">--:--:--</span><span style="color:var(--bd2)">|</span><span>Connection:</span> <span style="color:var(--gn)">Stable</span></div><div class="topbar-r"><span>Scranton: <span class="topbar-flux" id="scrantonVal">99.2%</span></span><span style="color:var(--bd2)">|</span><span>Site-92</span><span style="color:var(--bd2)">|</span><span class="cls-badge">TOP SECRET</span></div></div>
+<div class="site-alert" id="siteAlert"><iconify-icon icon="lucide:alert-triangle" class="site-alert-icon"></iconify-icon><span id="siteAlertText"></span><button class="site-alert-close" onclick="dismissSiteAlert()">&times;</button></div>
 <nav class="navbar">
 <div class="nav-brand" onclick="go('overview')">
 <img src="site92-logo.png" alt="Site-92 Logo" class="nav-logo">
@@ -900,6 +930,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="nav-links" id="navLinks">
 <a class="nav-link active" data-p="overview">Overview</a>
 <a class="nav-link" data-p="objects">Database</a>
+<a class="nav-link" data-p="report">Report</a>
 <a class="nav-link" data-p="personnel">Personnel</a>
 <a class="nav-link" data-p="departments">Departments</a>
 <a class="nav-link" data-p="protocols">Protocols</a>
@@ -980,6 +1011,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div style="font-size:11px;color:var(--t3);letter-spacing:1px"><span id="dbCount">0</span> OBJECTS</div>
 </div>
 <div id="dbScpGrid"><div class="search-empty">Loading database...</div></div>
+<div class="watchlist-sec" id="dbWatchlistSec" style="display:none">
+<div class="sec-head"><div class="sec-title"><iconify-icon icon="lucide:bookmark"></iconify-icon>My Watchlist</div></div>
+<div class="g3" id="dbWatchlist"></div>
+</div>
 </div>
 
 <div class="pg-sec" id="page-personnel">
@@ -1021,16 +1056,31 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <div class="pg-sec" id="page-incidents">
 <div class="page-head"><h1>Incidents</h1><p>Security events & breach reports</p></div>
-<div class="g2">
-<div>
-<div class="incident"><div class="inc-code">INC-2025-0412-A</div><div class="inc-title">Sector 7B Containment Breach</div><div class="inc-desc">SCP-5531 breached primary containment. Scranton anchors fluctuated. Quarantine protocol initiated.</div><div class="inc-meta"><span class="inc-sev inc-sev-critical">CRITICAL</span><span>2 min ago</span></div></div>
-<div class="incident"><div class="inc-code">INC-2025-0411-B</div><div class="inc-title">Unauthorized Access Attempt</div><div class="inc-desc">Unknown user attempted to access O5 Council terminal. IP traced to external node.</div><div class="inc-meta"><span class="inc-sev inc-sev-high">HIGH</span><span>1 day ago</span></div></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px" id="incFilters">
+<button class="admin-btn active" onclick="filterIncidents('ALL', this)" data-f="ALL">ALL</button>
+<button class="admin-btn" onclick="filterIncidents('CRITICAL', this)" data-f="CRITICAL">CRITICAL</button>
+<button class="admin-btn" onclick="filterIncidents('HIGH', this)" data-f="HIGH">HIGH</button>
+<button class="admin-btn" onclick="filterIncidents('MODERATE', this)" data-f="MODERATE">MODERATE</button>
+<button class="admin-btn" onclick="filterIncidents('LOW', this)" data-f="LOW">LOW</button>
 </div>
-<div>
-<div class="incident"><div class="inc-code">INC-2025-0410-C</div><div class="inc-title">Power Grid Fluctuation</div><div class="inc-desc">Generator 4 failed temporarily. Backup power engaged within 3 seconds. No breaches occurred.</div><div class="inc-meta"><span class="inc-sev inc-sev-medium">MEDIUM</span><span>2 days ago</span></div></div>
-<div class="incident"><div class="inc-code">INC-2025-0405-D</div><div class="inc-title">D-Class Escape Attempt</div><div class="inc-desc">D-9341 attempted to breach perimeter fence. Neutralized by automated turrets.</div><div class="inc-meta"><span class="inc-sev inc-sev-low">LOW</span><span>1 week ago</span></div></div>
+<div class="g2" id="incGrid"><div class="search-empty">Loading incidents...</div></div>
 </div>
+
+<div class="pg-sec" id="page-report">
+<div class="page-head"><h1>Report an Anomaly</h1><p>Submit a sighting or anomalous encounter for review</p></div>
+<div class="report-form">
+<div class="fg"><label class="fl">Your Name / Callsign</label><div class="fi-wrap"><input class="fi" type="text" id="rptName" placeholder="Dr. Smith / Agent-X..." spellcheck="false"><iconify-icon icon="lucide:user"></iconify-icon></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div class="fg"><label class="fl">SCP Reference (if known)</label><div class="fi-wrap"><input class="fi" type="text" id="rptScpRef" placeholder="SCP-XXX or Unknown" spellcheck="false"><iconify-icon icon="lucide:hash"></iconify-icon></div></div>
+<div class="fg"><label class="fl">Location</label><div class="fi-wrap"><input class="fi" type="text" id="rptLocation" placeholder="Sector / Room / Coordinates..." spellcheck="false"><iconify-icon icon="lucide:map-pin"></iconify-icon></div></div>
 </div>
+<div class="fg"><label class="fl">Description of Event</label><textarea id="rptDesc" placeholder="Describe what you observed in detail..." style="min-height:100px"></textarea></div>
+<div class="fg"><label class="fl">Contact (optional)</label><div class="fi-wrap"><input class="fi" type="text" id="rptContact" placeholder="Discord / Email (for follow-up)" spellcheck="false"><iconify-icon icon="lucide:mail"></iconify-icon></div></div>
+<div id="rptMsg" class="admin-msg"></div>
+<button class="admin-btn" style="width:100%;padding:10px" onclick="submitAnomalyReport()">SUBMIT REPORT</button>
+</div>
+<div class="sec-head" style="margin-top:36px"><div class="sec-title"><iconify-icon icon="lucide:users"></iconify-icon>Community Reports</div></div>
+<div id="rptList"><div class="search-empty">Loading community reports...</div></div>
 </div>
 
 <div class="pg-sec" id="page-map">
@@ -1191,13 +1241,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="admin-stat"><div class="admin-stat-num" id="statScps">0</div><div class="admin-stat-label">SCPs</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statTestLogs">0</div><div class="admin-stat-label">Test Logs</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statProtocols">0</div><div class="admin-stat-label">Protocols</div></div>
+<div class="admin-stat"><div class="admin-stat-num" id="statIncidents">0</div><div class="admin-stat-label">Incidents</div></div>
+<div class="admin-stat"><div class="admin-stat-num" id="statReports">0</div><div class="admin-stat-label">Reports</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statStatusKeys">0</div><div class="admin-stat-label">Status Keys</div></div>
 </div>
 <div class="admin-tabs">
 <div class="admin-tab active" data-tab="scps" onclick="switchAdminTab('scps')">SCPs</div>
 <div class="admin-tab" data-tab="test-logs" onclick="switchAdminTab('test-logs')">Test Logs</div>
 <div class="admin-tab" data-tab="protocols" onclick="switchAdminTab('protocols')">Protocols</div>
+<div class="admin-tab" data-tab="incidents" onclick="switchAdminTab('incidents')">Incidents</div>
+<div class="admin-tab" data-tab="reports" onclick="switchAdminTab('reports')">Reports</div>
 <div class="admin-tab" data-tab="site-status" onclick="switchAdminTab('site-status')">Site Status</div>
+</div>
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:12px">
+<button class="admin-btn" style="background:var(--b4)" onclick="clearAiMemory()">CLEAR AI MEMORY</button>
 </div>
 
 <div class="admin-panel active" id="admin-scps">
@@ -1248,7 +1305,38 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="table-wrap"><table class="tbl" id="admin-protocols-table"><thead><tr><th>Code</th><th>Name</th><th>Target</th><th>Status</th><th>Assigned To</th><th>Actions</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Loading...</td></tr></tbody></table></div>
 </div>
 
+<div class="admin-panel" id="admin-incidents">
+<div class="admin-form">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div class="fg"><label class="fl">Code</label><div class="fi-wrap"><input class="fi" type="text" id="newIncCode" placeholder="INC-2025-XXXX-X" spellcheck="false"><iconify-icon icon="lucide:hash"></iconify-icon></div></div>
+<div class="fg"><label class="fl">Title</label><div class="fi-wrap"><input class="fi" type="text" id="newIncTitle" placeholder="Incident title..." spellcheck="false"><iconify-icon icon="lucide:file-text"></iconify-icon></div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<div class="fg"><label class="fl">Severity</label><select id="newIncSeverity"><option>LOW</option><option>MODERATE</option><option>HIGH</option><option>CRITICAL</option></select></div>
+<div class="fg"><label class="fl">Sector</label><div class="fi-wrap"><input class="fi" type="text" id="newIncSector" placeholder="e.g. D-7B" spellcheck="false"><iconify-icon icon="lucide:map-pin"></iconify-icon></div></div>
+<div class="fg"><label class="fl">&nbsp;</label><button class="admin-btn" onclick="addIncident()" style="width:100%;padding:8px 0">ADD INCIDENT</button></div>
+</div>
+<div class="fg"><label class="fl">Description</label><textarea id="newIncDesc" placeholder="Incident description..."></textarea></div>
+</div>
+<div id="incMsg" class="admin-msg"></div>
+<div class="table-wrap"><table class="tbl" id="admin-incidents-table"><thead><tr><th>Code</th><th>Title</th><th>Severity</th><th>Sector</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Loading...</td></tr></tbody></table></div>
+</div>
+
+<div class="admin-panel" id="admin-reports">
+<p style="color:var(--t3);font-size:11px;margin-bottom:12px">User-submitted anomaly reports. Update status to track review progress.</p>
+<div id="adminReportsList"><div class="search-empty">Loading reports...</div></div>
+</div>
+
 <div class="admin-panel" id="admin-site-status">
+<div class="admin-form" style="border:1px solid var(--rd);border-radius:2px;padding:14px;margin-bottom:16px;background:var(--b3)">
+<div style="font-size:11px;letter-spacing:1px;color:var(--rd);margin-bottom:8px"><iconify-icon icon="lucide:megaphone"></iconify-icon> SITE-WIDE ALERT BROADCAST</div>
+<div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end">
+<div class="fg" style="margin:0"><label class="fl">Alert Message (empty = clear)</label><div class="fi-wrap"><input class="fi" type="text" id="alertBroadcast" placeholder="e.g. Containment breach in progress. All personnel shelter in place." spellcheck="false"><iconify-icon icon="lucide:alert-triangle"></iconify-icon></div></div>
+<button class="admin-btn" onclick="broadcastAlert()">SET ALERT</button>
+<button class="admin-btn danger" onclick="clearAlert()">CLEAR</button>
+</div>
+<div id="alertMsg" class="admin-msg" style="margin-top:8px"></div>
+</div>
 <div class="admin-form">
 <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
 <div class="fg"><label class="fl">New Key</label><div class="fi-wrap"><input class="fi" type="text" id="newStatusKey" placeholder="e.g. A-1" spellcheck="false"><iconify-icon icon="lucide:hash"></iconify-icon></div></div>
@@ -1314,6 +1402,8 @@ function go(page) {
     window.scrollTo(0, 0);
     if (page === 'protocols') loadPublicProtocols();
     if (page === 'objects') loadDatabase();
+    if (page === 'incidents') loadIncidents();
+    if (page === 'report') loadAnomalyReports();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => go(e.target.dataset.p));
@@ -1804,6 +1894,7 @@ function initApp() {
     fetchPersonnel();
     loadDepartments();
     setupCanvas();
+    loadSiteAlert();
     // Auto-restore live chat if a ticket is still open
     setTimeout(() => restoreActiveTicket(), 1500);
 }
@@ -2467,6 +2558,10 @@ async function loadDatabase() {
         ...CURATED_SCPS.filter(c => !dbIds.has(c.id.toLowerCase())).map(c => ({ ...c, source: 'curated' })),
     ];
     renderDatabase(dbScpCache);
+    // Show + render watchlist
+    const wlSec = document.getElementById('dbWatchlistSec');
+    if (wlSec) wlSec.style.display = 'block';
+    renderWatchlist();
 }
 
 function renderDatabase(scps) {
@@ -2495,10 +2590,59 @@ function dbScpCardHtml(s, m) {
     const threatIcon = isMax ? 'lucide:lock' : 'lucide:zap';
     const threatLabel = isMax ? 'LOCKED DOWN' : 'THREAT: ' + (threat || 'UNDETERMINED');
     const tag = (s.source === 'db') ? '<span class="scp-src-tag" title="Added via admin panel">ADMIN</span>' : '';
-    return `<div class="scp-card"><div class="scp-bar" style="background:${m.color};box-shadow:0 0 15px ${m.color}"></div><div class="scp-body"><div class="scp-top"><div class="scp-id">${escHtml(s.id)} ${tag}</div><div class="scp-cls ${m.tag}">${escHtml(s.cls || 'UNCLASSIFIED')}</div></div><div class="scp-name">${escHtml(s.name)}</div><div class="scp-desc">${escHtml(s.desc || '')}</div><div class="scp-foot"><span class="threat"><iconify-icon icon="${threatIcon}" width="10"></iconify-icon>${threatLabel}</span><span>ZONE: ${escHtml((s.zone || 'STANDARD').toUpperCase())}</span></div></div></div>`;
+    const dataAttrs = s.source === 'db' ? `data-scp='${escAttr(JSON.stringify(s))}'` : `data-scp='${escAttr(JSON.stringify(s))}'`;
+    return `<div class="scp-card" style="cursor:pointer" onclick='openScpDetail(${escAttr(JSON.stringify(s))})' ${dataAttrs}><div class="scp-bar" style="background:${m.color};box-shadow:0 0 15px ${m.color}"></div><div class="scp-body"><div class="scp-top"><div class="scp-id">${escHtml(s.id)} ${tag}</div><div class="scp-cls ${m.tag}">${escHtml(s.cls || 'UNCLASSIFIED')}</div></div><div class="scp-name">${escHtml(s.name)}</div><div class="scp-desc">${escHtml(s.desc || '')}</div><div class="scp-foot"><span class="threat"><iconify-icon icon="${threatIcon}" width="10"></iconify-icon>${threatLabel}</span><span>ZONE: ${escHtml((s.zone || 'STANDARD').toUpperCase())}</span></div></div></div>`;
 }
 
+// --- SCP Detail Modal + Watchlist ---
+function getWatchlist() { try { return JSON.parse(localStorage.getItem('scpWatchlist') || '[]'); } catch { return []; } }
+function isInWatchlist(id) { return getWatchlist().some(s => s.id === id); }
+function saveWatchlist(list) { localStorage.setItem('scpWatchlist', JSON.stringify(list)); }
+
+let currentDetailScp = null;
+function openScpDetail(s) {
+    currentDetailScp = s;
+    document.getElementById('sdId').textContent = s.id || '';
+    document.getElementById('sdName').textContent = s.name || '';
+    const sevColor = (s.threat||'').toUpperCase() === 'MAX' ? 'var(--rd)' : (s.threat||'').toUpperCase() === 'HIGH' ? 'var(--yl)' : 'var(--gn)';
+    document.getElementById('sdFields').innerHTML = `
+        <div class="scp-detail-field">CLASS<b>${escHtml(s.cls || 'UNCLASSIFIED')}</b></div>
+        <div class="scp-detail-field">THREAT<b style="color:${sevColor}">${escHtml((s.threat || 'UNDETERMINED').toUpperCase())}</b></div>
+        <div class="scp-detail-field">ZONE<b>${escHtml((s.zone || 'STANDARD').toUpperCase())}</b></div>
+        <div class="scp-detail-field">SOURCE<b>${s.source === 'db' ? 'ADMIN DATABASE' : 'CURATED ARCHIVE'}</b></div>
+    `;
+    document.getElementById('sdDesc').textContent = s.desc || 'No description on file.';
+    const btn = document.getElementById('sdWatchBtn');
+    if (isInWatchlist(s.id)) { btn.textContent = 'REMOVE FROM WATCHLIST'; btn.classList.add('danger'); }
+    else { btn.textContent = 'ADD TO WATCHLIST'; btn.classList.remove('danger'); }
+    document.getElementById('scpDetailModal').classList.add('open');
+}
+function closeScpDetail() { document.getElementById('scpDetailModal').classList.remove('open'); currentDetailScp = null; }
+function toggleWatchlist() {
+    if (!currentDetailScp) return;
+    const list = getWatchlist();
+    const idx = list.findIndex(s => s.id === currentDetailScp.id);
+    if (idx >= 0) { list.splice(idx, 1); }
+    else { list.push(currentDetailScp); }
+    saveWatchlist(list);
+    const btn = document.getElementById('sdWatchBtn');
+    if (isInWatchlist(currentDetailScp.id)) { btn.textContent = 'REMOVE FROM WATCHLIST'; btn.classList.add('danger'); }
+    else { btn.textContent = 'ADD TO WATCHLIST'; btn.classList.remove('danger'); }
+    // Re-render watchlist if on database page
+    if (document.getElementById('dbWatchlist')) renderWatchlist();
+}
+function renderWatchlist() {
+    const el = document.getElementById('dbWatchlist');
+    if (!el) return;
+    const list = getWatchlist();
+    if (!list.length) { el.innerHTML = '<div class="watchlist-empty">No watched SCPs. Click an SCP card to add it to your watchlist.</div>'; return; }
+    el.innerHTML = list.map(s => {
+        const m = { SAFE: { color: 'var(--gn)', tag: 'cl-s' }, EUCLID: { color: 'var(--ac)', tag: 'cl-e' }, KETER: { color: 'var(--rd)', tag: 'cl-k' }, OTHER: { color: 'var(--t3)', tag: 'cl-e' } }[(s.cls||'').toUpperCase()] || { color: 'var(--t3)', tag: 'cl-e' };
+        return `<div class="scp-card" style="cursor:pointer" onclick='openScpDetail(${escAttr(JSON.stringify(s))})'><div class="scp-bar" style="background:${m.color};box-shadow:0 0 15px ${m.color}"></div><div class="scp-body"><div class="scp-top"><div class="scp-id">${escHtml(s.id)}</div><div class="scp-cls ${m.tag}">${escHtml(s.cls||'')}</div></div><div class="scp-name">${escHtml(s.name)}</div><div class="scp-foot"><span class="threat">WATCHED</span></div></div></div>`;
+    }).join('');
+}
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('scpDetailModal')?.addEventListener('click', (e) => { if (e.target.id === 'scpDetailModal') closeScpDetail(); });
     const dbSearch = document.getElementById('dbSearch');
     if (dbSearch) dbSearch.addEventListener('input', () => {
         const q = dbSearch.value.toLowerCase().trim();
@@ -2506,6 +2650,234 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDatabase(filtered);
     });
 });
+
+// --- Site Alert Banner ---
+let siteAlertDismissed = '';
+async function loadSiteAlert() {
+    try {
+        const res = await fetch('/api/public/site-status');
+        const data = await res.json();
+        const alert = data && data.SITE_ALERT;
+        if (alert && alert !== siteAlertDismissed) {
+            document.getElementById('siteAlertText').textContent = alert;
+            document.getElementById('siteAlert').classList.add('show');
+        } else {
+            document.getElementById('siteAlert').classList.remove('show');
+        }
+    } catch(e) { /* silent */ }
+}
+function dismissSiteAlert() {
+    const text = document.getElementById('siteAlertText').textContent;
+    siteAlertDismissed = text;
+    document.getElementById('siteAlert').classList.remove('show');
+}
+
+// --- Public Incidents Page ---
+let allIncidents = [];
+let incFilter = 'ALL';
+async function loadIncidents() {
+    const grid = document.getElementById('incGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="search-empty">Loading incidents...</div>';
+    try {
+        const res = await fetch('/api/public/incidents');
+        const data = await res.json();
+        allIncidents = Array.isArray(data) ? data : [];
+        renderIncidents();
+    } catch(e) { grid.innerHTML = '<div class="search-empty">Failed to load incidents.</div>'; }
+}
+function filterIncidents(sev, btn) {
+    incFilter = sev;
+    document.querySelectorAll('#incFilters button').forEach(b => b.classList.toggle('active', b === btn));
+    renderIncidents();
+}
+function renderIncidents() {
+    const grid = document.getElementById('incGrid');
+    if (!grid) return;
+    const filtered = incFilter === 'ALL' ? allIncidents : allIncidents.filter(i => (i.severity||'').toUpperCase() === incFilter);
+    if (!filtered.length) { grid.innerHTML = '<div class="search-empty">No incidents match this filter.</div>'; return; }
+    const sevClass = { CRITICAL: 'inc-sev-critical', HIGH: 'inc-sev-high', MODERATE: 'inc-sev-medium', LOW: 'inc-sev-low' };
+    const half = Math.ceil(filtered.length / 2);
+    const col1 = filtered.slice(0, half);
+    const col2 = filtered.slice(half);
+    const cardHtml = (i) => `<div class="incident"><div class="inc-code">${escHtml(i.code)}</div><div class="inc-title">${escHtml(i.title)}</div><div class="inc-desc">${escHtml(i.description)}</div><div class="inc-meta"><span class="inc-sev ${sevClass[(i.severity||'').toUpperCase()] || 'inc-sev-low'}">${escHtml(i.severity || 'LOW')}</span><span>${escHtml(i.sector || '?')}</span><span>${escHtml(i.status || 'ACTIVE')}</span><span>${timeAgo(i.createdAt)}</span></div></div>`;
+    grid.innerHTML = `<div>${col1.map(cardHtml).join('')}</div><div>${col2.map(cardHtml).join('')}</div>`;
+}
+function timeAgo(iso) {
+    if (!iso) return '';
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    if (d > 0) return d + ' day' + (d>1?'s':'') + ' ago';
+    if (h > 0) return h + ' hour' + (h>1?'s':'') + ' ago';
+    if (m > 0) return m + ' min ago';
+    return 'just now';
+}
+
+// --- Public Anomaly Report Submission ---
+async function submitAnomalyReport() {
+    const reporterName = document.getElementById('rptName').value.trim();
+    const scpRef = document.getElementById('rptScpRef').value.trim();
+    const location = document.getElementById('rptLocation').value.trim();
+    const description = document.getElementById('rptDesc').value.trim();
+    const contact = document.getElementById('rptContact').value.trim();
+    const msg = document.getElementById('rptMsg');
+    if (!reporterName || !scpRef || !location || !description) {
+        msg.textContent = 'Name, SCP Reference, Location, and Description are required.'; msg.style.color = 'var(--rd)'; return;
+    }
+    msg.textContent = 'Submitting...'; msg.style.color = 'var(--ac)';
+    try {
+        const res = await fetch('/api/public/anomaly-reports', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({reporterName, scpRef, location, description, contact})
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+            msg.textContent = 'Report submitted. An admin will review it shortly.'; msg.style.color = 'var(--gn)';
+            document.getElementById('rptName').value = ''; document.getElementById('rptScpRef').value = '';
+            document.getElementById('rptLocation').value = ''; document.getElementById('rptDesc').value = '';
+            document.getElementById('rptContact').value = '';
+            loadAnomalyReports();
+        } else {
+            msg.textContent = 'Failed: ' + (data.error || res.status); msg.style.color = 'var(--rd)';
+        }
+    } catch(e) { msg.textContent = 'Connection failed.'; msg.style.color = 'var(--rd)'; }
+}
+async function loadAnomalyReports() {
+    const el = document.getElementById('rptList');
+    if (!el) return;
+    el.innerHTML = '<div class="search-empty">Loading community reports...</div>';
+    try {
+        const res = await fetch('/api/public/anomaly-reports');
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) { el.innerHTML = '<div class="search-empty">No community reports yet. Be the first to submit one.</div>'; return; }
+        el.innerHTML = data.map(r => `<div class="rpt-card rpt-${(r.status||'pending').toLowerCase()}">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+                <div><strong style="color:var(--t1)">${escHtml(r.scpRef)}</strong> — ${escHtml(r.location)}</div>
+                <span class="rpt-status rpt-status-${(r.status||'PENDING').toUpperCase()}">${escHtml(r.status||'PENDING')}</span>
+            </div>
+            <div style="font-size:12px;color:var(--t2);margin:6px 0">${escHtml(r.description)}</div>
+            <div class="rpt-meta"><span>By: ${escHtml(r.reporterName)}</span>${r.contact ? '<span>Contact: '+escHtml(r.contact)+'</span>' : ''}<span>${timeAgo(r.createdAt)}</span></div>
+        </div>`).join('');
+    } catch(e) { el.innerHTML = '<div class="search-empty">Failed to load reports.</div>'; }
+}
+
+// --- Admin: Clear AI Memory ---
+async function clearAiMemory() {
+    if (!confirm("Clear all AI conversation memory? This resets Ducky's context for all sessions.")) return;
+    try {
+        const res = await fetch('/api/stream/clear', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({}) });
+        if (res.ok) alert('AI memory cleared.');
+        else alert('Failed to clear memory.');
+    } catch(e) { alert('Connection failed.'); }
+}
+
+// --- Admin: Incidents CRUD ---
+let adminIncidentsCache = [];
+async function loadAdminIncidents() {
+    try {
+        const res = await fetch('/api/public/incidents');
+        const data = await res.json();
+        adminIncidentsCache = Array.isArray(data) ? data : [];
+        setStat('statIncidents', adminIncidentsCache.length);
+        const tbody = document.querySelector('#admin-incidents-table tbody');
+        if (!tbody) return;
+        if (!adminIncidentsCache.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">No incidents yet.</td></tr>'; return; }
+        tbody.innerHTML = adminIncidentsCache.map(i => `<tr>
+            <td class="tbl-id">${escHtml(i.code)}</td><td>${escHtml(i.title)}</td><td>${escHtml(i.severity)}</td><td>${escHtml(i.sector)}</td><td>${escHtml(i.status)}</td>
+            <td style="white-space:nowrap"><button class="admin-btn" onclick="editIncident('${escHtml(i.id)}')">EDIT</button> <button class="admin-btn danger" onclick="deleteIncident('${escHtml(i.id)}')">DEL</button></td>
+        </tr>`).join('');
+    } catch(e) { setAdminMsg('incMsg', 'Failed to load incidents.', true); }
+}
+async function addIncident() {
+    const code = document.getElementById('newIncCode').value.trim().toUpperCase();
+    const title = document.getElementById('newIncTitle').value.trim();
+    const severity = document.getElementById('newIncSeverity').value;
+    const sector = document.getElementById('newIncSector').value.trim();
+    const description = document.getElementById('newIncDesc').value.trim();
+    if (!code || !title || !description) { setAdminMsg('incMsg', 'Code, Title, and Description are required.', true); return; }
+    try {
+        setAdminMsg('incMsg', 'Creating...', false);
+        const res = await fetch('/api/admin/incidents', { method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-token': adminToken}, body: JSON.stringify({code, title, severity, sector: sector||'UNKNOWN', description}) });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+            document.getElementById('newIncCode').value = ''; document.getElementById('newIncTitle').value = ''; document.getElementById('newIncDesc').value = '';
+            setAdminMsg('incMsg', 'Incident ' + code + ' created.', false); loadAdminIncidents();
+        } else { setAdminMsg('incMsg', 'Failed: ' + (data.error || res.status), true); }
+    } catch(e) { setAdminMsg('incMsg', 'Connection failed.', true); }
+}
+function editIncident(id) {
+    const i = adminIncidentsCache.find(x => x.id === id);
+    if (!i) return;
+    openEditor('incident', i);
+}
+async function deleteIncident(id) {
+    if (!confirm('Delete this incident?')) return;
+    try {
+        const res = await fetch('/api/admin/incidents?id=' + id, {method: 'DELETE', headers: {'x-admin-token': adminToken}});
+        if (res.ok) { setAdminMsg('incMsg', 'Incident deleted.', false); loadAdminIncidents(); }
+        else setAdminMsg('incMsg', 'Failed to delete.', true);
+    } catch(e) { setAdminMsg('incMsg', 'Connection failed.', true); }
+}
+
+// --- Admin: Anomaly Reports Review ---
+async function loadAdminReports() {
+    const el = document.getElementById('adminReportsList');
+    if (!el) return;
+    el.innerHTML = '<div class="search-empty">Loading reports...</div>';
+    try {
+        const res = await fetch('/api/public/anomaly-reports');
+        const data = await res.json();
+        setStat('statReports', Array.isArray(data) ? data.length : 0);
+        if (!Array.isArray(data) || !data.length) { el.innerHTML = '<div class="search-empty">No anomaly reports submitted yet.</div>'; return; }
+        el.innerHTML = data.map(r => `<div class="rpt-card rpt-${(r.status||'pending').toLowerCase()}">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+                <div><strong style="color:var(--t1)">${escHtml(r.scpRef)}</strong> — ${escHtml(r.location)} — by ${escHtml(r.reporterName)}</div>
+                <span class="rpt-status rpt-status-${(r.status||'PENDING').toUpperCase()}">${escHtml(r.status||'PENDING')}</span>
+            </div>
+            <div style="font-size:12px;color:var(--t2);margin:6px 0">${escHtml(r.description)}</div>
+            ${r.contact ? '<div style="font-size:10px;color:var(--t3)">Contact: '+escHtml(r.contact)+'</div>' : ''}
+            <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+                <button class="admin-btn" style="padding:4px 8px;font-size:10px" onclick="updateReportStatus('${escHtml(r.id)}','REVIEWED')">REVIEW</button>
+                <button class="admin-btn" style="padding:4px 8px;font-size:10px" onclick="updateReportStatus('${escHtml(r.id)}','RESOLVED')">RESOLVE</button>
+                <button class="admin-btn" style="padding:4px 8px;font-size:10px" onclick="updateReportStatus('${escHtml(r.id)}','DISMISSED')">DISMISS</button>
+                <button class="admin-btn danger" style="padding:4px 8px;font-size:10px" onclick="deleteReport('${escHtml(r.id)}')">DELETE</button>
+            </div>
+        </div>`).join('');
+    } catch(e) { el.innerHTML = '<div class="search-empty">Failed to load reports.</div>'; }
+}
+async function updateReportStatus(id, status) {
+    try {
+        const res = await fetch('/api/admin/anomaly-reports', { method: 'PUT', headers: {'Content-Type': 'application/json', 'x-admin-token': adminToken}, body: JSON.stringify({id, status}) });
+        if (res.ok) loadAdminReports();
+    } catch(e) {}
+}
+async function deleteReport(id) {
+    if (!confirm('Delete this report?')) return;
+    try {
+        const res = await fetch('/api/admin/anomaly-reports?id=' + id, {method: 'DELETE', headers: {'x-admin-token': adminToken}});
+        if (res.ok) loadAdminReports();
+    } catch(e) {}
+}
+
+// --- Admin: Site Alert Broadcast ---
+async function broadcastAlert() {
+    const msg = document.getElementById('alertBroadcast').value.trim();
+    const el = document.getElementById('alertMsg');
+    if (!msg) { clearAlert(); return; }
+    try {
+        const res = await fetch('/api/admin/site-status', { method: 'PUT', headers: {'Content-Type': 'application/json', 'x-admin-token': adminToken}, body: JSON.stringify({SITE_ALERT: msg}) });
+        if (res.ok) { el.textContent = 'Alert broadcasted to all users.'; el.style.color = 'var(--gn)'; siteAlertDismissed = ''; loadSiteAlert(); }
+        else { el.textContent = 'Failed to set alert.'; el.style.color = 'var(--rd)'; }
+    } catch(e) { el.textContent = 'Connection failed.'; el.style.color = 'var(--rd)'; }
+}
+async function clearAlert() {
+    const el = document.getElementById('alertMsg');
+    try {
+        const res = await fetch('/api/admin/site-status?key=SITE_ALERT', { method: 'DELETE', headers: {'x-admin-token': adminToken} });
+        if (res.ok) { el.textContent = 'Alert cleared.'; el.style.color = 'var(--gn)'; document.getElementById('alertBroadcast').value = ''; document.getElementById('siteAlert').classList.remove('show'); }
+        else { el.textContent = 'Failed to clear.'; el.style.color = 'var(--rd)'; }
+    } catch(e) { el.textContent = 'Connection failed.'; el.style.color = 'var(--rd)'; }
+}
 
 // Admin tab switching
 function switchAdminTab(tab) {
@@ -2518,6 +2890,8 @@ async function loadAdminData() {
     loadAdminScps();
     loadAdminTestLogs();
     loadAdminProtocols();
+    loadAdminIncidents();
+    loadAdminReports();
     loadAdminSiteStatus();
 }
 
@@ -2781,6 +3155,15 @@ function openEditor(type, data) {
             <div class="editor-row"><label>Status</label><select id="ed_status">${opts(['STANDBY','ACTIVE','NOMINAL','REVIEW','COMPLETE'], data.status)}</select></div>
             <div class="editor-row"><label>Assigned To</label><input id="ed_assignedTo" value="${escAttr(data.assignedTo||'')}"></div>
             <div class="editor-row"><label>Description</label><textarea id="ed_description">${escHtml(data.description||'')}</textarea></div>`;
+    } else if (type === 'incident') {
+        title.textContent = 'EDIT INCIDENT — ' + (data.code || '');
+        body.innerHTML = `
+            <div class="editor-row"><label>Code</label><input id="ed_code" value="${escAttr(data.code||'')}" readonly style="opacity:.6"></div>
+            <div class="editor-row"><label>Title</label><input id="ed_title" value="${escAttr(data.title||'')}"></div>
+            <div class="editor-row"><label>Severity</label><select id="ed_severity">${opts(['LOW','MODERATE','HIGH','CRITICAL'], data.severity)}</select></div>
+            <div class="editor-row"><label>Sector</label><input id="ed_sector" value="${escAttr(data.sector||'')}"></div>
+            <div class="editor-row"><label>Status</label><select id="ed_status">${opts(['ACTIVE','RESOLVED','CONTAINED','ARCHIVED'], data.status)}</select></div>
+            <div class="editor-row"><label>Description</label><textarea id="ed_description">${escHtml(data.description||'')}</textarea></div>`;
     }
     modal.classList.add('open');
 }
@@ -2825,6 +3208,14 @@ async function submitEditor() {
                 status: val('ed_status'), assignedTo: val('ed_assignedTo'),
                 description: val('ed_description'),
             };
+        } else if (type === 'incident') {
+            url = '/api/admin/incidents'; method = 'PUT';
+            payload = {
+                id,
+                title: val('ed_title'), severity: val('ed_severity'),
+                sector: val('ed_sector'), status: val('ed_status'),
+                description: val('ed_description'),
+            };
         } else { return; }
 
         const res = await fetch(url, {
@@ -2837,6 +3228,7 @@ async function submitEditor() {
             if (type === 'scp') { setAdminMsg('scpMsg', 'SCP updated.', false); loadAdminScps(); }
             if (type === 'testlog') { setAdminMsg('tlMsg', 'Test log updated.', false); loadAdminTestLogs(); }
             if (type === 'protocol') { setAdminMsg('protoMsg', 'Protocol updated.', false); loadAdminProtocols(); }
+            if (type === 'incident') { setAdminMsg('incMsg', 'Incident updated.', false); loadAdminIncidents(); }
         } else {
             err.textContent = 'Failed: ' + (data.error || res.status);
             if (saveBtn) saveBtn.textContent = 'SAVE';
@@ -2992,6 +3384,20 @@ async function saveSiteStatus() {
     <div class="editor-actions">
       <button class="admin-btn" style="background:var(--b4)" onclick="closeEditor()">CANCEL</button>
       <button class="admin-btn" id="editorSaveBtn" onclick="submitEditor()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCP detail modal (public Database page) -->
+<div class="scp-detail-modal" id="scpDetailModal">
+  <div class="scp-detail-box">
+    <div class="scp-detail-id" id="sdId"></div>
+    <div class="scp-detail-name" id="sdName"></div>
+    <div class="scp-detail-row" id="sdFields"></div>
+    <div class="scp-detail-desc" id="sdDesc"></div>
+    <div class="scp-detail-actions">
+      <button class="admin-btn" id="sdWatchBtn" onclick="toggleWatchlist()">ADD TO WATCHLIST</button>
+      <button class="admin-btn" style="background:var(--b4)" onclick="closeScpDetail()">CLOSE</button>
     </div>
   </div>
 </div>

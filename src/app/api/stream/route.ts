@@ -571,6 +571,44 @@ async function getLiveContextString(): Promise<string> {
   }
 }
 
+// If the user asks about a specific SCP-XXX, try the local DB then the external
+// wiki (via z-ai page_reader) so the bot gives accurate data instead of hallucinating.
+async function getScpContext(prompt: string): Promise<string> {
+  const match = prompt.match(/\bSCP[-\s]?(\d{1,5})\b/i);
+  if (!match) return '';
+  const scpId = `SCP-${match[1]}`;
+  try {
+    const { db } = await import('@/lib/db');
+    const all = await db.siteScp.findMany();
+    const local = all.find((s: { scpId: string }) => s.scpId.toLowerCase() === scpId.toLowerCase());
+    if (local) {
+      return `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
+    }
+    // External wiki lookup via z-ai page_reader (routes through z-ai API,
+    // which can reach the public web even when the sandbox cannot directly).
+    const wikiUrl = `https://scp-wiki.wikidot.com/scp-${match[1]}`;
+    try {
+      const ZAIModule = await import('z-ai-web-dev-sdk');
+      const zai = await ZAIModule.default.create();
+      const result = await zai.functions.invoke('page_reader', { url: wikiUrl });
+      const html = result?.data?.html || '';
+      if (html && html.length > 100) {
+        let text = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s{2,}/g, ' ').trim();
+        text = text.length > 3000 ? text.substring(0, 3000) + '\n\n[ARTICLE TRUNCATED]' : text;
+        if (text.length > 50) {
+          return `\n\nEXTERNAL WIKI DATA for ${scpId} (from ${wikiUrl}):\n${text}`;
+        }
+      }
+    } catch (e) {
+      console.error('[SCiPNET] getScpContext page_reader failed:', e);
+    }
+    return `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it and suggest the user request it be added.`;
+  } catch (e) {
+    console.error('[SCiPNET] getScpContext failed:', e);
+    return '';
+  }
+}
+
 // ---- Route Handler ----
 export async function POST(req: NextRequest) {
   const { prompt: userPrompt, sessionId } = await req.json();
@@ -851,7 +889,8 @@ export async function POST(req: NextRequest) {
 
         // Pull live admin-managed data so the bot reflects the current site state.
         const liveContext = await getLiveContextString();
-        const fallbackSysPrompt = FALLBACK_SYS_PROMPT + liveContext;
+        const scpContext = await getScpContext(userPrompt);
+        const fallbackSysPrompt = FALLBACK_SYS_PROMPT + liveContext + scpContext;
 
         const fallbackMessages = [
           { role: "system", content: fallbackSysPrompt },

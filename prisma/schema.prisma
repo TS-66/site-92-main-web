@@ -94,3 +94,28 @@ model SiteStatus {
   value String
   updatedAt DateTime @updatedAt
 }
+
+model Incident {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  severity    String   @default("MODERATE")
+  sector      String   @default("UNKNOWN")
+  description String
+  status      String   @default("ACTIVE")
+  reportedBy  String   @default("SYSTEM")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AnomalyReport {
+  id          String   @id @default(cuid())
+  reporterName String
+  scpRef      String
+  location    String
+  description String
+  contact     String   @default("")
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
