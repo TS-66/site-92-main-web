@@ -2966,17 +2966,29 @@ function renderPersonnel() {
     const list = document.getElementById('perList');
     if (!list) return;
 
+    // Tier order from the personnel-ranks API (0 = highest, 7 = lowest)
+    const ROLE_TIERS = {
+        'The Administrator': 0,
+        'Developer': 1,
+        'Server Management': 2,
+        'Faction Leader': 3,
+        'Partnership Affiliate': 4,
+        'UCSO Representative': 5,
+        'VIP': 6,
+        'Foundation Personnel': 7,
+    };
+
     // Group by highest role
     const roleGroups = {};
     personnelCache.forEach(m => {
         const role = m.highestRole ? m.highestRole.name : 'Foundation Personnel';
         const color = m.highestRole ? m.highestRole.color : '#5a706b';
-        if (!roleGroups[role]) roleGroups[role] = { role, color, members: [] };
+        if (!roleGroups[role]) roleGroups[role] = { role, color, tier: ROLE_TIERS[role] ?? 7, members: [] };
         roleGroups[role].members.push(m);
     });
 
-    // Sort groups by first member's position in personnelCache (which is already roughly sorted)
-    const sortedGroups = Object.values(roleGroups);
+    // Sort groups by tier (0 = highest = first)
+    const sortedGroups = Object.values(roleGroups).sort((a, b) => a.tier - b.tier);
 
     list.innerHTML = sortedGroups.map(g => `
         <div class="per-group-header" style="border-left-color:${g.color}">${g.role} <span>${g.members.length} MEMBER${g.members.length !== 1 ? 'S' : ''}</span></div>
