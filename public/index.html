@@ -928,16 +928,52 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .news-title{font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px}
 .news-body{font-size:12px;color:var(--t2);line-height:1.7}
 
-/* ===== Security Cameras ===== */
-.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+/* ===== Security Cameras — 3D rendered ===== */
+.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
 .camera-feed{background:#0a0a0f;border:1px solid var(--bd2);border-radius:4px;overflow:hidden;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
-.camera-feed:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.camera-screen{height:160px;background:linear-gradient(180deg,#0a0a0f 0%,#0d0d14 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.camera-screen::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);animation:cameraScan 3s linear infinite;box-shadow:0 0 8px var(--ac)}
-@keyframes cameraScan{0%{top:0}100%{top:100%}}
-.camera-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none}
-.camera-content{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gn);text-align:center;z-index:1;text-shadow:0 0 6px var(--gn)}
-.camera-content.alert{color:var(--rd);text-shadow:0 0 6px var(--rd)}
+.camera-feed:hover{transform:scale(1.03);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.camera-3d{height:200px;position:relative;overflow:hidden;perspective:400px}
+.camera-3d-scene{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(8deg)}
+/* Floor */
+.cam-floor{position:absolute;bottom:0;left:-20%;right:-20%;height:60%;background:linear-gradient(180deg,#0d0d18 0%,#08080e 100%);transform:rotateX(70deg);transform-origin:bottom;border-top:1px solid rgba(0,255,200,.08)}
+/* Back wall */
+.cam-wall{position:absolute;top:0;left:-10%;right:-10%;height:55%;background:linear-gradient(180deg,#12121e 0%,#0d0d16 100%);border-bottom:1px solid rgba(0,255,200,.05)}
+/* Ceiling lights */
+.cam-light{position:absolute;top:8px;width:30px;height:4px;background:rgba(0,255,200,.15);border-radius:2px;box-shadow:0 0 20px 4px rgba(0,255,200,.08);animation:camLightFlicker 4s ease-in-out infinite}
+.cam-light:nth-child(2){left:30%;animation-delay:.5s}
+.cam-light:nth-child(3){left:60%;animation-delay:1s}
+@keyframes camLightFlicker{0%,100%{opacity:.6}50%{opacity:1}}
+/* Door on back wall */
+.cam-door{position:absolute;top:15%;left:50%;transform:translateX(-50%);width:50px;height:80px;background:linear-gradient(180deg,#1a1a2e 0%,#12121e 100%);border:1px solid rgba(0,255,200,.1);border-radius:2px 2px 0 0}
+.cam-door::after{content:'';position:absolute;right:6px;top:50%;width:3px;height:6px;background:var(--ac);border-radius:2px;box-shadow:0 0 4px var(--ac)}
+/* Acid pool (for containment sectors) */
+.cam-acid{position:absolute;bottom:0;left:0;right:0;height:25%;background:linear-gradient(180deg,rgba(0,255,100,.05) 0%,rgba(0,200,80,.15) 100%);animation:camAcidBubble 3s ease-in-out infinite}
+@keyframes camAcidBubble{0%,100%{opacity:.3}50%{opacity:.6}}
+/* Entity silhouette (animated) */
+.cam-entity{position:absolute;bottom:15%;left:50%;transform:translateX(-50%);width:24px;height:50px;background:radial-gradient(ellipse at center,#0a0a0f 0%,transparent 70%);animation:camEntityMove 6s ease-in-out infinite}
+.cam-entity::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:14px;height:14px;background:#08080e;border-radius:50%;box-shadow:0 0 8px 2px rgba(255,50,50,.2)}
+.cam-entity.alert::before{box-shadow:0 0 12px 4px rgba(255,50,50,.5);animation:camEntityAlert 1s ease-in-out infinite}
+@keyframes camEntityMove{0%,100%{left:35%}50%{left:65%}}
+@keyframes camEntityAlert{0%,100%{box-shadow:0 0 8px 2px rgba(255,50,50,.3)}50%{box-shadow:0 0 16px 6px rgba(255,50,50,.6)}}
+/* Walking personnel */
+.cam-person{position:absolute;bottom:20%;width:10px;height:30px;animation:camPersonWalk 8s linear infinite}
+.cam-person::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:rgba(0,255,200,.3);border-radius:50%}
+.cam-person::after{content:'';position:absolute;top:2px;left:0;width:10px;height:24px;background:rgba(0,255,200,.08);border-radius:2px}
+@keyframes camPersonWalk{0%{left:-5%}100%{left:105%}}
+.cam-person:nth-child(2){animation-delay:-3s;animation-duration:10s}
+/* Scanline + CRT overlay */
+.cam-overlay{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);pointer-events:none;z-index:5}
+.cam-scanline{position:absolute;left:0;right:0;height:2px;background:rgba(0,255,200,.4);box-shadow:0 0 8px rgba(0,255,200,.3);animation:camScanMove 3s linear infinite;z-index:6}
+@keyframes camScanMove{0%{top:0}100%{top:100%}}
+.cam-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.6) 100%);pointer-events:none;z-index:4}
+.cam-rec{position:absolute;top:6px;right:8px;display:flex;align-items:center;gap:4px;z-index:7}
+.cam-rec-dot{width:6px;height:6px;background:#ff3333;border-radius:50%;animation:camRecBlink 1.5s ease-in-out infinite}
+@keyframes camRecBlink{0%,100%{opacity:1}50%{opacity:.2}}
+.cam-rec-text{font-family:'Share Tech Mono',monospace;font-size:8px;color:#ff3333;letter-spacing:1px}
+.cam-timestamp{position:absolute;bottom:6px;left:8px;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,.5);z-index:7;letter-spacing:1px}
+.cam-offline-screen{display:flex;align-items:center;justify-content:center;height:200px;background:#08080e;color:var(--t4);font-family:'Share Tech Mono',monospace;font-size:11px;flex-direction:column;gap:8px}
+.cam-offline-screen::before{content:'NO SIGNAL';letter-spacing:3px;animation:camStatic 2s steps(4) infinite}
+@keyframes camStatic{0%{opacity:.3}25%{opacity:.8}50%{opacity:.2}75%{opacity:.6}100%{opacity:.4}}
 .camera-info{padding:10px 14px;border-top:1px solid var(--bd2)}
 .camera-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:1px}
 .camera-label{font-size:12px;color:var(--t1);margin-top:2px}
@@ -1545,6 +1581,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="admin-stat"><div class="admin-stat-num" id="statProtocols">0</div><div class="admin-stat-label">Protocols</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statIncidents">0</div><div class="admin-stat-label">Incidents</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statReports">0</div><div class="admin-stat-label">Reports</div></div>
+<div class="admin-stat"><div class="admin-stat-num" id="statNews">0</div><div class="admin-stat-label">News</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statStatusKeys">0</div><div class="admin-stat-label">Status Keys</div></div>
 </div>
 <div class="admin-tabs">
@@ -1553,6 +1590,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="admin-tab" data-tab="protocols" onclick="switchAdminTab('protocols')">Protocols</div>
 <div class="admin-tab" data-tab="incidents" onclick="switchAdminTab('incidents')">Incidents</div>
 <div class="admin-tab" data-tab="reports" onclick="switchAdminTab('reports')">Reports</div>
+<div class="admin-tab" data-tab="news" onclick="switchAdminTab('news')">News</div>
 <div class="admin-tab" data-tab="site-status" onclick="switchAdminTab('site-status')">Site Status</div>
 </div>
 <div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:12px">
@@ -1627,6 +1665,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="admin-panel" id="admin-reports">
 <p style="color:var(--t3);font-size:11px;margin-bottom:12px">User-submitted anomaly reports. Update status to track review progress.</p>
 <div id="adminReportsList"><div class="search-empty">Loading reports...</div></div>
+</div>
+
+<div class="admin-panel" id="admin-news">
+<div class="admin-form">
+<div class="fg"><label class="fl">Tag</label><select id="newNewsTag"><option value="info">INFO</option><option value="urgent">URGENT</option><option value="warning">WARNING</option><option value="good">GOOD</option><option value="admin">ADMIN</option></select></div>
+<div class="fg"><label class="fl">Title</label><div class="fi-wrap"><input class="fi" type="text" id="newNewsTitle" placeholder="News headline..." spellcheck="false"><iconify-icon icon="lucide:newspaper"></iconify-icon></div></div>
+<div class="fg"><label class="fl">Body</label><textarea id="newNewsBody" placeholder="News content..."></textarea></div>
+<button class="admin-btn" onclick="addNews()">PUBLISH NEWS</button>
+</div>
+<div id="newsMsg" class="admin-msg"></div>
+<div class="table-wrap"><table class="tbl" id="admin-news-table"><thead><tr><th>Tag</th><th>Title</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead><tbody><tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">Loading...</td></tr></tbody></table></div>
 </div>
 
 <div class="admin-panel" id="admin-site-status">
@@ -3550,6 +3599,60 @@ async function deleteReport(id) {
     } catch(e) {}
 }
 
+// --- Admin: News CRUD ---
+let adminNewsCache = [];
+async function loadAdminNews() {
+    try {
+        const res = await fetch('/api/public/news');
+        const items = await res.json();
+        adminNewsCache = Array.isArray(items) ? items : [];
+        setStat('statNews', adminNewsCache.length);
+        const tbody = document.querySelector('#admin-news-table tbody');
+        if (!tbody) return;
+        if (!adminNewsCache.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">No news items yet.</td></tr>'; return; }
+        tbody.innerHTML = adminNewsCache.map(n => `<tr>
+            <td><span class="news-tag ${n.tag || 'info'}">${(n.tag || 'info').toUpperCase()}</span></td>
+            <td>${escHtml(n.title)}</td>
+            <td>${escHtml(n.author || 'ADMIN')}</td>
+            <td>${timeAgo(n.createdAt)}</td>
+            <td style="white-space:nowrap"><button class="admin-btn" onclick="editNews('${escHtml(n.id)}')">EDIT</button> <button class="admin-btn danger" onclick="deleteNews('${escHtml(n.id)}')">DEL</button></td>
+        </tr>`).join('');
+    } catch(e) { setAdminMsg('newsMsg', 'Failed to load news.', true); }
+}
+async function addNews() {
+    const tag = document.getElementById('newNewsTag').value;
+    const title = document.getElementById('newNewsTitle').value.trim();
+    const body = document.getElementById('newNewsBody').value.trim();
+    if (!title || !body) { setAdminMsg('newsMsg', 'Title and body are required.', true); return; }
+    try {
+        setAdminMsg('newsMsg', 'Publishing...', false);
+        const res = await fetch('/api/admin/news', {
+            method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-token': adminToken},
+            body: JSON.stringify({tag, title, body, author: (document.getElementById('navUn')?.textContent || 'ADMIN')})
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+            document.getElementById('newNewsTitle').value = '';
+            document.getElementById('newNewsBody').value = '';
+            setAdminMsg('newsMsg', 'News published.', false);
+            loadAdminNews();
+        } else { setAdminMsg('newsMsg', 'Failed: ' + (data.error || res.status), true); }
+    } catch(e) { setAdminMsg('newsMsg', 'Connection failed.', true); }
+}
+function editNews(id) {
+    const n = adminNewsCache.find(x => x.id === id);
+    if (!n) return;
+    openEditor('news', n);
+}
+async function deleteNews(id) {
+    if (!confirm('Delete this news item?')) return;
+    try {
+        const res = await fetch('/api/admin/news?id=' + id, {method: 'DELETE', headers: {'x-admin-token': adminToken}});
+        if (res.ok) { setAdminMsg('newsMsg', 'News deleted.', false); loadAdminNews(); }
+        else setAdminMsg('newsMsg', 'Failed to delete.', true);
+    } catch(e) { setAdminMsg('newsMsg', 'Connection failed.', true); }
+}
+
 // --- Admin: Site Alert Broadcast ---
 async function broadcastAlert() {
     const msg = document.getElementById('alertBroadcast').value.trim();
@@ -3847,28 +3950,95 @@ const NEWS_ITEMS = [
     { tag: 'good', date: '5 DAYS AGO', title: 'MTF Epsilon-11 Commendation', body: 'MTF Epsilon-11 ("Nine-Tailed Fox") has been commended for their response to Incident 2025-0412-A. All 9 members received the Foundation Containment Medal. Agent [REDACTED] also received a personal commendation for "extraordinary bravery in the face of an entity that should not have been approached." ' },
     { tag: 'admin', date: '1 WEEK AGO', title: 'Parking Reallocation', body: 'Due to the arrival of new containment equipment, parking spaces 1-12 in the sub-level garage have been reassigned. Personnel previously assigned to these spaces should report to Facilities Management for reassignment. We apologize for the inconvenience. The SCPs don\'t park, so they get priority.' },
 ];
-function loadNewsFeed() {
+async function loadNewsFeed() {
     const el = document.getElementById('newsFeed');
     if (!el) return;
-    el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+    el.innerHTML = '<div class="archive-loading">Loading news feed...</div>';
+    try {
+        const res = await fetch('/api/public/news');
+        const items = await res.json();
+        if (!Array.isArray(items) || !items.length) {
+            // Fallback to hardcoded items if DB is empty
+            el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+            return;
+        }
+        el.innerHTML = items.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag || 'info'}">${(n.tag || 'info').toUpperCase()}</span><span class="news-date">${timeAgo(n.createdAt)}</span></div><div class="news-title">${escHtml(n.title)}</div><div class="news-body">${escHtml(n.body)}</div></div>`).join('');
+    } catch(e) {
+        el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+    }
 }
 
 // ===== SECURITY CAMERAS =====
 const CAMERAS = [
-    { id: 'CAM-D7B-01', label: 'Sector D-7B — Keter Containment', status: 'alert', content: '⚠ MOTION DETECTED\nSCP-682 chamber\nAcid level: NOMINAL\nEntity: SUBMERGED' },
-    { id: 'CAM-A1-03', label: 'Sector A-1 — Reception', status: 'online', content: 'NO ACTIVITY\nReception desk: staffed\nVisitors: 0\nClearance checks: 12 today' },
-    { id: 'CAM-C3-02', label: 'Sector C-3 — Euclid Wing', status: 'online', content: 'ALL CLEAR\n12 cells monitored\nNo anomalies detected\nNext patrol: 14:30' },
-    { id: 'CAM-F5-01', label: 'Sector F-5 — Testing Labs', status: 'online', content: 'LAB 3: IN USE\nTest subject: D-9341\nObserver: Dr. [REDACTED]\nStatus: ongoing' },
-    { id: 'CAM-G6-04', label: 'Sector G-6 — Reactor Core', status: 'offline', content: 'CAMERA OFFLINE\nLast frame: 14:02:33\nReactor status: UNKNOWN\nDispatching maintenance' },
-    { id: 'CAM-E4-02', label: 'Sector E-4 — MTF Barracks', status: 'online', content: 'ALL CLEAR\nMTF E-11: on standby\nMTF T-5: deployed\nEquipment: nominal' },
-    { id: 'CAM-B2-05', label: 'Sector B-2 — D-Class Cells', status: 'online', content: 'POPULATION: 247\nAll cells: sealed\nNext rotation: 18:00\nIncidents today: 0' },
-    { id: 'CAM-H8-01', label: 'Sector H-8 — Admin Terminal', status: 'online', content: 'ADMIN LEVEL\nO5 access only\nCurrent users: [REDACTED]\nSecurity: MAXIMUM' },
-    { id: 'CAM-COR-12', label: 'Corridor D-7 — Main Hall', status: 'alert', content: 'BULKHEAD SEALED\nScranton anchor: 97.8%\nAcid residue detected\nDo not enter without MTF escort' },
+    { id: 'CAM-D7B-01', label: 'Sector D-7B — Keter Containment', status: 'alert', type: 'containment' },
+    { id: 'CAM-A1-03', label: 'Sector A-1 — Reception', status: 'online', type: 'corridor' },
+    { id: 'CAM-C3-02', label: 'Sector C-3 — Euclid Wing', status: 'online', type: 'corridor' },
+    { id: 'CAM-F5-01', label: 'Sector F-5 — Testing Labs', status: 'online', type: 'corridor' },
+    { id: 'CAM-G6-04', label: 'Sector G-6 — Reactor Core', status: 'offline', type: 'containment' },
+    { id: 'CAM-E4-02', label: 'Sector E-4 — MTF Barracks', status: 'online', type: 'corridor' },
+    { id: 'CAM-B2-05', label: 'Sector B-2 — D-Class Cells', status: 'online', type: 'cells' },
+    { id: 'CAM-H8-01', label: 'Sector H-8 — Admin Terminal', status: 'online', type: 'admin' },
+    { id: 'CAM-COR-12', label: 'Corridor D-7 — Main Hall', status: 'alert', type: 'corridor' },
 ];
 function loadCameras() {
     const el = document.getElementById('cameraGrid');
     if (!el) return;
-    el.innerHTML = CAMERAS.map(c => `<div class="camera-feed"><div class="camera-screen"><div class="camera-content ${c.status === 'alert' ? 'alert' : ''}">${c.content}</div></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : c.status === 'alert' ? '⚠ ALERT' : '○ OFFLINE'}</div></div></div>`).join('');
+    const now = new Date();
+    const ts = now.toLocaleDateString('en-US') + ' ' + now.toLocaleTimeString('en-US', { hour12: false });
+    el.innerHTML = CAMERAS.map(c => {
+        if (c.status === 'offline') {
+            return `<div class="camera-feed"><div class="cam-offline-screen"></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status offline">○ OFFLINE</div></div></div>`;
+        }
+        // Build 3D scene based on camera type
+        let sceneContent = '';
+        if (c.type === 'containment') {
+            // Containment chamber: acid pool + entity
+            sceneContent = `
+                <div class="cam-wall"><div class="cam-light" style="left:15%"></div><div class="cam-light" style="left:45%"></div><div class="cam-light" style="left:75%"></div><div class="cam-door"></div></div>
+                <div class="cam-floor"></div>
+                <div class="cam-acid"></div>
+                <div class="cam-entity ${c.status === 'alert' ? 'alert' : ''}"></div>`;
+        } else if (c.type === 'corridor') {
+            // Corridor: walking personnel
+            sceneContent = `
+                <div class="cam-wall"><div class="cam-light" style="left:20%"></div><div class="cam-light" style="left:50%"></div><div class="cam-light" style="left:80%"></div><div class="cam-door"></div></div>
+                <div class="cam-floor"></div>
+                <div class="cam-person"></div>
+                <div class="cam-person"></div>`;
+        } else if (c.type === 'cells') {
+            // D-Class cells: multiple doors
+            sceneContent = `
+                <div class="cam-wall"><div class="cam-door" style="left:25%;transform:none"></div><div class="cam-door" style="left:50%;transform:translateX(-50%)"></div><div class="cam-door" style="left:75%;transform:none"></div></div>
+                <div class="cam-floor"></div>
+                <div class="cam-person" style="animation-duration:12s"></div>`;
+        } else if (c.type === 'admin') {
+            // Admin terminal: desk glow
+            sceneContent = `
+                <div class="cam-wall"><div class="cam-light" style="left:10%"></div><div class="cam-light" style="left:35%"></div><div class="cam-light" style="left:60%"></div><div class="cam-light" style="left:85%"></div></div>
+                <div class="cam-floor"></div>`;
+        } else {
+            // Default: empty room
+            sceneContent = `
+                <div class="cam-wall"><div class="cam-light" style="left:25%"></div><div class="cam-light" style="left:55%"></div><div class="cam-light" style="left:80%"></div></div>
+                <div class="cam-floor"></div>
+                <div class="cam-person" style="animation-duration:14s"></div>`;
+        }
+        return `<div class="camera-feed">
+            <div class="camera-3d">
+                <div class="camera-3d-scene">${sceneContent}</div>
+                <div class="cam-vignette"></div>
+                <div class="cam-overlay"></div>
+                <div class="cam-scanline"></div>
+                <div class="cam-rec"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>
+                <div class="cam-timestamp">${c.id} | ${ts}</div>
+            </div>
+            <div class="camera-info">
+                <div class="camera-id">${c.id}</div>
+                <div class="camera-label">${c.label}</div>
+                <div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : c.status === 'alert' ? '⚠ ALERT — MOTION DETECTED' : '○ OFFLINE'}</div>
+            </div>
+        </div>`;
+    }).join('');
 }
 
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
@@ -4307,6 +4477,7 @@ async function loadAdminData() {
     loadAdminProtocols();
     loadAdminIncidents();
     loadAdminReports();
+    loadAdminNews();
     loadAdminSiteStatus();
 }
 
@@ -4579,6 +4750,13 @@ function openEditor(type, data) {
             <div class="editor-row"><label>Sector</label><input id="ed_sector" value="${escAttr(data.sector||'')}"></div>
             <div class="editor-row"><label>Status</label><select id="ed_status">${opts(['ACTIVE','RESOLVED','CONTAINED','ARCHIVED'], data.status)}</select></div>
             <div class="editor-row"><label>Description</label><textarea id="ed_description">${escHtml(data.description||'')}</textarea></div>`;
+    } else if (type === 'news') {
+        title.textContent = 'EDIT NEWS';
+        body.innerHTML = `
+            <div class="editor-row"><label>Tag</label><select id="ed_tag">${opts(['info','urgent','warning','good','admin'], data.tag)}</select></div>
+            <div class="editor-row"><label>Title</label><input id="ed_title" value="${escAttr(data.title||'')}"></div>
+            <div class="editor-row"><label>Body</label><textarea id="ed_body">${escHtml(data.body||'')}</textarea></div>
+            <div class="editor-row"><label>Author</label><input id="ed_author" value="${escAttr(data.author||'ADMIN')}"></div>`;
     }
     modal.classList.add('open');
 }
@@ -4631,6 +4809,13 @@ async function submitEditor() {
                 sector: val('ed_sector'), status: val('ed_status'),
                 description: val('ed_description'),
             };
+        } else if (type === 'news') {
+            url = '/api/admin/news'; method = 'PUT';
+            payload = {
+                id,
+                tag: val('ed_tag'), title: val('ed_title'),
+                body: val('ed_body'), author: val('ed_author'),
+            };
         } else { return; }
 
         const res = await fetch(url, {
@@ -4644,6 +4829,7 @@ async function submitEditor() {
             if (type === 'testlog') { setAdminMsg('tlMsg', 'Test log updated.', false); loadAdminTestLogs(); }
             if (type === 'protocol') { setAdminMsg('protoMsg', 'Protocol updated.', false); loadAdminProtocols(); }
             if (type === 'incident') { setAdminMsg('incMsg', 'Incident updated.', false); loadAdminIncidents(); }
+            if (type === 'news') { setAdminMsg('newsMsg', 'News updated.', false); loadAdminNews(); }
         } else {
             err.textContent = 'Failed: ' + (data.error || res.status);
             if (saveBtn) saveBtn.textContent = 'SAVE';

@@ -119,3 +119,13 @@ model AnomalyReport {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model NewsItem {
+  id          String   @id @default(cuid()) @map("_id")
+  tag         String   @default("info")
+  title       String
+  body        String
+  author      String   @default("SYSTEM")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
