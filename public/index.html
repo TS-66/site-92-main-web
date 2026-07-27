@@ -896,6 +896,56 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .gen-scp-desc{font-size:12px;line-height:1.7;color:var(--t2);margin-top:12px;padding:12px;background:var(--b3);border-radius:4px}
 .gen-scp-proc{font-size:11px;line-height:1.6;color:var(--yl);margin-top:10px;padding:10px;background:rgba(255,170,0,.05);border-left:2px solid var(--yl);border-radius:0 4px 4px 0}
 
+/* ===== Breach Simulator ===== */
+.breach-sim-container{max-width:700px;margin:0 auto}
+.breach-sim-status{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.breach-stat{flex:1;min-width:120px;background:var(--b2);border:1px solid var(--bd2);padding:12px 14px;border-radius:4px;text-align:center}
+.breach-stat-label{font-size:9px;letter-spacing:1px;color:var(--t3);margin-bottom:4px}
+.breach-stat-val{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--t1);transition:color .3s}
+.breach-sim-story{background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:24px;min-height:160px;animation:fadeIn .4s ease forwards}
+.breach-intro{font-size:13px;line-height:1.8;color:var(--t2)}
+.breach-sim-choices{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.breach-choice{background:var(--b3);border:1px solid var(--bd2);border-left:3px solid var(--ac);padding:14px 16px;border-radius:4px;cursor:pointer;transition:transform .2s,background .2s,border-color .2s;animation:slideInRight .3s ease forwards}
+.breach-choice:hover{transform:translateX(4px);background:var(--gl2);border-left-color:var(--gn)}
+.breach-choice-title{font-size:12px;color:var(--t1);font-weight:600;margin-bottom:2px}
+.breach-choice-desc{font-size:11px;color:var(--t3)}
+.breach-end{font-size:14px;font-weight:700;text-align:center;padding:20px;border-radius:4px;margin-top:16px;animation:scaleIn .4s ease forwards}
+.breach-end.good{background:rgba(0,255,136,.1);border:1px solid var(--gn);color:var(--gn)}
+.breach-end.bad{background:rgba(255,51,51,.1);border:1px solid var(--rd);color:var(--rd)}
+
+/* ===== News Feed ===== */
+.news-feed{max-width:700px;margin:0 auto}
+.news-item{background:var(--b2);border:1px solid var(--bd2);border-radius:4px;padding:16px;margin-bottom:14px;transition:transform .25s,box-shadow .25s;animation:fadeUp .35s ease forwards}
+.news-item:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.news-head{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:8px}
+.news-tag{font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:2px;font-weight:600}
+.news-tag.urgent{background:var(--rd);color:var(--b0)}
+.news-tag.info{background:var(--ac);color:var(--b0)}
+.news.tag.warning{background:var(--yl);color:var(--b0)}
+.news-tag.good{background:var(--gn);color:var(--b0)}
+.news-tag.admin{background:var(--b4);color:var(--t2)}
+.news-date{font-size:10px;color:var(--t3);letter-spacing:1px}
+.news-title{font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px}
+.news-body{font-size:12px;color:var(--t2);line-height:1.7}
+
+/* ===== Security Cameras ===== */
+.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.camera-feed{background:#0a0a0f;border:1px solid var(--bd2);border-radius:4px;overflow:hidden;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
+.camera-feed:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.camera-screen{height:160px;background:linear-gradient(180deg,#0a0a0f 0%,#0d0d14 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.camera-screen::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);animation:cameraScan 3s linear infinite;box-shadow:0 0 8px var(--ac)}
+@keyframes cameraScan{0%{top:0}100%{top:100%}}
+.camera-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none}
+.camera-content{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gn);text-align:center;z-index:1;text-shadow:0 0 6px var(--gn)}
+.camera-content.alert{color:var(--rd);text-shadow:0 0 6px var(--rd)}
+.camera-info{padding:10px 14px;border-top:1px solid var(--bd2)}
+.camera-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:1px}
+.camera-label{font-size:12px;color:var(--t1);margin-top:2px}
+.camera-status{font-size:10px;color:var(--t3);margin-top:4px}
+.camera-status.online{color:var(--gn)}
+.camera-status.alert{color:var(--rd)}
+.camera-status.offline{color:var(--t4)}
+
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
 </style>
@@ -1103,6 +1153,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <a class="nav-link" data-p="archives">Archives</a>
 <a class="nav-link" data-p="comms">Comms</a>
 <a class="nav-link" data-p="generator">Generator</a>
+<a class="nav-link" data-p="breach-sim">Breach Sim</a>
+<a class="nav-link" data-p="news">News Feed</a>
+<a class="nav-link" data-p="cameras">Cameras</a>
 <a class="nav-link" data-p="site-ai">Site AI</a>
 <a class="nav-link" data-p="settings">Settings</a>
 <a class="nav-link" data-p="bot-commands">Terminal</a>
@@ -1382,6 +1435,37 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="gen-output" id="genOutput">
 <div class="gen-placeholder">Click GENERATE to create a random SCP entry</div>
 </div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-breach-sim">
+<div class="page-head"><h1>Containment Breach Simulator</h1><p>You're the site director. A breach just happened. Make the right calls.</p></div>
+<div class="breach-sim-container">
+<div class="breach-sim-status" id="breachSimStatus">
+<div class="breach-stat"><div class="breach-stat-label">PERSONNEL</div><div class="breach-stat-val" id="bsPersonnel">482</div></div>
+<div class="breach-stat"><div class="breach-stat-label">CASUALTIES</div><div class="breach-stat-val" id="bsCasualties" style="color:var(--gn)">0</div></div>
+<div class="breach-stat"><div class="breach-stat-label">CONTAINMENT</div><div class="breach-stat-val" id="bsContainment" style="color:var(--gn)">100%</div></div>
+<div class="breach-stat"><div class="breach-stat-label">TIME</div><div class="breach-stat-val" id="bsTime">00:00</div></div>
+</div>
+<div class="breach-sim-story" id="breachSimStory">
+<div class="breach-intro">A containment breach has been detected in Sector D-7B. SCP-682 has escaped its chamber. You are the acting Site Director. Every decision matters. People will live or die based on what you do next.</div>
+<button class="admin-btn" style="font-size:14px;padding:12px 24px;margin-top:16px" onclick="startBreachSim()">▶ START SIMULATION</button>
+</div>
+<div class="breach-sim-choices" id="breachSimChoices"></div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-news">
+<div class="page-head"><h1>Foundation News Feed</h1><p>Official bulletins, incident reports, and site announcements</p></div>
+<div id="newsFeed" class="news-feed">
+<div class="archive-loading">Loading news feed...</div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-cameras">
+<div class="page-head"><h1>Security Cameras</h1><p>Live feeds from containment sectors (simulated)</p></div>
+<div class="camera-grid" id="cameraGrid">
+<div class="archive-loading">Loading camera feeds...</div>
 </div>
 </div>
 
@@ -1740,6 +1824,8 @@ function go(page) {
     if (page === 'report') loadAnomalyReports();
     if (page === 'archives') loadArchives();
     if (page === 'comms') updateCommsDisplay();
+    if (page === 'news') loadNewsFeed();
+    if (page === 'cameras') loadCameras();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => go(e.target.dataset.p));
@@ -1781,6 +1867,9 @@ function getSearchIndex() {
         { label: 'Archives', page: 'archives', tags: 'archives history foundation timeline classified documents' },
         { label: 'Comms', page: 'comms', tags: 'comms radio frequency scanner transmissions communications' },
         { label: 'SCP Generator', page: 'generator', tags: 'generator random scp create fun' },
+        { label: 'Breach Simulator', page: 'breach-sim', tags: 'breach simulator game interactive story scp-682' },
+        { label: 'News Feed', page: 'news', tags: 'news feed bulletin announcements foundation' },
+        { label: 'Security Cameras', page: 'cameras', tags: 'cameras security feeds cctv surveillance sectors' },
         { label: 'Site AI (Ducky 2.5)', page: 'site-ai', tags: 'ai chat bot ducky assistant help' },
         { label: 'Settings', page: 'settings', tags: 'settings customize crt cursor color' },
         { label: 'Terminal', page: 'bot-commands', tags: 'terminal commands console shell hack' },
@@ -3622,6 +3711,166 @@ function generateScp() {
     `;
 }
 
+// ===== BREACH SIMULATOR =====
+let breachSimState = { personnel: 482, casualties: 0, containment: 100, time: 0, step: 0 };
+const BREACH_SCENARIOS = [
+    {
+        text: "SCP-682 has breached its chamber in Sector D-7B. The acid bath is drained. It's heading toward the D-Class cells. You have 3 minutes before it reaches populated areas. What do you do?",
+        choices: [
+            { title: "Deploy MTF Epsilon-11 immediately", desc: "Send the containment specialists. They're trained for this.", next: 1, effect: { casualties: 4, containment: -10 } },
+            { title: "Seal all bulkheads in Sector D", desc: "Trap it. Buy time. Hope it doesn't break through.", next: 2, effect: { casualties: 0, containment: -5 } },
+            { title: "Release SCP-073 (Cain) as a distraction", desc: "SCP-682 has shown reluctance to harm SCP-073 before. Risky.", next: 3, effect: { casualties: 0, containment: -15 } },
+        ],
+    },
+    {
+        text: "MTF Epsilon-11 engaged SCP-682 in Corridor D-7. The entity is agitated. Two operatives are down. It's regenerating from their weapons fire. What now?",
+        choices: [
+            { title: "Fall back and seal the corridor", desc: "Retreat to a defensible position. Regroup.", next: 4, effect: { casualties: 2, containment: -5 } },
+            { title: "Use heavy weaponry — rocket launchers", desc: "More firepower. More collateral. More noise.", next: 5, effect: { casualties: 0, containment: -20 } },
+            { title: " lure it back toward the acid bath chamber", desc: "Get it back where it belongs. Use yourself as bait.", next: 6, effect: { casualties: 1, containment: +15 } },
+        ],
+    },
+    {
+        text: "The bulkheads held. SCP-682 is sealed in Sector D-7B. But it's pounding on the walls. The Scranton anchors are fluctuating. The seal won't hold forever. What do you do?",
+        choices: [
+            { title: "Flood the sector with amnestic gas", desc: "Knock out any personnel inside. They knew the risks.", next: 7, effect: { casualties: 12, containment: +20 } },
+            { title: "Reinforce the bulkheads with Scranton anchors", desc: "Divert anchor power from other sectors. Risk cascading failures.", next: 8, effect: { casualties: 0, containment: +30 } },
+            { title: "Open the acid bath valves remotely", desc: "Fill the sector with hydrochloric acid. It won't kill it, but it'll slow it down.", next: 6, effect: { casualties: 0, containment: +25 } },
+        ],
+    },
+    {
+        text: "SCP-073 (Cain) is in the corridor. SCP-682 stops. It stares at him. For a moment, nothing happens. Then SCP-682 speaks: 'Not you.' It turns around and walks back toward its chamber. Cain is unharmed. The breach is over. This is unprecedented.",
+        end: true, result: 'good', msg: 'CONTAINMENT SUCCESSFUL — 0 casualties. SCP-682 returned to its chamber voluntarily after encountering SCP-073. Recommend further cross-SCP testing. The Ethics Committee will want to hear about this.',
+    },
+    {
+        text: "You fell back to Bulkhead D-4. SCP-682 broke through the previous seal in 47 seconds. The MTF is regrouping. You have a narrow window. What's the play?",
+        choices: [
+            { title: "Set up a firing line at the next bulkhead", desc: "Make a stand. Slow it down with sustained fire.", next: 5, effect: { casualties: 3, containment: -5 } },
+            { title: "Activate the emergency acid sprinklers", desc: "The whole corridor fills with acid. It'll hurt everything. Including your people.", next: 6, effect: { casualties: 2, containment: +20 } },
+            { title: "Evacuate Sector D entirely", desc: "Abandon the sector. Let it have the space. Recontain later.", next: 7, effect: { casualties: 0, containment: -40 } },
+        ],
+    },
+    {
+        text: "The rocket launchers hit. SCP-682 is blown apart. For 14 seconds, there's nothing but chunks. Then it starts regenerating. Faster than before. It's adapting. The MTF captain says 'That just made it angrier.' The entity charges.",
+        choices: [
+            { title: "Retreat. Full evacuation of Sector D.", desc: "This isn't working. Get everyone out.", next: 7, effect: { casualties: 5, containment: -30 } },
+            { title: "Hold the line. Keep firing.", desc: "Maybe enough damage will keep it down long enough to recontain.", next: 6, effect: { casualties: 8, containment: +10 } },
+        ],
+    },
+    {
+        text: "The acid is flowing. SCP-682 is submerged. It's screaming — a horrible, gurgling sound. It's not dead (it never dies), but it's contained. The breach is over. The chamber is sealed. The acid is circulating. Normalcy is restored.",
+        end: true, result: 'good', msg: 'CONTAINMENT SUCCESSFUL — Some casualties, but the entity is back in its chamber. The acid bath is operational. File the incident report. Notify the Ethics Committee. Get some sleep. You earned it.',
+    },
+    {
+        text: "Sector D is evacuated. SCP-682 has the run of the sector. It's destroying everything — walls, equipment, doors. It'll break through to Sector C within the hour. You've bought time, but at a cost. The entity is now in a larger area. Recontainment will be harder.",
+        choices: [
+            { title: "Flood the entire sector with acid", desc: "Massive acid deployment. Expensive. Dangerous. Effective.", next: 6, effect: { casualties: 0, containment: +30 } },
+            { title: "Collapse the sector with explosives", desc: "Bring the ceiling down. Bury it. Hope it holds.", next: 8, effect: { casualties: 0, containment: +40 } },
+        ],
+    },
+    {
+        text: "The Scranton anchors are reinforced. The bulkheads hold. SCP-682 is sealed. It's still pounding, but the walls aren't giving. The fluctuation has stabilized. You've bought enough time for MTF to set up a proper recontainment. The breach is contained.",
+        end: true, result: 'good', msg: 'CONTAINMENT SUCCESSFUL — The entity is sealed behind reinforced bulkheads. Scranton anchors are holding. No further casualties. Recommend a commendation for the engineering team. And therapy for everyone else.',
+    },
+    {
+        text: "The sector is collapsed. Tons of concrete and steel bury SCP-682. For now, it's trapped. It'll dig out eventually — it always does — but that's a problem for tomorrow. Today, you saved the facility. The breach is over.",
+        end: true, result: 'good', msg: 'CONTAINMENT SUCCESSFUL — Sector D-7B collapsed. SCP-682 buried under 400 tons of debris. Estimated time to dig out: 2-4 hours. Use that time wisely. Recommend immediate reconstruction of a new containment chamber. Somewhere else.',
+    },
+];
+function startBreachSim() {
+    breachSimState = { personnel: 482, casualties: 0, containment: 100, time: 0, step: 0 };
+    breachSimTimer();
+    showBreachStep(0);
+}
+let breachTimeInterval = null;
+function breachSimTimer() {
+    if (breachTimeInterval) clearInterval(breachTimeInterval);
+    breachTimeInterval = setInterval(() => {
+        breachSimState.time++;
+        const m = String(Math.floor(breachSimState.time / 60)).padStart(2, '0');
+        const s = String(breachSimState.time % 60).padStart(2, '0');
+        const el = document.getElementById('bsTime');
+        if (el) el.textContent = m + ':' + s;
+    }, 1000);
+}
+function updateBreachStats() {
+    const p = document.getElementById('bsPersonnel'); if (p) p.textContent = breachSimState.personnel - breachSimState.casualties;
+    const c = document.getElementById('bsCasualties'); if (c) { c.textContent = breachSimState.casualties; c.style.color = breachSimState.casualties > 10 ? 'var(--rd)' : breachSimState.casualties > 0 ? 'var(--yl)' : 'var(--gn)'; }
+    const ct = document.getElementById('bsContainment'); if (ct) { ct.textContent = breachSimState.containment + '%'; ct.style.color = breachSimState.containment < 30 ? 'var(--rd)' : breachSimState.containment < 60 ? 'var(--yl)' : 'var(--gn)'; }
+}
+function showBreachStep(idx) {
+    const scenario = BREACH_SCENARIOS[idx];
+    if (!scenario) return;
+    breachSimState.step = idx;
+    const storyEl = document.getElementById('breachSimStory');
+    const choicesEl = document.getElementById('breachSimChoices');
+    if (!storyEl || !choicesEl) return;
+    if (scenario.end) {
+        if (breachTimeInterval) clearInterval(breachTimeInterval);
+        storyEl.innerHTML = '<div class="breach-intro">' + scenario.text + '</div><div class="breach-end ' + scenario.result + '">' + scenario.msg + '</div><button class="admin-btn" style="margin-top:16px" onclick="startBreachSim()">▶ PLAY AGAIN</button>';
+        choicesEl.innerHTML = '';
+        return;
+    }
+    storyEl.innerHTML = '<div class="breach-intro">' + scenario.text + '</div>';
+    choicesEl.innerHTML = scenario.choices.map((c, i) => '<div class="breach-choice" onclick="chooseBreach(' + idx + ',' + i + ')"><div class="breach-choice-title">' + c.title + '</div><div class="breach-choice-desc">' + c.desc + '</div></div>').join('');
+    storyEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function chooseBreach(scenarioIdx, choiceIdx) {
+    const scenario = BREACH_SCENARIOS[scenarioIdx];
+    const choice = scenario.choices[choiceIdx];
+    if (!choice) return;
+    breachSimState.casualties += choice.effect.casualties || 0;
+    breachSimState.containment = Math.max(0, Math.min(100, breachSimState.containment + choice.effect.containment));
+    updateBreachStats();
+    // Check for failure (too many casualties or containment too low)
+    if (breachSimState.casualties > 50 || breachSimState.containment <= 0) {
+        if (breachTimeInterval) clearInterval(breachTimeInterval);
+        const storyEl = document.getElementById('breachSimStory');
+        const choicesEl = document.getElementById('breachSimChoices');
+        storyEl.innerHTML = '<div class="breach-intro">The situation has deteriorated beyond recovery. SCP-682 has broken through to populated sectors. Casualties are mounting. The O5 Council has been notified. This incident will be classified.\n\nYou did your best. Sometimes that\'s not enough.</div><div class="breach-end bad">SIMULATION FAILED — ' + breachSimState.casualties + ' casualties. Containment at ' + breachSimState.containment + '%. The facility is lost. Amnestics have been deployed to all survivors.</div><button class="admin-btn" style="margin-top:16px" onclick="startBreachSim()">▶ TRY AGAIN</button>';
+        choicesEl.innerHTML = '';
+        return;
+    }
+    showBreachStep(choice.next);
+}
+
+// ===== NEWS FEED =====
+const NEWS_ITEMS = [
+    { tag: 'urgent', date: '2 HOURS AGO', title: 'Sector D-7B Quarantine Lifted', body: 'Following successful recontainment of SCP-████, the quarantine on Sector D-7B has been lifted. All personnel may resume normal activities. Amnestic deployment is not required at this time.' },
+    { tag: 'info', date: '5 HOURS AGO', title: 'New D-Class Personnel Arriving', body: 'A transport of 24 D-Class personnel will arrive at 14:00. All researchers with pending test proposals should submit their requests to the scheduling office by 12:00. First come, first served.' },
+    { tag: 'warning', date: '8 HOURS AGO', title: 'Scranton Anchor #4 Maintenance', body: 'Anchor #4 will be taken offline for routine maintenance from 22:00 to 02:00. During this time, reality fluctuations in Sector C may increase by up to 0.4%. All personnel should report any anomalies to their supervisor immediately.' },
+    { tag: 'good', date: '1 DAY AGO', title: 'SCP-999 Interaction Session Success', body: 'Yesterday\'s morale-boosting session with SCP-999 was a complete success. 47 personnel participated. Stress levels dropped by an average of 34%. The next session is scheduled for next Thursday. Sign-up sheet is in the break room.' },
+    { tag: 'admin', date: '1 DAY AGO', title: 'Amnestic Compliance Reminder', body: 'This is a reminder that all personnel must complete their annual amnestic compliance training by the end of the month. The online module takes approximately 45 minutes. Failure to complete training will result in... well, you won\'t remember. Complete it.' },
+    { tag: 'urgent', date: '2 DAYS AGO', title: 'Coffee Machine (SCP-294) Malfunction', body: 'SCP-294 has begun dispensing liquids without input. So far it has produced: 3 cups of coffee (normal), 1 cup of liquid nitrogen (contained), and 1 cup of a substance that sings when you look at it (contained, under study). The machine has been unplugged. Again.' },
+    { tag: 'info', date: '3 DAYS AGO', title: 'Dr. Bright\'s Birthday Party', body: 'The staff lounge will be reserved from 16:00 to 18:00 for Dr. Bright\'s birthday celebration. Cake will be served. Dr. Bright is not allowed to blow out the candles himself (see Incident Report 2019-BR-7). Someone else will do it.' },
+    { tag: 'warning', date: '4 DAYS AGO', title: 'Intercom System Upgrade', body: 'The facility intercom system will be upgraded over the weekend. During the upgrade, emergency announcements will be routed through backup speakers. The new system includes improved audio quality and... for some reason, a feature that plays elevator music during non-emergency broadcasts. We did not request this.' },
+    { tag: 'good', date: '5 DAYS AGO', title: 'MTF Epsilon-11 Commendation', body: 'MTF Epsilon-11 ("Nine-Tailed Fox") has been commended for their response to Incident 2025-0412-A. All 9 members received the Foundation Containment Medal. Agent [REDACTED] also received a personal commendation for "extraordinary bravery in the face of an entity that should not have been approached." ' },
+    { tag: 'admin', date: '1 WEEK AGO', title: 'Parking Reallocation', body: 'Due to the arrival of new containment equipment, parking spaces 1-12 in the sub-level garage have been reassigned. Personnel previously assigned to these spaces should report to Facilities Management for reassignment. We apologize for the inconvenience. The SCPs don\'t park, so they get priority.' },
+];
+function loadNewsFeed() {
+    const el = document.getElementById('newsFeed');
+    if (!el) return;
+    el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+}
+
+// ===== SECURITY CAMERAS =====
+const CAMERAS = [
+    { id: 'CAM-D7B-01', label: 'Sector D-7B — Keter Containment', status: 'alert', content: '⚠ MOTION DETECTED\nSCP-682 chamber\nAcid level: NOMINAL\nEntity: SUBMERGED' },
+    { id: 'CAM-A1-03', label: 'Sector A-1 — Reception', status: 'online', content: 'NO ACTIVITY\nReception desk: staffed\nVisitors: 0\nClearance checks: 12 today' },
+    { id: 'CAM-C3-02', label: 'Sector C-3 — Euclid Wing', status: 'online', content: 'ALL CLEAR\n12 cells monitored\nNo anomalies detected\nNext patrol: 14:30' },
+    { id: 'CAM-F5-01', label: 'Sector F-5 — Testing Labs', status: 'online', content: 'LAB 3: IN USE\nTest subject: D-9341\nObserver: Dr. [REDACTED]\nStatus: ongoing' },
+    { id: 'CAM-G6-04', label: 'Sector G-6 — Reactor Core', status: 'offline', content: 'CAMERA OFFLINE\nLast frame: 14:02:33\nReactor status: UNKNOWN\nDispatching maintenance' },
+    { id: 'CAM-E4-02', label: 'Sector E-4 — MTF Barracks', status: 'online', content: 'ALL CLEAR\nMTF E-11: on standby\nMTF T-5: deployed\nEquipment: nominal' },
+    { id: 'CAM-B2-05', label: 'Sector B-2 — D-Class Cells', status: 'online', content: 'POPULATION: 247\nAll cells: sealed\nNext rotation: 18:00\nIncidents today: 0' },
+    { id: 'CAM-H8-01', label: 'Sector H-8 — Admin Terminal', status: 'online', content: 'ADMIN LEVEL\nO5 access only\nCurrent users: [REDACTED]\nSecurity: MAXIMUM' },
+    { id: 'CAM-COR-12', label: 'Corridor D-7 — Main Hall', status: 'alert', content: 'BULKHEAD SEALED\nScranton anchor: 97.8%\nAcid residue detected\nDo not enter without MTF escort' },
+];
+function loadCameras() {
+    const el = document.getElementById('cameraGrid');
+    if (!el) return;
+    el.innerHTML = CAMERAS.map(c => `<div class="camera-feed"><div class="camera-screen"><div class="camera-content ${c.status === 'alert' ? 'alert' : ''}">${c.content}</div></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : c.status === 'alert' ? '⚠ ALERT' : '○ OFFLINE'}</div></div></div>`).join('');
+}
+
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
 let termHistory = [];
 let termHistoryIdx = -1;
@@ -3650,18 +3899,44 @@ function termClear() {
 }
 
 const TERM_COMMANDS = {
-    help: () => {
-        const cats = {
-            'System': ['help', 'clear', 'cls', 'echo', 'date', 'time', 'whoami', 'hostname', 'uname', 'uptime', 'version', 'history', 'exit', 'logout', 'man', 'about', 'credits', 'echo'],
-            'SCP / Foundation': ['scp', 'scp-list', 'containment', 'classify', 'object-class', 'breach', 'terminate', 'terminate-scp', 'recontain', 'amnestic', 'class-d', 'd-class', 'foundation', 'o5', 'ethics', 'mtf', 'researcher', 'keter', 'euclid', 'safe', 'thaumiel', 'apollyon', 'anomaly', 'scp-173', 'scp-682', 'scp-999', 'scp-096', 'scp-049', 'scp-079', 'scp-106'],
-            'Facility': ['scan', 'status', 'sectors', 'map', 'lockdown', 'unlock', 'evacuate', 'alarm', 'silent', 'power', 'reactor', 'cooling', 'anchor', 'scranton', 'door', 'elevator', 'intercom', 'log', 'logs', 'access-log', 'shift', 'report'],
-            'Fun / Easter Eggs': ['hack', 'matrix', 'coffee', 'cookie', 'party', 'dance', 'sing', 'joke', 'coin', 'dice', '8ball', 'fortune', 'ascii', 'banner', 'figlet', 'cowsay', 'sudo', 'rm', 'ls', 'cd', 'cat', 'vim', 'nano', 'ping', 'traceroute', 'nmap', 'wget', 'curl', 'git', 'npm', 'python', 'hello', 'hi', 'bye', 'love', 'rickroll'],
-        };
-        let out = 'Available commands (' + Object.values(cats).reduce((a, b) => a + b.length, 0) + ' total):\n\n';
-        for (const [cat, cmds] of Object.entries(cats)) {
-            out += '  ' + cat + ':\n    ' + cmds.join(', ') + '\n\n';
+    help: (args) => {
+        // If user typed 'help <command>', show that command's description
+        if (args[0]) {
+            const cmd = args[0].toLowerCase();
+            if (TERM_COMMANDS[cmd]) {
+                termPrint('Command: ' + cmd + '\n\nThis command is available. Type it without arguments to run it.\n(Individual command descriptions are not available — just try it!)', 'term-sys');
+            } else {
+                termPrint('No such command: ' + cmd + '\n\nType \'help\' with no arguments to see all commands.', 'term-err');
+            }
+            return;
         }
-        out += "Type any command to run it. Type 'help <command>' for details on a specific command.";
+        // Dynamically list ALL commands from TERM_COMMANDS, grouped by category
+        const allCmds = Object.keys(TERM_COMMANDS).sort();
+        const categories = {
+            'System & Info': ['help', 'clear', 'cls', 'echo', 'date', 'time', 'whoami', 'hostname', 'uname', 'uptime', 'version', 'history', 'exit', 'logout', 'man', 'about', 'credits', 'reset', 'reboot', 'shutdown', 'sleep', 'wait', 'env', 'export', 'alias', 'source'],
+            'SCP Entries': [],
+            'SCP Lore & Foundation': ['scp', 'scp-list', 'scp-wiki', 'scp-foundation', 'scp-staff', 'scp-sites', 'scp-glossary', 'scp-tales', 'scp-joke', 'scp-explained', 'scp-archived', 'scp-neutralized', 'containment', 'classify', 'object-class', 'breach', 'terminate', 'terminate-scp', 'recontain', 'amnestic', 'class-d', 'd-class', 'foundation', 'o5', 'ethics', 'mtf', 'researcher', 'keter', 'euclid', 'safe', 'thaumiel', 'apollyon', 'anomaly', 'k-class', 'xk-scenario', '096-incident', '682-termination', '173-origin', 'scranton-logs', 'bright-list', 'clef-tips', 'king-coconut'],
+            'Facility': ['scan', 'status', 'sectors', 'map', 'lockdown', 'unlock', 'evacuate', 'alarm', 'silent', 'power', 'reactor', 'cooling', 'anchor', 'scranton', 'door', 'elevator', 'intercom', 'log', 'logs', 'access-log', 'shift', 'report', 'weather'],
+            'Terminal Classics': ['tree', 'find', 'grep', 'ps', 'top', 'kill', 'chmod', 'chown', 'mkdir', 'touch', 'mv', 'cp', 'df', 'du', 'free', 'which', 'whereis', 'stat', 'head', 'tail', 'wc', 'sort', 'uniq', 'ls', 'cd', 'cat', 'vim', 'nano', 'ping', 'traceroute', 'nmap', 'wget', 'curl', 'git', 'npm', 'python'],
+            'Games & Random': ['rps', 'hangman', 'guess', 'trivia', 'fact', 'quote', 'coin', 'dice', '8ball', 'fortune', 'flip', 'random', 'number', 'yes-or-no', 'yes', 'no', 'maybe', 'horoscope', 'zodiac', 'name', 'nickname', 'superpower', 'achievement', 'quest', 'inventory', 'level', 'xp', 'shop', 'buy', 'money', 'mine', 'craft', 'fish', 'farm', 'cook', 'eat', 'drink'],
+            'Fun & Memes': ['hack', 'matrix', 'coffee', 'cookie', 'party', 'dance', 'sing', 'joke', 'hello', 'hi', 'bye', 'love', 'rickroll', 'lol', 'bruh', 'yeet', 'sus', 'amogus', 'pog', 'kek', 'gg', 'ez', 'f', 'rip', 'oof', 'big-oof', 'yikes', 'based', 'no-cap', 'bussin', 'skibidi', 'ohio', 'sigma', 'rizz', 'gyatt', 'fanum', 'derp', 'facepalm', 'shrug', 'tableflip', 'tableback', 'lenny', 'magic', 'portal', 'beep', 'boop', 'meow', 'woof', 'moo', 'quack', 'honk', 'brb', 'gtg'],
+            'ASCII & Art': ['ascii', 'banner', 'figlet', 'cowsay', 'logo', 'splash', 'art', 'emoji', 'rainbow', 'firework', 'snow', 'rain', 'stars', 'rocket', 'explosion', 'zombie', 'ghost', 'vampire', 'dragon', 'unicorn', 'cat-says', 'dog-says', 'color'],
+            'Encoding & Math': ['base64', 'rot13', 'binary', 'hex', 'morse', 'hash', 'uuid', 'password', 'pi', 'euler', 'phi', 'prime', 'fibonacci'],
+            'Game Cheats (fake)': ['respawn', 'invincible', 'noclip', 'godmode', 'cheat', 'save', 'load', 'pause', 'time-travel', 'teleport', 'invisible', 'fly'],
+        };
+        // Auto-populate SCP entries (scp-XXX pattern)
+        allCmds.forEach(c => { if (/^scp-\d/.test(c) && !categories['SCP Lore & Foundation'].includes(c)) categories['SCP Entries'].push(c); });
+        // Find uncategorized commands
+        const categorized = new Set(Object.values(categories).flat());
+        const uncategorized = allCmds.filter(c => !categorized.has(c));
+        if (uncategorized.length) categories['Other'] = uncategorized;
+
+        let out = 'SCiPNET Terminal — ' + allCmds.length + ' commands available\n\n';
+        for (const [cat, cmds] of Object.entries(categories)) {
+            if (!cmds.length) continue;
+            out += '  ' + cat + ' (' + cmds.length + '):\n    ' + cmds.join(', ') + '\n\n';
+        }
+        out += "Type any command to run it. Use ArrowUp/Down for command history.";
         termPrint(out, 'term-sys');
     },
     clear: () => termClear(),
