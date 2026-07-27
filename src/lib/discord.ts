@@ -92,14 +92,41 @@ async function sendDirectMessage(userId: string, content: string): Promise<boole
  * online/offline presence — that data only comes through a persistent Gateway
  * connection, which isn't available in a serverless environment like Vercel.
  */
+export interface GuildRole {
+  id: string;
+  name: string;
+  color: number;
+  position: number;
+  hoist: boolean;
+}
+
+export async function getGuildRoles(): Promise<GuildRole[]> {
+  const token = getBotToken();
+  const guildId = getGuildId();
+  if (!token || !guildId) return [];
+
+  const res = await fetch(`${DISCORD_API}/guilds/${guildId}/roles`, {
+    headers: { Authorization: `Bot ${token}` },
+  });
+
+  if (!res.ok) {
+    console.error(`[discord] failed to fetch roles: ${res.status}`);
+    return [];
+  }
+
+  const roles: Array<{ id: string; name: string; color: number; position: number; hoist: boolean }> = await res.json();
+  // Sort by position descending (highest position = highest rank)
+  return roles.filter(r => r.name !== '@everyone').sort((a, b) => b.position - a.position);
+}
+
 export async function getAllGuildMembers(): Promise<
-  Array<{ name: string; displayName: string; avatar: string }>
+  Array<{ name: string; displayName: string; avatar: string; userId: string; roles: string[] }>
 > {
   const token = getBotToken();
   const guildId = getGuildId();
   if (!token || !guildId) return [];
 
-  const results: Array<{ name: string; displayName: string; avatar: string }> = [];
+  const results: Array<{ name: string; displayName: string; avatar: string; userId: string; roles: string[] }> = [];
   let after = '0';
 
   while (true) {
@@ -115,6 +142,7 @@ export async function getAllGuildMembers(): Promise<
 
     const page: Array<{
       nick?: string | null;
+      roles?: string[];
       user: { id: string; username: string; global_name?: string | null; avatar?: string | null; bot?: boolean };
     }> = await res.json();
 
@@ -123,13 +151,15 @@ export async function getAllGuildMembers(): Promise<
     for (const m of page) {
       if (m.user.bot) continue;
       const avatar = m.user.avatar
-        ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png`
+        ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png?size=128`
         : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(m.user.id) >> 22n) % 6n)}.png`;
 
       results.push({
         name: m.user.username,
         displayName: m.nick || m.user.global_name || m.user.username,
         avatar,
+        userId: m.user.id,
+        roles: m.roles || [],
       });
     }
 

@@ -928,52 +928,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .news-title{font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px}
 .news-body{font-size:12px;color:var(--t2);line-height:1.7}
 
-/* ===== Security Cameras — 3D rendered ===== */
-.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.camera-feed{background:#0a0a0f;border:1px solid var(--bd2);border-radius:4px;overflow:hidden;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
-.camera-feed:hover{transform:scale(1.03);box-shadow:0 8px 32px rgba(0,0,0,.5)}
-.camera-3d{height:200px;position:relative;overflow:hidden;perspective:400px}
-.camera-3d-scene{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(8deg)}
-/* Floor */
-.cam-floor{position:absolute;bottom:0;left:-20%;right:-20%;height:60%;background:linear-gradient(180deg,#0d0d18 0%,#08080e 100%);transform:rotateX(70deg);transform-origin:bottom;border-top:1px solid rgba(0,255,200,.08)}
-/* Back wall */
-.cam-wall{position:absolute;top:0;left:-10%;right:-10%;height:55%;background:linear-gradient(180deg,#12121e 0%,#0d0d16 100%);border-bottom:1px solid rgba(0,255,200,.05)}
-/* Ceiling lights */
-.cam-light{position:absolute;top:8px;width:30px;height:4px;background:rgba(0,255,200,.15);border-radius:2px;box-shadow:0 0 20px 4px rgba(0,255,200,.08);animation:camLightFlicker 4s ease-in-out infinite}
-.cam-light:nth-child(2){left:30%;animation-delay:.5s}
-.cam-light:nth-child(3){left:60%;animation-delay:1s}
-@keyframes camLightFlicker{0%,100%{opacity:.6}50%{opacity:1}}
-/* Door on back wall */
-.cam-door{position:absolute;top:15%;left:50%;transform:translateX(-50%);width:50px;height:80px;background:linear-gradient(180deg,#1a1a2e 0%,#12121e 100%);border:1px solid rgba(0,255,200,.1);border-radius:2px 2px 0 0}
-.cam-door::after{content:'';position:absolute;right:6px;top:50%;width:3px;height:6px;background:var(--ac);border-radius:2px;box-shadow:0 0 4px var(--ac)}
-/* Acid pool (for containment sectors) */
-.cam-acid{position:absolute;bottom:0;left:0;right:0;height:25%;background:linear-gradient(180deg,rgba(0,255,100,.05) 0%,rgba(0,200,80,.15) 100%);animation:camAcidBubble 3s ease-in-out infinite}
-@keyframes camAcidBubble{0%,100%{opacity:.3}50%{opacity:.6}}
-/* Entity silhouette (animated) */
-.cam-entity{position:absolute;bottom:15%;left:50%;transform:translateX(-50%);width:24px;height:50px;background:radial-gradient(ellipse at center,#0a0a0f 0%,transparent 70%);animation:camEntityMove 6s ease-in-out infinite}
-.cam-entity::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:14px;height:14px;background:#08080e;border-radius:50%;box-shadow:0 0 8px 2px rgba(255,50,50,.2)}
-.cam-entity.alert::before{box-shadow:0 0 12px 4px rgba(255,50,50,.5);animation:camEntityAlert 1s ease-in-out infinite}
-@keyframes camEntityMove{0%,100%{left:35%}50%{left:65%}}
-@keyframes camEntityAlert{0%,100%{box-shadow:0 0 8px 2px rgba(255,50,50,.3)}50%{box-shadow:0 0 16px 6px rgba(255,50,50,.6)}}
-/* Walking personnel */
-.cam-person{position:absolute;bottom:20%;width:10px;height:30px;animation:camPersonWalk 8s linear infinite}
-.cam-person::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:rgba(0,255,200,.3);border-radius:50%}
-.cam-person::after{content:'';position:absolute;top:2px;left:0;width:10px;height:24px;background:rgba(0,255,200,.08);border-radius:2px}
-@keyframes camPersonWalk{0%{left:-5%}100%{left:105%}}
-.cam-person:nth-child(2){animation-delay:-3s;animation-duration:10s}
-/* Scanline + CRT overlay */
-.cam-overlay{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);pointer-events:none;z-index:5}
-.cam-scanline{position:absolute;left:0;right:0;height:2px;background:rgba(0,255,200,.4);box-shadow:0 0 8px rgba(0,255,200,.3);animation:camScanMove 3s linear infinite;z-index:6}
-@keyframes camScanMove{0%{top:0}100%{top:100%}}
-.cam-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.6) 100%);pointer-events:none;z-index:4}
-.cam-rec{position:absolute;top:6px;right:8px;display:flex;align-items:center;gap:4px;z-index:7}
-.cam-rec-dot{width:6px;height:6px;background:#ff3333;border-radius:50%;animation:camRecBlink 1.5s ease-in-out infinite}
-@keyframes camRecBlink{0%,100%{opacity:1}50%{opacity:.2}}
-.cam-rec-text{font-family:'Share Tech Mono',monospace;font-size:8px;color:#ff3333;letter-spacing:1px}
-.cam-timestamp{position:absolute;bottom:6px;left:8px;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,.5);z-index:7;letter-spacing:1px}
-.cam-offline-screen{display:flex;align-items:center;justify-content:center;height:200px;background:#08080e;color:var(--t4);font-family:'Share Tech Mono',monospace;font-size:11px;flex-direction:column;gap:8px}
-.cam-offline-screen::before{content:'NO SIGNAL';letter-spacing:3px;animation:camStatic 2s steps(4) infinite}
-@keyframes camStatic{0%{opacity:.3}25%{opacity:.8}50%{opacity:.2}75%{opacity:.6}100%{opacity:.4}}
+/* ===== Security Cameras — Canvas 3D ===== */
+.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.camera-feed{background:#06060a;border:1px solid var(--bd2);border-radius:6px;overflow:hidden;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
+.camera-feed:hover{transform:scale(1.03);box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.cam-canvas-wrap{position:relative;height:220px;overflow:hidden;background:#040408}
+.cam-canvas-wrap canvas{display:block;width:100%;height:100%}
+.cam-overlay-fx{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.1) 2px,rgba(0,0,0,.1) 3px);z-index:2}
+.cam-vignette-fx{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.7) 100%);z-index:3}
+.cam-rec-fx{position:absolute;top:8px;right:10px;display:flex;align-items:center;gap:5px;z-index:5}
+.cam-rec-dot{width:7px;height:7px;background:#ff2222;border-radius:50%;animation:camRecBlink 1.5s ease-in-out infinite;box-shadow:0 0 6px #ff2222}
+@keyframes camRecBlink{0%,100%{opacity:1}50%{opacity:.15}}
+.cam-rec-text{font-family:'Share Tech Mono',monospace;font-size:9px;color:#ff3333;letter-spacing:1px}
+.cam-ts-fx{position:absolute;bottom:6px;left:8px;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,.4);z-index:5;letter-spacing:1px}
+.cam-label-fx{position:absolute;bottom:6px;right:8px;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,.4);z-index:5;letter-spacing:1px}
 .camera-info{padding:10px 14px;border-top:1px solid var(--bd2)}
 .camera-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:1px}
 .camera-label{font-size:12px;color:var(--t1);margin-top:2px}
@@ -981,6 +949,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .camera-status.online{color:var(--gn)}
 .camera-status.alert{color:var(--rd)}
 .camera-status.offline{color:var(--t4)}
+@keyframes camStaticTxt{0%{opacity:.3}25%{opacity:.8}50%{opacity:.2}75%{opacity:.6}100%{opacity:.4}}
 
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
@@ -2633,17 +2602,17 @@ function animateValue(id, start, end, duration) {
     window.requestAnimationFrame(step);
 }
 
+let personnelCache = [];
 async function fetchPersonnel() {
     const list = document.getElementById('perList');
     let rankOverrides = {};
-    const defaultColor = 'var(--t3)';
+    const defaultColor = '#5a706b';
 
     try {
         const rr = await fetch('/api/public/personnel-ranks');
         rankOverrides = await rr.json();
     } catch(e) { rankOverrides = {}; }
 
-    // Build a lookup map from rank overrides (case-insensitive keys)
     const rankMap = {};
     for (const [key, val] of Object.entries(rankOverrides)) {
         rankMap[key.toLowerCase()] = val;
@@ -2652,67 +2621,102 @@ async function fetchPersonnel() {
     try {
         const res = await fetch('/api/personnel');
         const data = await res.json();
-        if(data.length === 0) {
-            list.innerHTML = '<div class="search-empty">No personnel found.</div>';
+        if(data.length === 0 || !data[0].members || data[0].members.length === 0) {
+            // Fallback to rank overrides if no Discord data
+            if (Object.keys(rankMap).length > 0) {
+                const fallback = Object.entries(rankMap).sort((a, b) => a[1].tier - b[1].tier);
+                personnelCache = fallback.map(([name, r]) => ({ name, displayName: name, avatar: '', userId: '', highestRole: { name: r.role, color: r.color || defaultColor }, allRoles: [{ name: r.role, color: r.color || defaultColor }] }));
+                renderPersonnel();
+            } else {
+                list.innerHTML = '<div class="search-empty">Could not connect to Discord.</div>';
+            }
             return;
         }
 
-        // Flatten all members and apply rank overrides
-        const allMembers = [];
-        data.forEach(group => {
-            (group.members || []).forEach(m => {
-                const nameLower = (m.name || '').toLowerCase();
-                const displayNameLower = (m.displayName || '').toLowerCase();
-                const override = rankMap[nameLower] || rankMap[displayNameLower];
-                const finalRole = override ? override.role : 'Foundation Personnel';
-                const finalTier = override ? override.tier : 5;
-                const finalColor = override ? (override.color || defaultColor) : defaultColor;
-                allMembers.push({ ...m, finalRole, finalTier, finalColor });
-            });
+        const members = data[0].members;
+        // Enrich with rank overrides as fallback for highest role
+        personnelCache = members.map(m => {
+            const nameLower = (m.name || '').toLowerCase();
+            const displayLower = (m.displayName || '').toLowerCase();
+            const override = rankMap[nameLower] || rankMap[displayLower];
+            // Use Discord role if available, otherwise fall back to override
+            if (m.highestRole) {
+                return m;
+            } else if (override) {
+                return { ...m, highestRole: { name: override.role, color: override.color || defaultColor }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
+            } else {
+                return { ...m, highestRole: { name: 'Foundation Personnel', color: defaultColor }, allRoles: [{ name: 'Foundation Personnel', color: defaultColor }] };
+            }
         });
 
-        // Group by final role, sort groups by lowest tier in group
-        const roleGroups = {};
-        allMembers.forEach(m => {
-            if (!roleGroups[m.finalRole]) roleGroups[m.finalRole] = { role: m.finalRole, color: m.finalColor, tier: m.finalTier, members: [] };
-            roleGroups[m.finalRole].members.push(m);
-            if (m.finalTier < roleGroups[m.finalRole].tier) roleGroups[m.finalRole].tier = m.finalTier;
-        });
-
-        // Sort groups by tier
-        const sortedGroups = Object.values(roleGroups).sort((a, b) => a.tier - b.tier);
-
-        list.innerHTML = sortedGroups.map(g => `
-            <div class="per-group-header" style="border-left-color:${g.color}">${g.role} <span>${g.members.length} MEMBER${g.members.length !== 1 ? 'S' : ''}</span></div>
-            ${g.members.map(m => `
-                <div class="per-item" style="border-left:3px solid ${m.finalColor}">
-                    <div class="per-av" style="background-image:url('${m.avatar}');background-size:cover"></div>
-                    <div class="per-info">
-                        <div class="per-name">${m.name}</div>
-                        <div class="per-role" style="color:${m.finalColor}">${m.finalRole}</div>
-                    </div>
-                    <div class="per-dot ${m.stClass}" title="${m.st}"></div>
-                </div>
-            `).join('')}
-        `).join('');
+        renderPersonnel();
     } catch (err) {
-        // Fallback: show custom-ranked users as a static list
         if (Object.keys(rankMap).length > 0) {
             const fallback = Object.entries(rankMap).sort((a, b) => a[1].tier - b[1].tier);
-            list.innerHTML = fallback.map(([name, r]) => `
-                <div class="per-item" style="border-left:3px solid ${r.color || defaultColor}">
-                    <div class="per-av">${name.charAt(0).toUpperCase()}</div>
-                    <div class="per-info">
-                        <div class="per-name">${name}</div>
-                        <div class="per-role" style="color:${r.color || defaultColor}">${r.role}</div>
-                    </div>
-                </div>
-            `).join('');
+            personnelCache = fallback.map(([name, r]) => ({ name, displayName: name, avatar: '', userId: '', highestRole: { name: r.role, color: r.color || defaultColor }, allRoles: [{ name: r.role, color: r.color || defaultColor }] }));
+            renderPersonnel();
         } else {
             list.innerHTML = '<div class="search-empty">Could not connect to Discord.</div>';
         }
     }
 }
+
+function renderPersonnel() {
+    const list = document.getElementById('perList');
+    if (!list) return;
+
+    // Group by highest role
+    const roleGroups = {};
+    personnelCache.forEach(m => {
+        const role = m.highestRole ? m.highestRole.name : 'Foundation Personnel';
+        const color = m.highestRole ? m.highestRole.color : '#5a706b';
+        if (!roleGroups[role]) roleGroups[role] = { role, color, members: [] };
+        roleGroups[role].members.push(m);
+    });
+
+    // Sort groups by first member's position in personnelCache (which is already roughly sorted)
+    const sortedGroups = Object.values(roleGroups);
+
+    list.innerHTML = sortedGroups.map(g => `
+        <div class="per-group-header" style="border-left-color:${g.color}">${g.role} <span>${g.members.length} MEMBER${g.members.length !== 1 ? 'S' : ''}</span></div>
+        ${g.members.map((m, i) => {
+            const idx = personnelCache.indexOf(m);
+            return `
+            <div class="per-item" style="border-left:3px solid ${m.highestRole ? m.highestRole.color : '#5a706b'};cursor:pointer" onclick="openPersonnelModal(${idx})">
+                <div class="per-av" style="${m.avatar ? 'background-image:url(\'' + m.avatar + '\');background-size:cover' : 'background:var(--b4)'}">${m.avatar ? '' : (m.name || '?').charAt(0).toUpperCase()}</div>
+                <div class="per-info">
+                    <div class="per-name">${escHtml(m.displayName || m.name)}</div>
+                    <div class="per-role" style="color:${m.highestRole ? m.highestRole.color : '#5a706b'}">${escHtml(m.highestRole ? m.highestRole.name : 'Foundation Personnel')}</div>
+                </div>
+                <div style="font-size:9px;color:var(--t4);letter-spacing:1px;padding:2px 6px;border:1px solid var(--bd2);border-radius:2px">${m.allRoles ? m.allRoles.length : 1} ROLE${(!m.allRoles || m.allRoles.length === 1) ? '' : 'S'}</div>
+            </div>`;
+        }).join('')}
+    `).join('');
+}
+
+function openPersonnelModal(idx) {
+    const m = personnelCache[idx];
+    if (!m) return;
+    document.getElementById('pmAvatar').src = m.avatar || '';
+    document.getElementById('pmAvatar').onerror = function() { this.style.display = 'none'; };
+    document.getElementById('pmAvatar').style.display = '';
+    document.getElementById('pmName').textContent = m.displayName || m.name;
+    document.getElementById('pmHandle').textContent = '@' + (m.name || '');
+    const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
+    const hrEl = document.getElementById('pmHighestRole');
+    hrEl.textContent = hr.name;
+    hrEl.style.background = hr.color + '22';
+    hrEl.style.color = hr.color;
+    hrEl.style.border = '1px solid ' + hr.color + '44';
+    const allEl = document.getElementById('pmAllRoles');
+    const roles = m.allRoles || [hr];
+    allEl.innerHTML = roles.map(r => `<span style="display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;background:${r.color}22;color:${r.color};border:1px solid ${r.color}44">${escHtml(r.name)}</span>`).join('') || '<span style="color:var(--t3);font-size:11px">No roles assigned</span>';
+    document.getElementById('personnelModal').classList.add('open');
+}
+function closePersonnelModal() { document.getElementById('personnelModal').classList.remove('open'); }
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('personnelModal')?.addEventListener('click', (e) => { if (e.target.id === 'personnelModal') closePersonnelModal(); });
+});
 
 async function loadDepartments() {
     try {
@@ -3980,65 +3984,307 @@ const CAMERAS = [
     { id: 'CAM-H8-01', label: 'Sector H-8 — Admin Terminal', status: 'online', type: 'admin' },
     { id: 'CAM-COR-12', label: 'Corridor D-7 — Main Hall', status: 'alert', type: 'corridor' },
 ];
+// ===== Canvas 3D Camera Renderer =====
+const camAnimations = [];
 function loadCameras() {
     const el = document.getElementById('cameraGrid');
     if (!el) return;
-    const now = new Date();
-    const ts = now.toLocaleDateString('en-US') + ' ' + now.toLocaleTimeString('en-US', { hour12: false });
-    el.innerHTML = CAMERAS.map(c => {
+    // Stop any existing animations
+    camAnimations.forEach(id => cancelAnimationFrame(id));
+    camAnimations.length = 0;
+
+    el.innerHTML = CAMERAS.map((c, i) => {
         if (c.status === 'offline') {
-            return `<div class="camera-feed"><div class="cam-offline-screen"></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status offline">○ OFFLINE</div></div></div>`;
+            return `<div class="camera-feed"><div class="cam-canvas-wrap" style="display:flex;align-items:center;justify-content:center;background:#040408"><div style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t4);letter-spacing:4px;animation:camStaticTxt 2s steps(4) infinite">NO SIGNAL</div></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status offline">○ OFFLINE</div></div></div>`;
         }
-        // Build 3D scene based on camera type
-        let sceneContent = '';
-        if (c.type === 'containment') {
-            // Containment chamber: acid pool + entity
-            sceneContent = `
-                <div class="cam-wall"><div class="cam-light" style="left:15%"></div><div class="cam-light" style="left:45%"></div><div class="cam-light" style="left:75%"></div><div class="cam-door"></div></div>
-                <div class="cam-floor"></div>
-                <div class="cam-acid"></div>
-                <div class="cam-entity ${c.status === 'alert' ? 'alert' : ''}"></div>`;
-        } else if (c.type === 'corridor') {
-            // Corridor: walking personnel
-            sceneContent = `
-                <div class="cam-wall"><div class="cam-light" style="left:20%"></div><div class="cam-light" style="left:50%"></div><div class="cam-light" style="left:80%"></div><div class="cam-door"></div></div>
-                <div class="cam-floor"></div>
-                <div class="cam-person"></div>
-                <div class="cam-person"></div>`;
-        } else if (c.type === 'cells') {
-            // D-Class cells: multiple doors
-            sceneContent = `
-                <div class="cam-wall"><div class="cam-door" style="left:25%;transform:none"></div><div class="cam-door" style="left:50%;transform:translateX(-50%)"></div><div class="cam-door" style="left:75%;transform:none"></div></div>
-                <div class="cam-floor"></div>
-                <div class="cam-person" style="animation-duration:12s"></div>`;
-        } else if (c.type === 'admin') {
-            // Admin terminal: desk glow
-            sceneContent = `
-                <div class="cam-wall"><div class="cam-light" style="left:10%"></div><div class="cam-light" style="left:35%"></div><div class="cam-light" style="left:60%"></div><div class="cam-light" style="left:85%"></div></div>
-                <div class="cam-floor"></div>`;
-        } else {
-            // Default: empty room
-            sceneContent = `
-                <div class="cam-wall"><div class="cam-light" style="left:25%"></div><div class="cam-light" style="left:55%"></div><div class="cam-light" style="left:80%"></div></div>
-                <div class="cam-floor"></div>
-                <div class="cam-person" style="animation-duration:14s"></div>`;
-        }
+        const now = new Date();
+        const ts = now.toLocaleDateString('en-US') + ' ' + now.toLocaleTimeString('en-US', { hour12: false });
         return `<div class="camera-feed">
-            <div class="camera-3d">
-                <div class="camera-3d-scene">${sceneContent}</div>
-                <div class="cam-vignette"></div>
-                <div class="cam-overlay"></div>
-                <div class="cam-scanline"></div>
-                <div class="cam-rec"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>
-                <div class="cam-timestamp">${c.id} | ${ts}</div>
+            <div class="cam-canvas-wrap">
+                <canvas id="camCanvas${i}" width="340" height="220"></canvas>
+                <div class="cam-vignette-fx"></div>
+                <div class="cam-overlay-fx"></div>
+                <div class="cam-rec-fx"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>
+                <div class="cam-ts-fx">${c.id} | ${ts.split(' ')[1] || ''}</div>
+                <div class="cam-label-fx">${c.label.split('—')[0]?.trim() || ''}</div>
             </div>
             <div class="camera-info">
                 <div class="camera-id">${c.id}</div>
                 <div class="camera-label">${c.label}</div>
-                <div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : c.status === 'alert' ? '⚠ ALERT — MOTION DETECTED' : '○ OFFLINE'}</div>
+                <div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : '⚠ ALERT — MOTION DETECTED'}</div>
             </div>
         </div>`;
     }).join('');
+
+    // Start canvas animations for each camera
+    CAMERAS.forEach((c, i) => {
+        if (c.status === 'offline') return;
+        const canvas = document.getElementById('camCanvas' + i);
+        if (!canvas) return;
+        startCameraAnimation(canvas, c);
+    });
+}
+
+function startCameraAnimation(canvas, camera) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const vpX = W / 2; // vanishing point X
+    const horizonY = H * 0.38; // horizon line (back wall meets floor)
+    const floorBottom = H;
+    let frame = 0;
+
+    // Entity/personnel state
+    const walkers = camera.type === 'corridor' ? [
+        { x: -0.2, z: 0.3, speed: 0.004, color: 'rgba(100,200,180,0.7)' },
+        { x: 0.6, z: 0.6, speed: 0.003, color: 'rgba(120,180,200,0.6)' },
+    ] : camera.type === 'cells' ? [
+        { x: 0.1, z: 0.5, speed: 0.002, color: 'rgba(100,200,180,0.5)' },
+    ] : [];
+    const entityAlert = camera.status === 'alert';
+
+    function project(worldX, z) {
+        // worldX: -1 to 1 (left to right), z: 0 (front/close) to 1 (back/far)
+        const scale = 1 / (1 + z * 2.5);
+        const screenX = vpX + worldX * (W * 0.45) * scale;
+        const screenY = horizonY + (floorBottom - horizonY) * (1 - z) * scale * (1 / (1 - 0.38));
+        return { x: screenX, y: screenY, scale };
+    }
+
+    function drawFloor() {
+        // Floor gradient (dark at back, slightly lighter at front)
+        const grad = ctx.createLinearGradient(0, horizonY, 0, floorBottom);
+        grad.addColorStop(0, '#080812');
+        grad.addColorStop(1, '#0e0e1a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, horizonY, W, floorBottom - horizonY);
+
+        // Floor grid — vertical lines converging to vanishing point
+        ctx.strokeStyle = 'rgba(0,255,200,0.04)';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            const x = vpX + i * (W * 0.12);
+            ctx.beginPath();
+            ctx.moveTo(x, floorBottom);
+            ctx.lineTo(vpX + i * 8, horizonY);
+            ctx.stroke();
+        }
+        // Floor grid — horizontal lines (perspective intervals)
+        for (let z = 0.1; z < 1; z += 0.08) {
+            const y = horizonY + (floorBottom - horizonY) * (1 - z) * (1 - z);
+            ctx.globalAlpha = (1 - z) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    function drawBackWall() {
+        const grad = ctx.createLinearGradient(0, 0, 0, horizonY);
+        grad.addColorStop(0, '#0c0c18');
+        grad.addColorStop(1, '#080812');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, horizonY);
+
+        // Wall texture — subtle vertical lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.01)';
+        for (let x = 0; x < W; x += 20) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, horizonY);
+            ctx.stroke();
+        }
+    }
+
+    function drawCeilingLights() {
+        const lights = [0.2, 0.5, 0.8];
+        lights.forEach(lx => {
+            const flicker = 0.7 + Math.sin(frame * 0.03 + lx * 10) * 0.15 + Math.random() * 0.1;
+            // Light fixture
+            ctx.fillStyle = `rgba(180,220,255,${0.15 * flicker})`;
+            ctx.fillRect(lx * W - 18, 5, 36, 3);
+            // Light cone on floor
+            const coneGrad = ctx.createRadialGradient(lx * W, horizonY, 5, lx * W, floorBottom * 0.8, W * 0.2);
+            coneGrad.addColorStop(0, `rgba(100,150,200,${0.08 * flicker})`);
+            coneGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = coneGrad;
+            ctx.beginPath();
+            ctx.moveTo(lx * W - 4, 8);
+            ctx.lineTo(lx * W + 4, 8);
+            ctx.lineTo(lx * W + 60, floorBottom);
+            ctx.lineTo(lx * W - 60, floorBottom);
+            ctx.closePath();
+            ctx.fill();
+        });
+    }
+
+    function drawDoor(x, z, w, h) {
+        const p = project(x, z);
+        const dw = w * p.scale, dh = h * p.scale;
+        const dx = p.x - dw / 2, dy = p.y - dh;
+        ctx.fillStyle = '#0a0a14';
+        ctx.fillRect(dx, dy, dw, dh);
+        ctx.strokeStyle = 'rgba(0,255,200,0.08)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(dx, dy, dw, dh);
+        // Door handle
+        ctx.fillStyle = 'rgba(0,255,200,0.3)';
+        ctx.fillRect(dx + dw - 4 * p.scale, dy + dh * 0.5, 2 * p.scale, 3 * p.scale);
+    }
+
+    function drawWalker(w) {
+        w.x += w.speed;
+        if (w.x > 1.3) w.x = -0.3;
+        const p = project(w.x, w.z);
+        const s = p.scale;
+        const bodyH = 35 * s;
+        const headR = 5 * s;
+        const px = p.x, py = p.y;
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(px, py, 8 * s, 2 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Body
+        ctx.fillStyle = w.color;
+        ctx.fillRect(px - 3 * s, py - bodyH, 6 * s, bodyH);
+        // Head
+        ctx.beginPath();
+        ctx.arc(px, py - bodyH - headR, headR, 0, Math.PI * 2);
+        ctx.fill();
+        // Walking animation — legs
+        const legPhase = Math.sin(frame * 0.15 + w.x * 10);
+        ctx.strokeStyle = w.color;
+        ctx.lineWidth = 2 * s;
+        ctx.beginPath();
+        ctx.moveTo(px, py - bodyH * 0.3);
+        ctx.lineTo(px + legPhase * 4 * s, py);
+        ctx.moveTo(px, py - bodyH * 0.3);
+        ctx.lineTo(px - legPhase * 4 * s, py);
+        ctx.stroke();
+    }
+
+    function drawEntity() {
+        const z = 0.55;
+        const p = project(0, z);
+        const s = p.scale;
+        const bodyH = 50 * s;
+        const px = p.x, py = p.y;
+        // Shadow in acid
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath();
+        ctx.ellipse(px, py, 15 * s, 3 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Body silhouette — dark mass
+        ctx.fillStyle = '#050508';
+        ctx.beginPath();
+        ctx.ellipse(px, py - bodyH * 0.5, 12 * s, bodyH * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Head
+        ctx.beginPath();
+        ctx.arc(px, py - bodyH - 4 * s, 7 * s, 0, Math.PI * 2);
+        ctx.fill();
+        // Alert glow
+        if (entityAlert) {
+            const pulse = 0.4 + Math.sin(frame * 0.1) * 0.3;
+            const glowGrad = ctx.createRadialGradient(px, py - bodyH * 0.6, 5, px, py - bodyH * 0.6, 40 * s);
+            glowGrad.addColorStop(0, `rgba(255,40,40,${pulse * 0.3})`);
+            glowGrad.addColorStop(1, 'rgba(255,40,40,0)');
+            ctx.fillStyle = glowGrad;
+            ctx.beginPath();
+            ctx.arc(px, py - bodyH * 0.6, 40 * s, 0, Math.PI * 2);
+            ctx.fill();
+            // Eyes
+            ctx.fillStyle = `rgba(255,60,60,${pulse})`;
+            ctx.beginPath();
+            ctx.arc(px - 3 * s, py - bodyH - 4 * s, 1.5 * s, 0, Math.PI * 2);
+            ctx.arc(px + 3 * s, py - bodyH - 4 * s, 1.5 * s, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function drawAcidPool() {
+        const acidY = horizonY + (floorBottom - horizonY) * 0.5;
+        // Acid surface
+        const acidGrad = ctx.createLinearGradient(0, acidY, 0, floorBottom);
+        acidGrad.addColorStop(0, 'rgba(0,255,80,0.06)');
+        acidGrad.addColorStop(0.5, 'rgba(0,200,60,0.12)');
+        acidGrad.addColorStop(1, 'rgba(0,180,50,0.08)');
+        ctx.fillStyle = acidGrad;
+        ctx.fillRect(0, acidY, W, floorBottom - acidY);
+        // Bubbles
+        for (let i = 0; i < 8; i++) {
+            const bx = ((frame * 0.5 + i * 80) % (W + 40)) - 20;
+            const by = acidY + 20 + Math.sin(frame * 0.05 + i) * 15;
+            const br = 2 + Math.sin(frame * 0.1 + i * 2) * 1.5;
+            ctx.fillStyle = `rgba(100,255,100,${0.15 + Math.sin(frame * 0.08 + i) * 0.1})`;
+            ctx.beginPath();
+            ctx.arc(bx, by, Math.max(0.5, br), 0, Math.PI * 2);
+            ctx.fill();
+        }
+        // Acid surface line
+        ctx.strokeStyle = 'rgba(0,255,100,0.1)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x < W; x += 4) {
+            const y = acidY + Math.sin(x * 0.05 + frame * 0.05) * 2;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    function drawNoise() {
+        // Random noise pixels (sparse for performance)
+        for (let i = 0; i < 30; i++) {
+            const x = Math.random() * W;
+            const y = Math.random() * H;
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.04})`;
+            ctx.fillRect(x, y, 1, 1);
+        }
+    }
+
+    function drawScanline() {
+        const sy = (frame * 2) % H;
+        const scanGrad = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
+        scanGrad.addColorStop(0, 'rgba(0,255,200,0)');
+        scanGrad.addColorStop(0.5, 'rgba(0,255,200,0.08)');
+        scanGrad.addColorStop(1, 'rgba(0,255,200,0)');
+        ctx.fillStyle = scanGrad;
+        ctx.fillRect(0, sy - 3, W, 6);
+    }
+
+    function render() {
+        ctx.clearRect(0, 0, W, H);
+        drawBackWall();
+        drawCeilingLights();
+        // Draw doors for cells type
+        if (camera.type === 'cells') {
+            drawDoor(-0.4, 0.7, 40, 70);
+            drawDoor(0, 0.7, 40, 70);
+            drawDoor(0.4, 0.7, 40, 70);
+        } else if (camera.type !== 'admin') {
+            drawDoor(0, 0.85, 35, 60);
+        }
+        drawFloor();
+        // Draw scene-specific elements
+        if (camera.type === 'containment') {
+            drawAcidPool();
+            drawEntity();
+        }
+        // Walkers (sorted by depth — far ones first)
+        walkers.sort((a, b) => b.z - a.z).forEach(drawWalker);
+        // Effects
+        drawNoise();
+        drawScanline();
+        frame++;
+        const animId = requestAnimationFrame(render);
+        camAnimations.push(animId);
+        // Keep array from growing infinitely
+        if (camAnimations.length > 200) camAnimations.splice(0, 100);
+    }
+    render();
 }
 
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
@@ -4999,6 +5245,26 @@ async function saveSiteStatus() {
     <div class="scp-detail-actions">
       <button class="admin-btn" id="sdWatchBtn" onclick="toggleWatchlist()">ADD TO WATCHLIST</button>
       <button class="admin-btn" style="background:var(--b4)" onclick="closeScpDetail()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Personnel detail modal -->
+<div class="scp-detail-modal" id="personnelModal">
+  <div class="scp-detail-box" style="max-width:420px">
+    <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+      <img id="pmAvatar" src="" alt="" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--bd2);background:var(--b3)">
+      <div>
+        <div id="pmName" style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--t1)"></div>
+        <div id="pmHandle" style="font-size:11px;color:var(--t3)"></div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">HIGHEST ROLE</div>
+    <div id="pmHighestRole" style="display:inline-block;padding:4px 12px;border-radius:3px;font-size:12px;font-weight:600;margin-bottom:16px"></div>
+    <div style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">ALL ROLES</div>
+    <div id="pmAllRoles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px"></div>
+    <div class="scp-detail-actions">
+      <button class="admin-btn" style="background:var(--b4)" onclick="closePersonnelModal()">CLOSE</button>
     </div>
   </div>
 </div>
