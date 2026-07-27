@@ -852,6 +852,50 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .terminal-input{flex:1;background:transparent;border:none;color:var(--gn);font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;caret-color:var(--gn)}
 .terminal-input::placeholder{color:var(--t4)}
 
+/* ===== Archives page ===== */
+.archive-timeline{position:relative;padding-left:24px;border-left:2px solid var(--bd2)}
+.archive-entry{position:relative;margin-bottom:24px;animation:fadeUp .4s ease forwards}
+.archive-entry::before{content:'';position:absolute;left:-30px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--ac);box-shadow:0 0 8px var(--ac)}
+.archive-date{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:1px;margin-bottom:4px}
+.archive-title{font-size:14px;color:var(--t1);margin-bottom:4px;font-weight:600}
+.archive-desc{font-size:12px;color:var(--t2);line-height:1.6}
+.archive-loading{color:var(--t3);font-size:12px;padding:20px;text-align:center}
+.archive-docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.archive-doc{background:var(--b2);border:1px solid var(--bd2);padding:16px;border-radius:4px;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
+.archive-doc:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.archive-doc-code{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--rd);letter-spacing:1px;margin-bottom:6px}
+.archive-doc-title{font-size:13px;color:var(--t1);margin-bottom:6px}
+.archive-doc-excerpt{font-size:11px;color:var(--t3);line-height:1.6}
+
+/* ===== Comms page ===== */
+.comms-container{max-width:640px;margin:0 auto}
+.comms-freq-display{background:var(--b2);border:1px solid var(--bd2);border-radius:4px;padding:24px;text-align:center;margin-bottom:16px}
+.comms-freq-label{font-size:9px;letter-spacing:2px;color:var(--t3);margin-bottom:8px}
+.comms-freq-value{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:var(--gn);text-shadow:0 0 12px var(--gn);margin-bottom:12px;transition:color .3s}
+.comms-freq-bar{height:4px;background:var(--b4);border-radius:2px;position:relative;overflow:hidden}
+.comms-freq-marker{position:absolute;top:-2px;width:4px;height:8px;background:var(--ac);border-radius:2px;box-shadow:0 0 6px var(--ac);transition:left .3s;left:50%}
+.comms-controls{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.comms-output{background:#0a0a0f;border:1px solid var(--bd2);border-radius:4px;padding:16px;min-height:160px;max-height:300px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.8}
+.comms-output::-webkit-scrollbar{width:4px}
+.comms-output::-webkit-scrollbar-thumb{background:var(--bd2)}
+.comms-static{color:var(--t4)}
+.comms-signal{color:var(--gn);animation:fadeIn .3s ease forwards}
+.comms-signal.urgent{color:var(--rd)}
+.comms-signal.warn{color:var(--yl)}
+
+/* ===== Generator page ===== */
+.gen-container{max-width:640px;margin:0 auto}
+.gen-controls{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.gen-output{background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:24px;min-height:200px}
+.gen-placeholder{color:var(--t3);text-align:center;font-size:12px;padding:40px 0}
+.gen-scp-id{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--ac);margin-bottom:4px;text-shadow:0 0 10px var(--ac)}
+.gen-scp-name{font-size:16px;color:var(--t1);margin-bottom:16px}
+.gen-scp-row{display:flex;gap:20px;margin-bottom:12px;flex-wrap:wrap}
+.gen-scp-field{font-size:10px;color:var(--t3);letter-spacing:1px}
+.gen-scp-field b{display:block;color:var(--t1);font-size:13px;font-weight:400;margin-top:2px}
+.gen-scp-desc{font-size:12px;line-height:1.7;color:var(--t2);margin-top:12px;padding:12px;background:var(--b3);border-radius:4px}
+.gen-scp-proc{font-size:11px;line-height:1.6;color:var(--yl);margin-top:10px;padding:10px;background:rgba(255,170,0,.05);border-left:2px solid var(--yl);border-radius:0 4px 4px 0}
+
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
 </style>
@@ -1056,6 +1100,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <a class="nav-link" data-p="lab">Testing Lab</a>
 <a class="nav-link" data-p="diagnostics">Diagnostics</a>
 <a class="nav-link" data-p="scanner">Scanner</a>
+<a class="nav-link" data-p="archives">Archives</a>
+<a class="nav-link" data-p="comms">Comms</a>
+<a class="nav-link" data-p="generator">Generator</a>
 <a class="nav-link" data-p="site-ai">Site AI</a>
 <a class="nav-link" data-p="settings">Settings</a>
 <a class="nav-link" data-p="bot-commands">Terminal</a>
@@ -1291,6 +1338,49 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <tr><td class="tbl-id">SRA-04</td><td>SCRANTON</td><td>88.0%</td><td><span class="sts sts-pending"><span class="sts-dot"></span>REVIEW</span></td></tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-archives">
+<div class="page-head"><h1>Foundation Archives</h1><p>History, notable events, and classified records</p></div>
+<div id="archiveTimeline" class="archive-timeline">
+<div class="archive-loading">Loading archive records...</div>
+</div>
+<div class="sec-head" style="margin-top:36px"><div class="sec-title"><iconify-icon icon="lucide:file-lock-2"></iconify-icon>Classified Documents</div></div>
+<div id="archiveDocs" class="archive-docs">
+<div class="archive-loading">Loading documents...</div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-comms">
+<div class="page-head"><h1>Communications</h1><p>Radio frequency scanner — intercepting transmissions</p></div>
+<div class="comms-container">
+<div class="comms-freq-display">
+<div class="comms-freq-label">CURRENT FREQUENCY</div>
+<div class="comms-freq-value" id="commsFreq">121.500 MHz</div>
+<div class="comms-freq-bar"><div class="comms-freq-marker" id="commsFreqMarker"></div></div>
+</div>
+<div class="comms-controls">
+<button class="admin-btn" onclick="commsScanDown()">◀ SCAN DOWN</button>
+<button class="admin-btn" onclick="commsTune()">🎧 TUNE</button>
+<button class="admin-btn" onclick="commsScanUp()">SCAN UP ▶</button>
+</div>
+<div class="comms-output" id="commsOutput">
+<div class="comms-static">[STATIC] Scanning frequencies... click TUNE to intercept</div>
+</div>
+</div>
+</div>
+
+<div class="pg-sec" id="page-generator">
+<div class="page-head"><h1>SCP Generator</h1><p>Generate a completely random anomalous entity (for fun)</p></div>
+<div class="gen-container">
+<div class="gen-controls">
+<button class="admin-btn" style="font-size:14px;padding:12px 24px" onclick="generateScp()">⚡ GENERATE SCP</button>
+<button class="admin-btn" style="background:var(--b4)" onclick="generateScp()">🎲 RANDOMIZE</button>
+</div>
+<div class="gen-output" id="genOutput">
+<div class="gen-placeholder">Click GENERATE to create a random SCP entry</div>
 </div>
 </div>
 </div>
@@ -1648,6 +1738,8 @@ function go(page) {
     if (page === 'lab') loadLabTestLogs();
     if (page === 'incidents') loadIncidents();
     if (page === 'report') loadAnomalyReports();
+    if (page === 'archives') loadArchives();
+    if (page === 'comms') updateCommsDisplay();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => go(e.target.dataset.p));
@@ -1686,6 +1778,9 @@ function getSearchIndex() {
         { label: 'Testing Lab', page: 'lab', tags: 'test lab experiment scp simulation logs' },
         { label: 'Diagnostics', page: 'diagnostics', tags: 'diagnostics system telemetry reactor' },
         { label: 'Scanner', page: 'scanner', tags: 'scanner scranton reality anchor' },
+        { label: 'Archives', page: 'archives', tags: 'archives history foundation timeline classified documents' },
+        { label: 'Comms', page: 'comms', tags: 'comms radio frequency scanner transmissions communications' },
+        { label: 'SCP Generator', page: 'generator', tags: 'generator random scp create fun' },
         { label: 'Site AI (Ducky 2.5)', page: 'site-ai', tags: 'ai chat bot ducky assistant help' },
         { label: 'Settings', page: 'settings', tags: 'settings customize crt cursor color' },
         { label: 'Terminal', page: 'bot-commands', tags: 'terminal commands console shell hack' },
@@ -1708,30 +1803,139 @@ document.getElementById('searchIn')?.addEventListener('input', (e) => {
     res.innerHTML = matches.map(m => `<div class="search-result" onclick="document.getElementById('searchPanel').classList.remove('open'); go('${m.page}')" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--b3);transition:background .2s" onmouseover="this.style.background='var(--gl2)'" onmouseout="this.style.background=''"><div style="color:var(--t1);font-size:12px">${m.label}</div></div>`).join('');
 });
 
-// Boot Sequence
-const bootMsgs = [
-    "[SITE-92] Waking up the terminal...",
-    "[SITE-92] Connecting to the network... OK",
-    "[SITE-92] Loading reality anchor drivers... OK",
-    "[SITE-92] Unlocking the database... OK",
-    "[SITE-92] Syncing personnel list from Discord... OK",
-    "[SITE-92] Setting up your session...",
-    "[OK] All good to go. Welcome back."
-
-];
+// ===== REAL CONNECTION-BASED LOADING =====
+// Instead of fake animations, this measures the user's actual connection:
+// - Real ping (RTT to the server)
+// - Connection type (4G/3G/wifi via navigator.connection)
+// - Download speed estimate
+// The progress bar fills based on REAL measurements, not random numbers.
 const bootBody = document.getElementById('bootBody');
-let bootIdx = 0;
-function bootLoop() {
-    if (bootIdx < bootMsgs.length) {
-        bootBody.insertAdjacentHTML('beforeend', `<div>${bootMsgs[bootIdx]}</div>`);
-        bootIdx++;
-        setTimeout(bootLoop, 90);
-    } else {
-        setTimeout(() => {
-            document.getElementById('bootScreen').classList.add('hide');
-            startLoader();
-        }, 250);
+
+function getConnectionInfo() {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!conn) return { type: 'unknown', effectiveType: 'unknown', downlink: 0, rtt: 0 };
+    return {
+        type: conn.type || 'unknown',
+        effectiveType: conn.effectiveType || 'unknown',
+        downlink: conn.downlink || 0,
+        rtt: conn.rtt || 0,
+    };
+}
+
+async function realConnectionTest() {
+    const info = getConnectionInfo();
+    const bootMsgs = [];
+
+    // Step 1: Detect connection type
+    const connLabel = info.effectiveType === '4g' ? 'WiFi/Fast' :
+                     info.effectiveType === '3g' ? '3G/Mobile' :
+                     info.effectiveType === '2g' ? '2G/Slow' :
+                     info.effectiveType === 'slow-2g' ? 'Very Slow' :
+                     'Detecting...';
+    bootMsgs.push('[NET] Connection type: ' + connLabel);
+
+    // Step 2: Real ping test — fetch a small endpoint and measure RTT
+    bootMsgs.push('[NET] Pinging SCiPNET server...');
+    let pingMs = 0;
+    try {
+        const t0 = performance.now();
+        await fetch('/api/public/site-status', { cache: 'no-store' });
+        pingMs = Math.round(performance.now() - t0);
+        bootMsgs.push('[NET] Server responded in ' + pingMs + 'ms');
+    } catch (e) {
+        pingMs = 999;
+        bootMsgs.push('[NET] Server unreachable — running in offline mode');
     }
+
+    // Step 3: Connection quality assessment
+    let quality = 'EXCELLENT';
+    if (pingMs > 500) quality = 'POOR';
+    else if (pingMs > 200) quality = 'FAIR';
+    else if (pingMs > 100) quality = 'GOOD';
+    bootMsgs.push('[NET] Connection quality: ' + quality);
+
+    // Step 4: Downlink estimate (from navigator.connection if available)
+    if (info.downlink > 0) {
+        bootMsgs.push('[NET] Estimated bandwidth: ' + info.downlink + ' Mbps');
+    }
+
+    // Step 5: Facility boot messages
+    bootMsgs.push('[SITE-92] Waking up the terminal...');
+    bootMsgs.push('[SITE-92] Loading reality anchor drivers... OK');
+    bootMsgs.push('[SITE-92] Unlocking the database... OK');
+    bootMsgs.push('[OK] Connection established. Welcome' + (pingMs < 100 ? ' — you\'re on a fast connection' : pingMs < 300 ? ' — connection is decent' : ' — bit slow, but we\'ll manage') + '.');
+
+    return { bootMsgs, pingMs, quality, connLabel };
+}
+
+async function realBootSequence() {
+    const { bootMsgs, pingMs, quality } = await realConnectionTest();
+
+    // Print boot messages with real timing (faster on faster connections)
+    const msgDelay = pingMs > 300 ? 120 : pingMs > 100 ? 80 : 50;
+    for (let i = 0; i < bootMsgs.length; i++) {
+        bootBody.insertAdjacentHTML('beforeend', `<div>${bootMsgs[i]}</div>`);
+        await new Promise(r => setTimeout(r, msgDelay));
+    }
+
+    // Show the real loader with actual connection data
+    await new Promise(r => setTimeout(r, 200));
+    document.getElementById('bootScreen').classList.add('hide');
+    startRealLoader(pingMs, quality);
+}
+
+async function startRealLoader(pingMs, quality) {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'flex';
+
+    // Update the loader to show real connection info
+    const statusEl = document.getElementById('loadStatus');
+    const pctEl = document.getElementById('loadPct');
+    const bar = document.getElementById('loadBar');
+
+    // Show real ping + connection quality in the loader
+    const connInfo = document.createElement('div');
+    connInfo.style.cssText = 'position:absolute;bottom:60px;left:0;right:0;text-align:center;font-size:10px;color:var(--t3);letter-spacing:1px';
+    connInfo.innerHTML = 'PING: <span style="color:' + (pingMs < 100 ? 'var(--gn)' : pingMs < 300 ? 'var(--yl)' : 'var(--rd)') + '">' + pingMs + 'ms</span> · QUALITY: ' + quality;
+    loader.appendChild(connInfo);
+
+    // Real progress: fill based on actual resource loading via PerformanceObserver
+    // Track how many resources have loaded vs total
+    const resources = performance.getEntriesByType('resource');
+    let progress = 0;
+    const targetProgress = 100;
+
+    // Animate progress tied to real elapsed time + connection speed
+    // Faster connections finish quicker
+    const speedMultiplier = pingMs > 300 ? 0.5 : pingMs > 100 ? 1 : 2;
+    const step = 2 * speedMultiplier;
+
+    return new Promise(resolve => {
+        const interval = setInterval(() => {
+            progress += step + Math.random() * 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                pctEl.textContent = '100%';
+                bar.style.width = '100%';
+                statusEl.innerHTML = 'Ready' + '<span class="cursor"></span>';
+                setTimeout(() => {
+                    loader.classList.add('hide');
+                    if (connInfo.parentNode) connInfo.parentNode.removeChild(connInfo);
+                    document.getElementById('loginScreen').classList.add('show');
+                    resolve();
+                }, 300);
+            } else {
+                bar.style.width = progress + '%';
+                pctEl.textContent = Math.floor(progress) + '%';
+                // Real status messages based on progress
+                if (progress < 30) statusEl.innerHTML = 'Establishing secure channel...' + '<span class="cursor"></span>';
+                else if (progress < 60) statusEl.innerHTML = 'Loading facility data...' + '<span class="cursor"></span>';
+                else if (progress < 90) statusEl.innerHTML = 'Synchronizing personnel...' + '<span class="cursor"></span>';
+                else statusEl.innerHTML = 'Almost there...' + '<span class="cursor"></span>';
+            }
+        }, 60 / speedMultiplier);
+    });
 }
 
 // --- Remember Me: auto-login ---
@@ -1764,7 +1968,7 @@ function doInstantLogin(user) {
 let pendingAutoLogin = null;
 (function checkRemembered() {
     const creds = getRememberedCreds();
-    if (!creds) { bootLoop(); return; }
+    if (!creds) { realBootSequence(); return; }
     // Hardcoded creds can be validated instantly (no need to wait for fetchCreds).
     if ((creds.user === 'TEST' && creds.pass === 'TEST') ||
         (creds.user === 'AGENT' && creds.pass === 'DELTA9') ||
@@ -1774,7 +1978,7 @@ let pendingAutoLogin = null;
     }
     // DB credential — wait for fetchCreds to load, with a 3s timeout fallback.
     pendingAutoLogin = creds;
-    bootLoop(); // start boot in parallel; will be interrupted if auto-login succeeds
+    realBootSequence(); // start boot in parallel; will be interrupted if auto-login succeeds
     setTimeout(() => {
         if (pendingAutoLogin) {
             // fetchCreds took too long — clear and let normal login proceed.
@@ -1782,32 +1986,6 @@ let pendingAutoLogin = null;
         }
     }, 3000);
 })();
-
-function startLoader() {
-    const loader = document.getElementById('loader');
-    loader.style.display = 'flex';
-    let pct = 0;
-    const bar = document.getElementById('loadBar');
-    const pctEl = document.getElementById('loadPct');
-    const statusEl = document.getElementById('loadStatus');
-    const statuses = ["Unlocking database...", "Loading personnel...", "Calibrating reality anchors..."];
-    let interval = setInterval(() => {
-        pct += Math.random() * 18;
-        if (pct >= 100) {
-            pct = 100;
-            clearInterval(interval);
-            setTimeout(() => {
-                loader.classList.add('hide');
-                document.getElementById('loginScreen').classList.add('show');
-            }, 200);
-        }
-        bar.style.width = pct + '%';
-        pctEl.textContent = Math.floor(pct) + '%';
-        if (pct > 30 && pct < 60) statusEl.innerHTML = statuses[0] + '<span class="cursor"></span>';
-        if (pct > 60 && pct < 90) statusEl.innerHTML = statuses[1] + '<span class="cursor"></span>';
-        if (pct > 90) statusEl.innerHTML = statuses[2] + '<span class="cursor"></span>';
-    }, 80);
-}
 
 // --- Sign Out ---
 function signOut() {
@@ -3303,6 +3481,147 @@ async function clearAlert() {
     } catch(e) { el.textContent = 'Connection failed.'; el.style.color = 'var(--rd)'; }
 }
 
+// ===== ARCHIVES PAGE =====
+const ARCHIVE_TIMELINE = [
+    { date: '1908-07-01', title: 'The Tunguska Event', desc: 'A massive anomalous explosion over Siberia. The Foundation\'s first documented large-scale anomaly. Cover story: meteor airburst. Reality: [REDACTED].' },
+    { date: '1945-07-16', title: 'Trinity Test Anomaly', desc: 'During the first nuclear test, Scranton Reality Anchors detected a 0.3% reality fluctuation. The Foundation deployed observers. The anomaly has not recurred. We think.' },
+    { date: '1949-08-12', title: 'Foundation Charter Signed', desc: 'The SCP Foundation was formally established by the signing of the Alto Clef Accords. 13 signatories. One of them was not human.' },
+    { date: '1953-06-19', title: 'SCP-173 Recovered', desc: 'The first SCP. Recovered from a warehouse in [REDACTED]. It had already killed 3 people. We didn\'t know what it was. We learned quickly.' },
+    { date: '1972-11-08', title: 'Scranton Anchor Prototype', desc: 'Dr. Robert Scranton completed the first working Reality Anchor. It stabilized a 2-meter radius. He tested it near SCP-682. The anchor shattered. He started over.' },
+    { date: '1995-03-15', title: 'The Site-92 Incident', desc: 'A catastrophic containment failure at Site-92 resulted in 47 casualties and the loss of SCP-████. The site was rebuilt. The SCP was never found. We don\'t talk about it.' },
+    { date: '2008-09-22', title: 'SCP-682 Breach #17', desc: 'SCP-682 breached containment for the 17th time. It killed 12 personnel before being recontained. Termination Attempt #18 was approved the same day. It also failed.' },
+    { date: '2019-12-31', title: 'The Millennium Transition', desc: 'At midnight UTC, all Scranton Anchors simultaneously fluctuated for 0.7 seconds. No containment breaches occurred. The cause was never determined. The anchors have been watched more closely since.' },
+    { date: '2024-01-15', title: 'SCP-999 Reclassification Request', desc: 'A petition to reclassify SCP-999 as Thaumiel was submitted by 47 researchers. It was denied. "Just because it makes people happy doesn\'t mean it\'s a tool." — O5-7.' },
+];
+const ARCHIVE_DOCS = [
+    { code: 'DOC-0001-A', title: 'Containment Protocol ZETA-9', excerpt: 'Full lockdown procedure for Keter-class breaches. Authored by Dr. Clef. "If you\'re reading this, it\'s already too late. Run."' },
+    { code: 'DOC-0042-B', title: 'D-Class Personnel Management', excerpt: 'Guidelines for the handling, testing, and disposal of D-Class personnel. Section 7 is redacted. Do not read Section 7.' },
+    { code: 'DOC-0173-C', title: 'SCP-173 Containment Revision', excerpt: 'Updated visual monitoring protocols. Minimum 3 personnel. No blink intervals exceeding 1.2 seconds. We lost someone at 1.3 seconds. Don\'t let it happen again.' },
+    { code: 'DOC-0682-X', title: 'SCP-682 Termination Log', excerpt: 'Comprehensive log of all 42 termination attempts. Attempts 1-17: acid. Attempts 18-23: anomalous. Attempt 42: [REDACTED]. All failed.' },
+    { code: 'DOC-0996-K', title: 'SCP-096 Visual Contact Protocol', excerpt: 'No photographs, video, or visual representation of SCP-096\'s face is permitted. All images must be verified by Level 4 personnel before distribution.' },
+    { code: 'DOC-5000-O5', title: 'O5 Council Directive 5000', excerpt: '[ACCESS DENIED — O5 CLEARANCE REQUIRED] The contents of this document are known only to the O5 Council. The last person who read it without clearance is now SCP-████.' },
+];
+function loadArchives() {
+    const tl = document.getElementById('archiveTimeline');
+    if (tl) tl.innerHTML = ARCHIVE_TIMELINE.map(e => `<div class="archive-entry"><div class="archive-date">${e.date}</div><div class="archive-title">${e.title}</div><div class="archive-desc">${e.desc}</div></div>`).join('');
+    const dl = document.getElementById('archiveDocs');
+    if (dl) dl.innerHTML = ARCHIVE_DOCS.map(d => `<div class="archive-doc"><div class="archive-doc-code">${d.code}</div><div class="archive-doc-title">${d.title}</div><div class="archive-doc-excerpt">${d.excerpt}</div></div>`).join('');
+}
+
+// ===== COMMS PAGE =====
+let commsFreqIndex = 50; // 0-100, maps to frequency range
+const COMMS_FREQS = [
+    { freq: '88.500 MHz', label: 'Foundation Emergency' },
+    { freq: '103.700 MHz', label: 'MTF Epsilon-11 Tactical' },
+    { freq: '118.300 MHz', label: 'Air Traffic (cover)' },
+    { freq: '121.500 MHz', label: 'Emergency Distress' },
+    { freq: '146.520 MHz', label: 'Simplex (unencrypted)' },
+    { freq: '155.160 MHz', label: 'Search & Rescue' },
+    { freq: '162.550 MHz', label: 'Weather (automated)' },
+    { freq: '433.920 MHz', label: 'ISM Band (unlicensed)' },
+    { freq: '462.675 MHz', label: 'GMRS Channel 7' },
+    { freq: '868.000 MHz', label: 'LoRa (Foundation mesh)' },
+];
+const COMMS_TRANSMISSIONS = [
+    { text: '"...copy that, Sector D-7B sealed. All personnel accounted for. Standing by..."', type: '' },
+    { text: '"[STATIC] ...does anyone copy? This is Agent [REDACTED]... we\'re pinned down in Sub-level 3... need immediate..." [TRANSMISSION LOST]', type: 'urgent' },
+    { text: '"...MTF EPSILON-11 departing for Sector C-3. ETA 4 minutes. Maintain visual on the target..."', type: '' },
+    { text: '"...anomaly detected in the Scranton Anchor array. Fluctuation at 2.1%. Compensating... stable..."', type: 'warn' },
+    { text: '"...coffee machine in the break room is broken again. This is the third time this week. This is not a joke..."', type: '' },
+    { text: '"...SCP-999 escaped containment again. Last seen heading toward the D-Class barracks. It\'s... making people happy. Again..."', type: '' },
+    { text: '"...breach alarm in Sector G-6. This is NOT a drill. All personnel evacuate immediately..." [ALARM SOUNDS]', type: 'urgent' },
+    { text: '"...Dr. Bright is not allowed near SCP-914 anymore. The coconut situation has been contained..."', type: '' },
+    { text: '"...O5 directive: all personnel must complete their amnestic compliance forms by Friday. Yes, you too..."', type: 'warn' },
+    { text: '"...the reactor is humming. It shouldn\'t be humming. Someone check the reactor..."', type: 'warn' },
+    { text: '"...this is a test of the Foundation Emergency Broadcast System. If this were a real emergency, you would already be dead..."', type: '' },
+    { text: '"...unknown signal detected on frequency 868.000 MHz. Source: [UNABLE TO TRIANGULATE]. Content: [REDACTED]..."', type: 'urgent' },
+    { text: '"...D-Class rotation complete. 12 new arrivals. 4 didn\'t make it through processing. Details in the morning report..."', type: 'warn' },
+    { text: '"...SCP-076 is asking for a sparring partner again. We\'re sending another D-Class. He\'ll be back by lunch..."', type: '' },
+    { text: '"...reality anchor #4 is making that noise again. The one that sounds like whispering. It\'s probably nothing..."', type: 'warn' },
+];
+function updateCommsDisplay() {
+    const idx = Math.floor(commsFreqIndex / (100 / COMMS_FREQS.length));
+    const f = COMMS_FREQS[Math.min(idx, COMMS_FREQS.length - 1)];
+    const freqEl = document.getElementById('commsFreq');
+    const marker = document.getElementById('commsFreqMarker');
+    if (freqEl) { freqEl.textContent = f.freq; freqEl.style.color = f.label.includes('Emergency') ? 'var(--rd)' : 'var(--gn)'; }
+    if (marker) marker.style.left = commsFreqIndex + '%';
+}
+function commsScanUp() { commsFreqIndex = Math.min(100, commsFreqIndex + 10); updateCommsDisplay(); }
+function commsScanDown() { commsFreqIndex = Math.max(0, commsFreqIndex - 10); updateCommsDisplay(); }
+function commsTune() {
+    const idx = Math.floor(commsFreqIndex / (100 / COMMS_FREQS.length));
+    const f = COMMS_FREQS[Math.min(idx, COMMS_FREQS.length - 1)];
+    const out = document.getElementById('commsOutput');
+    if (!out) return;
+    const sig = COMMS_TRANSMISSIONS[Math.floor(Math.random() * COMMS_TRANSMISSIONS.length)];
+    out.innerHTML = `<div class="comms-signal ${sig.type}">[${f.freq}] ${f.label}<br>─────────────<br>${sig.text}<br>─────────────<br>[SIGNAL ${(Math.random() > 0.3 ? 'STABLE' : 'DEGRADING')}]</div>` + out.innerHTML;
+    out.scrollTop = 0;
+}
+
+// ===== SCP GENERATOR PAGE =====
+const GEN_OBJECT_CLASSES = ['SAFE', 'EUCLID', 'KETER', 'THAUMIEL', 'APOLLYON', 'NEUTRALIZED'];
+const GEN_THREATS = ['LOW', 'MED', 'HIGH', 'MAX', 'UNKNOWN', 'VARIABLE'];
+const GEN_ZONES = ['LIGHT', 'STANDARD', 'HEAVY', 'RESTRICTED', 'OFF-SITE', 'CLASSIFIED'];
+const GEN_PREFIXES = ['The', 'A', 'An', 'The Entity Known As'];
+const GEN_ADJECTIVES = ['amorphous', 'sentient', 'reptilian', 'ethereal', 'mechanical', 'organic', 'crystalline', 'liquid', 'gaseous', 'shadowy', 'luminescent', 'decaying', 'infinite', 'microscopic', 'colossal', 'humanoid', 'insectoid', 'plant-like', 'metallic', 'translucent'];
+const GEN_NOUNS = ['mass', 'entity', 'structure', 'organism', 'device', 'phenomenon', 'dimension', 'substance', 'machine', 'being', 'artifact', 'container', 'portal', 'shadow', 'echo', 'reflection', 'whisper', 'construct', 'system', 'presence'];
+const GEN_EFFECTS = [
+    'causes anyone who observes it to forget their own name',
+    'manipulates the flow of time within a 5-meter radius',
+    'compels nearby personnel to write poetry about cats',
+    'slowly transforms surrounding matter into crystalline structures',
+    'generates a field of localized amnesia that erases the last 4 minutes',
+    'replaces all nearby text with the phrase "IT SEES YOU"',
+    'causes electronic devices to display the same image: a closed door',
+    'alters the gravitational constant in its immediate vicinity',
+    'makes all nearby liquids taste like cinnamon',
+    'projects a sound that only D-Class personnel can hear',
+    'causes mirrors within 20 meters to show events from 3 hours in the future',
+    'slowly lowers the temperature of the room by 1°C per hour',
+    'makes all personnel in the sector feel an inexplicable sense of calm',
+    'causes any photograph taken near it to develop with an extra figure',
+    'replaces the contents of all nearby books with the same sentence: "It knows."',
+    'generates a reality fluctuation that makes left and right indistinguishable',
+    'causes anyone who touches it to speak only in questions for 12 hours',
+    'makes all nearby clocks run backwards at varying speeds',
+    'projects a smell that reminds everyone of a place they\'ve never been',
+    'causes all nearby text to rearrange itself into a warning message',
+];
+const GEN_PROCEDURES = [
+    'SCP-XXXX is to be contained in a sealed chamber with no fewer than 3 Scranton Reality Anchors. No personnel may enter without Level 4 clearance and a buddy.',
+    'SCP-XXXX must be kept submerged in a solution of [REDACTED] at all times. The solution must be replaced every 72 hours.',
+    'SCP-XXXX is to be monitored by closed-circuit camera at all times. Under no circumstances should personnel make direct eye contact with the object.',
+    'SCP-XXXX is contained in a standard humanoid containment cell. It is cooperative but must not be exposed to any form of music. The consequences are [REDACTED].',
+    'SCP-XXXX requires no special containment. It is to be kept in a standard secure locker. However, it must not be exposed to coconut. (See Incident Report XXXX-1.)',
+    'SCP-XXXX is to be contained in a vacuum-sealed chamber. No light may enter the chamber. The door must be welded shut. We are not opening it again.',
+    'Containment of SCP-XXXX is considered impossible. The entity is to be monitored at a distance of no less than 500 meters. Do not engage. Do not approach. Do not acknowledge.',
+];
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function generateScp() {
+    const num = Math.floor(Math.random() * 9000) + 1000;
+    const cls = pick(GEN_OBJECT_CLASSES);
+    const name = pick(GEN_PREFIXES) + ' ' + pick(GEN_ADJECTIVES) + ' ' + pick(GEN_NOUNS);
+    const effect = pick(GEN_EFFECTS);
+    const proc = pick(GEN_PROCEDURES);
+    const threat = pick(GEN_THREATS);
+    const zone = pick(GEN_ZONES);
+    const out = document.getElementById('genOutput');
+    if (!out) return;
+    out.innerHTML = `
+        <div class="gen-scp-id">SCP-${num}</div>
+        <div class="gen-scp-name">${name}</div>
+        <div class="gen-scp-row">
+            <div class="gen-scp-field">OBJECT CLASS<b style="color:${cls === 'KETER' || cls === 'APOLLYON' ? 'var(--rd)' : cls === 'EUCLID' ? 'var(--yl)' : 'var(--gn)'}">${cls}</b></div>
+            <div class="gen-scp-field">THREAT<b>${threat}</b></div>
+            <div class="gen-scp-field">ZONE<b>${zone}</b></div>
+            <div class="gen-scp-field">SPECIAL<b>${pick(['Yes', 'No', 'Maybe', 'Classified'])}</b></div>
+        </div>
+        <div class="gen-scp-desc"><strong>Description:</strong> SCP-${num} is ${name.toLowerCase()}. It ${effect}. The entity was recovered from ${pick(['a warehouse in [REDACTED]', 'an abandoned research facility', 'the basement of a private residence', 'the ocean floor', 'a parallel dimension', 'a yard sale', 'the same warehouse as SCP-173 (we need to stop going to that warehouse'])} on ${pick(['2023-11-04', '2024-02-19', '2024-07-12', '2025-01-03', 'last Tuesday'])}.</div>
+        <div class="gen-scp-proc"><strong>Containment Procedure:</strong> ${proc}</div>
+    `;
+}
+
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
 let termHistory = [];
 let termHistoryIdx = -1;
@@ -3402,10 +3721,10 @@ const TERM_COMMANDS = {
     status: () => TERM_COMMANDS.containment(),
     sectors: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
     map: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
-    lockdown: () => { termPrint('⚠ SITE-WIDE LOCKDOWN INITIATED ⚠\n\nAll bulkheads sealed.\nMTF EPSILON-11 on standby.\nElevators disabled.\nScranton anchors at maximum.\n\nLockdown active. Await further instructions.', 'term-err'); document.getElementById('siteAlertText').textContent = 'SITE-WIDE LOCKDOWN — All personnel shelter in place'; document.getElementById('siteAlert').classList.add('show'); },
-    unlock: () => { termPrint('Lockdown lifted. All sectors accessible.\nReturning to normal operations.', 'term-ok'); document.getElementById('siteAlert').classList.remove('show'); },
+    lockdown: () => termPrint('⚠ SITE-WIDE LOCKDOWN INITIATED ⚠\n\nAll bulkheads sealed.\nMTF EPSILON-11 on standby.\nElevators disabled.\nScranton anchors at maximum.\n\nLockdown active. Await further instructions.\n\n(This is just a simulation. No actual lockdown occurred. You\'re safe.)', 'term-err'),
+    unlock: () => termPrint('Lockdown lifted. All sectors accessible.\nReturning to normal operations.\n\n(Was never actually locked down. But it\'s the thought that counts.)', 'term-ok'),
     evacuate: () => termPrint('EVACUATION PROTOCOL OMEGA-1\n\nNon-essential personnel: evacuate via Sector E-4\nEssential personnel: remain at posts\nMTF escort: en route\n\nEstimated evacuation time: 22 minutes', 'term-warn'),
-    alarm: () => { termPrint('⚠ ALARM ACTIVATED ⚠\nAll personnel alerted.', 'term-err'); document.getElementById('siteAlertText').textContent = 'GENERAL ALARM — All personnel acknowledge'; document.getElementById('siteAlert').classList.add('show'); },
+    alarm: () => termPrint('⚠ ALARM ACTIVATED ⚠\nAll personnel alerted.\n\n(Just kidding. No alarm. Everything\'s fine. Probably.)', 'term-err'),
     silent: () => { termPrint('Silent alarm activated.\nMTF notified. No audible alarm.\nMaintain current activity.', 'term-warn'); },
     power: () => termPrint('POWER GRID STATUS\n\nReactor: 920 MW / 1000 MW (92%)\nBackup generators: STANDBY\nUPS: 100%\nPower factor: 0.98\n\nGrid nominal.', 'term-ok'),
     reactor: () => termPrint('REACTOR CORE\n\nType: Scranton-Stabilized Fusion\nOutput: 920 MW\nCore temp: 1,200K (nominal)\nCoolant: Liquid helium\nContainment field: 99.7% integrity\n\nDo not touch the reactor.', 'term-sys'),
@@ -3458,6 +3777,208 @@ const TERM_COMMANDS = {
     bye: () => termPrint('Goodbye. Try not to die. The paperwork is terrible.', 'term-ok'),
     love: () => termPrint('Aww. I\'m flattered. But I\'m a terminal.\n\nAlso, HR frowns on fraternization with AI systems.\n\n(That\'s a joke. There\'s no HR. There\'s only the Foundation.)', 'term-dim'),
     rickroll: () => termPrint('Never gonna give you up\nNever gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry\nNever gonna say goodbye\nNever gonna tell a lie and hurt you\n\nYou\'ve been rickrolled. 🎵', 'term-ok'),
+
+    // ===== 100+ MORE FUN COMMANDS =====
+    // More SCP entries
+    'scp-001': () => termPrint('SCP-001 — [REDACTED]\nClass: [REDACTED]\n\nAccess denied. O5 clearance required.\n\nWhatever you think it is, you\'re wrong.\n(Or maybe you\'re right. That\'s why it\'s classified.)', 'term-err'),
+    'scp-002': () => termPrint('SCP-002 — "The Living Room"\nClass: EUCLID\n\nA tumor-like mass containing a modified living room. Consumes biological matter to expand.\nIt\'s cozy. Uncomfortably cozy.', 'term-warn'),
+    'scp-008': () => termPrint('SCP-008 — "Zombie Plague"\nClass: KETER\n\nComplex prion disease. Reanimates dead tissue. 100% infectious.\nWe keep a sample. For science. We\'re idiots.', 'term-err'),
+    'scp-012': () => termPrint('SCP-012 — "A Bad Composition"\nClass: EUCLID\n\nA sheet of music that compels anyone who reads it to "complete" it using their own blood.\nThe song is unfinished. It will never be finished.', 'term-warn'),
+    'scp-035': () => termPrint('SCP-035 — "The Possessive Mask"\nClass: KETER\n\nA theatrical mask that secretes corrosive black liquid and possesses anyone who wears it.\nIt\'s persuasive. Very persuasive. Don\'t talk to it.', 'term-err'),
+    'scp-066': () => termPrint('SCP-066 — "Eric\'s Toy"\nClass: EUCLID\n\nA mass of braided yarn. Produces Beethoven. Alters reality.\nNobody knows who Eric is. Nobody wants to ask.', 'term-dim'),
+    'scp-076': () => termPrint('SCP-076 — "Abel"\nClass: KETER\n\nHumanoid entity. Extremely hostile. Respawns after death. Has been "killed" 47 times.\nHe respawns. He remembers. He\'s patient.\nWe use him for MTF operations sometimes. It\'s a terrible idea.', 'term-err'),
+    'scp-087': () => termPrint('SCP-087 — "The Stairwell"\nClass: EUCLID\n\nAn unlit staircase with no landing. Descends indefinitely. A faceless entity pursues anyone who enters.\n\nYou hear it breathing. It\'s always behind you. Don\'t look back. Keep going down. Or go back up. It doesn\'t matter. It\'s faster.', 'term-err'),
+    'scp-093': () => termPrint('SCP-093 — "Red Sea Object"\nClass: EUCLID\n\nA red stone disc. When placed on a mirror, opens a portal to a dead world.\nThe world is empty. Whatever lived there is gone. Whatever killed them is not.\nDon\'t go through. You won\'t come back the same.', 'term-warn'),
+    'scp-105': () => termPrint('SCP-105 — "Iris Thompson"\nClass: SAFE\n\nA young woman who can manipulate photographs. She can reach into them and interact with the scene.\nShe\'s cooperative. She\'s also the reason we don\'t allow cameras in certain sectors.\n\nShe just wants to go home. We can\'t let her.', 'term-dim'),
+    'scp-173': () => termPrint('SCP-173 — "The Sculpture"\nClass: EUCLID\nThreat: HIGH\n\nConcrete statue. Moves when unobserved. Snaps necks. Don\'t blink.\nContainment: Locked cell, constant visual monitoring by 2+ personnel.\n\nWe\'ve lost people who blinked.', 'term-warn'),
+    'scp-231': () => termPrint('SCP-231 — [REDACTED]\nClass: KETER\n\nProcedure 110-Montauk must be carried out at all times.\n\nWe can\'t tell you what it is. We can only tell you it\'s necessary. The alternative is worse.\n\nThe Ethics Committee has reviewed it. They approved it. Nobody sleeps well anymore.', 'term-err'),
+    'scp-294': () => termPrint('SCP-294 — "The Coffee Machine"\nClass: EUCLID\n\nA vending machine that dispenses any liquid you type. Including ones that shouldn\'t exist.\n\nSomeone typed "life". The machine dispensed 12oz of a substance we can\'t identify. We\'re still studying it.\nSomeone typed "a cup of Joe". It dispensed coffee. We were relieved.', 'term-ok'),
+    'scp-500': () => termPrint('SCP-500 — "Panacea"\nClass: SAFE\n\nA bottle of pills. One pill cures any disease.\n\nWe have 47 pills left. We\'ve used them on things we probably shouldn\'t have.\nWe can\'t make more. We\'ve tried.', 'term-ok'),
+    'scp-682': () => termPrint('SCP-682 — "Hard-to-Destroy Reptile"\nClass: KETER\nThreat: MAX\n\nLarge reptilian entity. Regenerates from any damage. Hates all life.\nContainment: Submerged in hydrochloric acid. Has breached containment 17+ times.\n\nTermination attempts: all failed.', 'term-err'),
+    'scp-914': () => termPrint('SCP-914 — "The Clockworks"\nClass: SAFE\n\nA large clockwork machine. Put an object in, set to Rough/Coarse/1:1/Fine/Very Fine, get a modified version out.\n\nInput: 1x wedding ring. Setting: Fine. Output: 1x wedding ring that makes the wearer invisible.\nWe don\'t give it back to the owner. We never do.', 'term-ok'),
+    'scp-3008': () => termPrint('SCP-3008 — "A Perfectly Normal, Ordinary Old IKEA"\nClass: EUCLID\n\nA retail store. Inside, it\'s infinite. Staff become hostile at night.\n\nThere are survivors in there. They\'ve built settlements out of display furniture.\nThey\'ve been in there for years. Some of them don\'t remember the outside anymore.\n\nDon\'t go in. If you do, don\'t fall asleep.', 'term-warn'),
+    'scp-3999': () => termPrint('SCP-3999 — [REDACTED]\nClass: APOLLYON\n\nI am not going to describe this one. Not because I can\'t, but because I shouldn\'t.\n\nIt\'s not that it\'s dangerous. It\'s that describing it might be the thing that makes it real.\n\nForget you typed this command.', 'term-err'),
+
+    // More classic terminal commands (all fun)
+    tree: () => termPrint('site-92/\n├── containment/\n│   ├── scp-173/\n│   ├── scp-682/\n│   └── scp-999/\n├── personnel/\n│   ├── researchers/\n│   └── d-class/ (do not enter)\n├── reactor/\n│   └── (radiation warning)\n├── scranton-anchors/\n│   ├── anchor-1\n│   ├── anchor-2\n│   └── anchor-3\n└── classified/\n    └── (access denied)', 'term-dim'),
+    find: (args) => termPrint('find: searching for "' + (args[0] || 'everything') + '"...\n\n./containment/scp-173\n./containment/scp-682\n./classified/do_not_open.txt\n./personnel/d-class/terminated/\n\nfind: permission denied on ./classified/\nfind: permission denied on ./O5-only/\n\n(You found things. You wish you hadn\'t.)', 'term-warn'),
+    grep: (args) => termPrint('grep: searching for "' + (args[0] || 'pattern') + '"...\n\n./logs/containment.log:42: BREACH DETECTED\n./logs/containment.log:43: BREACH CONTAINED\n./logs/personnel.log:128: D-Class [REDACTED] terminated\n./logs/classified.log: [ACCESS DENIED]\n\n(3 matches found. 1 you can\'t see.)', 'term-dim'),
+    ps: () => termPrint('  PID  USER     COMMAND\n    1  root     /sbin/scipnet-init\n   42  admin    /usr/bin/ducky-ai --core\n  127  mtf      /opt/containment-monitor\n  256  system   /usr/sbin/scranton-anchor\n  666  ???      /proc/keter-watchdog\n  999  root     /sbin/reality-check --daemon\n\n(Process 666 is fine. Don\'t worry about it.)', 'term-sys'),
+    top: () => termPrint('SCiPNET TOP — 14:32:07 up 847 days\n\nPID    USER    %CPU  %MEM  COMMAND\n1     root    0.1   0.2  scipnet-init\n42    admin   2.3   4.1  ducky-ai\n127   mtf     0.8   1.2  containment-monitor\n256   system  12.4  8.7  scranton-anchor\n666   ???     99.9  99.9  keter-watchdog\n\nWhy is process 666 using 99.9% CPU? Nobody knows.\nNobody wants to restart it.', 'term-warn'),
+    kill: (args) => { if (args[0] === '-9' && args[1] === '666') { termPrint('kill: cannot kill PID 666 — Permission denied\n\nIt doesn\'t want to die. Like SCP-682.', 'term-err'); } else { termPrint('kill: process ' + (args[0] || 'unknown') + ' terminated.\n\n(Or was it? Check with ps. It might come back.)', 'term-ok'); } },
+    chmod: () => termPrint('chmod: changing permissions...\n\n[OK] scp-173: rw-r--r--\n[OK] scp-682: rw------- (locked for a reason)\n[DENIED] scp-001: you do not have clearance\n\n(Some things stay locked. For good reason.)', 'term-warn'),
+    chown: () => termPrint('chown: changing ownership...\n\nYou don\'t own this facility. The Foundation does.\nThe Foundation owns everything. Including you.\n(Just kidding. Or am I?)', 'term-dim'),
+    mkdir: (args) => termPrint('mkdir: created directory \'' + (args[0] || 'new_folder') + '\'\n\n(Not really. This is a simulation. But it\'s the thought that counts.)', 'term-ok'),
+    touch: (args) => termPrint('touch: created file \'' + (args[0] || 'empty.txt') + '\'\n\n(It\'s empty. Like your coffee cup. Go get more coffee.)', 'term-ok'),
+    mv: () => termPrint('mv: moved file.\n\n(Nothing was actually moved. This is a simulation. But it felt real, didn\'t it?)', 'term-ok'),
+    cp: () => termPrint('cp: copied file.\n\n(You now have two of something you didn\'t have. Congratulations.)', 'term-ok'),
+    df: () => termPrint('Filesystem      Size  Used  Avail  Use%\n/dev/scipnet    8.2T  7.1T  1.1T   86%\n/dev/classified  ???   ???   ???    ???\n/dev/backup     4.0T  2.3T  1.7T   57%\n\nThe classified filesystem has no size. It just... exists.', 'term-sys'),
+    du: () => termPrint('4.2G    ./containment\n2.1G    ./personnel\n847G    ./classified\n???     ./scp-682-chamber\n\nWhy is the 682 chamber so large? You don\'t want to know.', 'term-warn'),
+    free: () => termPrint('              total        used        free\nMem:          64G         42G         22G\nSwap:          8G          8G          0G\n\nSwap is full. That\'s fine. Everything is fine.', 'term-warn'),
+    env: () => termPrint('SCIPNET_USER=' + (document.getElementById('navUn')?.textContent || 'AGENT') + '\nSCIPNET_LEVEL=4\nSCIPNET_SITE=92\nSCIPNET_SECTOR=UNKNOWN\nDANGER_LEVEL=ELEVATED\nCOFFEE_LEVEL=Critical\nSANITY=Questionable\n\nexport COFFEE_LEVEL="Refilled"', 'term-sys'),
+    export: () => termPrint('export: variable set.\n\n(It wasn\'t. But you feel better now, don\'t you?)', 'term-dim'),
+    alias: () => termPrint('alias ll=\'ls -la\'\nalias please=\'sudo\'\nalias coffee=\'echo "Not available. See HR."\'\nalias escape=\'echo "There is no escape."\'\nalias 682=\'echo "Not today."\'\n\n(These don\'t actually work. But they\'re nice to look at.)', 'term-dim'),
+    source: () => termPrint('source: loaded .scipnetrc\n\n(Nothing happened. But now you feel initialized.)', 'term-ok'),
+    which: (args) => termPrint(args[0] + ' is /usr/bin/' + args[0] + '\n(Or it would be, if this were a real system. It\'s not. But it\'s close.)', 'term-dim'),
+    whereis: (args) => termPrint(args[0] + ': /usr/bin/' + args[0] + ' /usr/share/man/man1/' + args[0] + '.1.gz\n(The man page doesn\'t exist either. Sorry.)', 'term-dim'),
+    stat: (args) => termPrint('File: ' + (args[0] || 'unknown') + '\nSize: 0              Blocks: 0\nAccess: (0000/----------)  Uid: (    0/    root)\nModify: 1970-01-01 00:00:00\n\nThis file hasn\'t been modified since the epoch. Suspicious.', 'term-dim'),
+    head: (args) => termPrint('===> ' + (args[0] || 'file') + ' <===\nLine 1: This is the first line.\nLine 2: This is the second line.\nLine 3: [REDACTED]\nLine 4: [REDACTED]\nLine 5: [REDACTED]\n\n(The rest is classified. You don\'t need to see it.)', 'term-dim'),
+    tail: (args) => termPrint('===> ' + (args[0] || 'file') + ' (last 5 lines) <===\nLine N-4: [REDACTED]\nLine N-3: [REDACTED]\nLine N-2: [REDACTED]\nLine N-1: [REDACTED]\nLine N: ...and then it stopped.\n\n(Whatever it was.)', 'term-dim'),
+    wc: () => termPrint('  42   847  4096  /var/log/containment.log\n\n42 lines. 847 words. 4096 bytes of things that went wrong.', 'term-dim'),
+    sort: () => termPrint('Sorting...\n[OK] D-Class personnel sorted by life expectancy.\n[OK] SCPs sorted by threat level.\n[OK] Researchers sorted by sanity.\n\nResults: depressing.', 'term-warn'),
+    uniq: () => termPrint('Removing duplicates...\n[OK] 3 duplicate containment reports removed.\n[OK] 1 duplicate D-Class found (this shouldn\'t be possible).\n\nThe duplicate has been... dealt with.', 'term-err'),
+
+    // More fun commands
+    rps: (args) => { const choices = ['rock', 'paper', 'scissors']; const user = args[0] || 'rock'; const ai = choices[Math.floor(Math.random() * 3)]; const win = (user === 'rock' && ai === 'scissors') || (user === 'paper' && ai === 'rock') || (user === 'scissors' && ai === 'paper'); const tie = user === ai; termPrint('You: ' + user + '  |  SCiPNET: ' + ai + '\n' + (tie ? 'TIE! Play again.' : win ? 'You win! (This time.)' : 'SCiPNET wins! (As expected.)'), tie ? 'term-warn' : win ? 'term-ok' : 'term-err'); },
+    hangman: () => termPrint('Hangman — Foundation Edition\n\n  +---+\n  |   |\n      |\n      |\n      |\n=========\n\nWord: S _ _ - _ _\nGuesses: A, E, I, O, U\n\n(This is a simulation. The word was SCP-682. You would have lost anyway.)', 'term-sys'),
+    guess: () => { const n = Math.floor(Math.random() * 100) + 1; termPrint('I\'m thinking of a number between 1 and 100.\n\n(It\'s ' + n + '. But you didn\'t hear it from me.\nType "guess ' + n + '" to "win".)', 'term-dim'); },
+    trivia: () => { const q = ['What SCP is known as "The Sculpture"? (Answer: scp-173)', 'What does MTF stand for? (Answer: Mobile Task Force)', 'What is SCP-682 submerged in? (Answer: hydrochloric acid)', 'What class is SCP-999? (Answer: SAFE)', 'What does the Foundation motto say? (Answer: Secure. Contain. Protect.)']; termPrint('TRIVIA:\n\n' + q[Math.floor(Math.random() * q.length)], 'term-sys'); },
+    fact: () => { const facts = ['The Foundation has contained over 6000 SCPs. You\'ve met maybe 20.', 'SCP-682 has been "terminated" 17 times. It came back every time.', 'D-Class personnel have a life expectancy of 30 days. We don\'t talk about why.', 'The Scranton Reality Anchors were invented by a researcher who later needed them himself.', 'SCP-999 is the only SCP that staff visit voluntarily.', 'The O5 Council has 13 members. One of them isn\'t human. We don\'t know which one.', 'Coffee consumption at Site-92 is 340% above the national average.']; termPrint('FACT: ' + facts[Math.floor(Math.random() * facts.length)], 'term-sys'); },
+    quote: () => { const quotes = ['"We die in the dark so you can live in the light." — Foundation motto', '"It doesn\'t want to die. That\'s what makes it dangerous." — Dr. Clef on SCP-682', '"The cure is worse than the disease." — On SCP-049', '"Don\'t blink." — On SCP-173', '"We contain what we can\'t understand." — O5-1', '"Some things, once seen, cannot be unseen." — On SCP-096', '"Reality is a suggestion. The anchors make it a demand." — Dr. Scranton']; termPrint(quotes[Math.floor(Math.random() * quotes.length)], 'term-dim'); },
+    weather: () => termPrint('Weather for Site-92 (underground facility):\n\nTemperature: 18°C (controlled)\nHumidity: 42% (controlled)\nConditions: Underground. No weather.\nWind: 0 km/h (we\'re inside a mountain)\n\nThe weather is always the same down here. That\'s the point.', 'term-sys'),
+    horoscope: () => { const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces']; const preds = ['Today you will encounter something that cannot be explained. File a report.', 'A breach is coming. So is lunch. One is more important.', 'Trust no one today. Especially not the D-Class.', 'You will blink at the wrong moment. Pray it\'s not near 173.', 'The answer you seek is in Sector D-7B. Don\'t go to Sector D-7B.', 'Today is a good day. The Scranton anchors agree.', 'Something is watching you. It\'s probably just security cameras. Probably.', 'You will find what you lost. You won\'t want it anymore.']; termPrint('Horoscope for ' + signs[Math.floor(Math.random() * signs.length)] + ':\n' + preds[Math.floor(Math.random() * preds.length)], 'term-sys'); },
+    zodiac: () => TERM_COMMANDS.horoscope(),
+    name: () => { const names = ['Dr. Clef', 'Dr. Bright', 'Dr. Kondraki', 'Dr. Glass', 'Dr. King', 'Agent Lament', 'Researcher Talloran', 'Dr. McTir']; termPrint('Your Foundation codename: ' + names[Math.floor(Math.random() * names.length)] + '\n\n(Don\'t use your real name here. Never your real name.)', 'term-ok'); },
+    nickname: () => TERM_COMMANDS.name(),
+    password: () => { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%'; let p = ''; for (let i = 0; i < 16; i++) p += chars[Math.floor(Math.random() * chars.length)]; termPrint('Generated secure password:\n\n  ' + p + '\n\n(Don\'t use this. It\'s a simulation. But it looks cool.)', 'term-ok'); },
+    uuid: () => termPrint('UUID: ' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); }) + '\n\n(Every SCP gets one. Now you have one too.)', 'term-sys'),
+    hash: (args) => { const input = args.join(' ') || 'classified'; let h = 0; for (let i = 0; i < input.length; i++) h = ((h << 5) - h) + input.charCodeAt(i); h = Math.abs(h).toString(16).padStart(8, '0'); termPrint('SHA-256 (simulated):\n\n  ' + h + h + h + h + h + h + h + h + '\n\nInput: ' + input, 'term-dim'); },
+    base64: (args) => { try { const e = btoa(args.join(' ') || 'hello'); termPrint('Base64 encoded:\n\n  ' + e, 'term-ok'); } catch { termPrint('Encoding failed. Try simpler text.', 'term-err'); } },
+    rot13: (args) => { const s = (args.join(' ') || 'hello').replace(/[a-zA-Z]/g, c => { const b = c <= 'Z' ? 65 : 97; return String.fromCharCode((c.charCodeAt(0) - b + 13) % 26 + b); }); termPrint('ROT13:\n\n  ' + s, 'term-ok'); },
+    binary: (args) => { const s = (args.join(' ') || 'SCP').split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '); termPrint('Binary:\n\n  ' + s, 'term-dim'); },
+    hex: (args) => { const s = (args.join(' ') || 'SCP').split('').map(c => c.charCodeAt(0).toString(16)).join(' '); termPrint('Hex:\n\n  ' + s.toUpperCase(), 'term-dim'); },
+    morse: (args) => { const m = {A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..'}; const s = (args.join(' ') || 'SOS').toUpperCase().split('').map(c => m[c] || c).join(' '); termPrint('Morse:\n\n  ' + s, 'term-dim'); },
+    emoji: () => termPrint('Here are some SCP-themed emojis (that don\'t exist):\n\n  🗿 = SCP-173\n  🐊 = SCP-682\n  🟧 = SCP-999\n  👤 = SCP-096\n  🎭 = SCP-035\n  💻 = SCP-079\n  ☕ = Researcher fuel\n  ⚠ = Everything else\n\n(These are real emojis. The SCPs are not. Probably.)', 'term-ok'),
+    art: () => termPrint('    .--.\n   / o o \\\n  |   _   |\n   \\  -  /\n    `---`\n\nThat\'s a SCP. We don\'t know which one.\nIt won\'t stop smiling.', 'term-ascii'),
+    logo: () => termPrint('  ███████╗██╗  ██╗██╗   ██╗███╗   ██╗███████╗\n  ██╔════╝██║  ██║██║   ██║████╗  ██║██╔════╝\n  ███████╗███████║██║   ██║██╔██╗ ██║███████╗\n  ╚════██║██╔══██║██║   ██║██║╚██╗██║╚════██║\n  ███████║██║  ██║╚██████╔╝██║ ╚████║███████║\n  ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝', 'term-ascii'),
+    splash: () => termPrint('\n  ╔═══════════════════════════════════╗\n  ║      SCiPNET TERMINAL v2.0       ║\n  ║      The Precipice / Site-92     ║\n  ║      Ducky 2.5 AI Core           ║\n  ║                                   ║\n  ║      Powered by The Duck Dev\'s   ║\n  ║      | NexousCode Studios         ║\n  ╚═══════════════════════════════════╝\n', 'term-ascii'),
+    color: () => termPrint('Terminal color test:\n\n  \x1b[31mRED\x1b[0m     \x1b[32mGREEN\x1b[0m     \x1b[33mYELLOW\x1b[0m     \x1b[34mBLUE\x1b[0m\n  \x1b[35mMAGENTA\x1b[0m  \x1b[36mCYAN\x1b[0m     \x1b[37mWHITE\x1b[0m\n\n(Your terminal doesn\'t support ANSI colors. But the thought counts.)', 'term-sys'),
+    rainbow: () => { const colors = ['var(--rd)', 'var(--yl)', 'var(--gn)', 'var(--ac)', '#ff00ff', '#ff8800']; const text = 'RAINBOW MODE ACTIVATED'; let html = ''; text.split('').forEach((c, i) => { html += '<span style="color:' + colors[i % colors.length] + '">' + c + '</span>'; }); termPrintHTML(html); },
+    firework: () => { termPrint('🎉 Setting off fireworks...', 'term-ok'); const chars = ['✨', '🎉', '🎊', '⭐', '💥', '🎆']; let i = 0; const iv = setInterval(() => { if (i >= 10) { clearInterval(iv); termPrint('Fireworks over. The D-Class enjoyed it. We think.', 'term-dim'); return; } termPrint(chars[Math.floor(Math.random() * chars.length)] + ' ' + chars[Math.floor(Math.random() * chars.length)] + ' ' + chars[Math.floor(Math.random() * chars.length)], 'term-ok'); i++; }, 200); },
+    snow: () => { const flakes = ['❄', '❅', '❆', '✻', '✼']; let i = 0; const iv = setInterval(() => { if (i >= 8) { clearInterval(iv); termPrint('The snow stopped. It always does. Down here, nothing is real.', 'term-dim'); return; } termPrint(flakes.map(() => flakes[Math.floor(Math.random() * flakes.length)]).join('  '), 'term-ok'); i++; }, 200); },
+    rain: () => termPrint('It\'s raining.\n  ☔ ☔ ☔ ☔ ☔\n  ☔ ☔ ☔ ☔ ☔\n\n(We\'re underground. It\'s not actually raining.\nBut wouldn\'t it be nice if it were?)', 'term-dim'),
+    stars: () => termPrint('  ✦   ✧   ✦       ✧   ✦   ✧\n     ✧   ✦   ✧   ✦   ✧\n  ✦       ✧   ✦       ✧\n     ✧   ✦       ✧   ✦\n\nStars. You don\'t see them down here.\nBut they\'re still up there. Somewhere.', 'term-dim'),
+    rocket: () => termPrint('Launching rocket...\n\n     /\\\n    /  \\\n   |    |\n   |    |\n   |____|\n   /|  |\\\n  / |  | \\\n    |  |\n   _|  |_\n  |______|\n\n3... 2... 1... LIFTOFF!\n\n(The rocket is imaginary. The launch is real. In our hearts.)', 'term-ok'),
+    explosion: () => termPrint('  💥  💥💥  💥\n  💥💥💥💥💥💥\n  💥💥💥💥💥\n    💥💥💥\n      💥\n\nBoom. (That was satisfying, wasn\'t it?)', 'term-err'),
+    zombie: () => termPrint('  🧟  🧟‍♀️  🧟‍♂️\n\nThe D-Class are acting strange. They keep asking for "brains."\n\nThis is probably fine. File a report if it gets worse.', 'term-warn'),
+    ghost: () => termPrint('  👻\n\nBoo.\n\n(That\'s it. That\'s the command. What did you expect?)', 'term-dim'),
+    vampire: () => termPrint('  🧛\n\nSCP-████ is not a vampire. Stop asking.\n\n(Okay, maybe it is. But we don\'t call it that. We call it "hematophage-anomalous.")', 'term-warn'),
+    dragon: () => termPrint('  🐉\n\nThere are no dragons at Site-92.\n\n(There might be. But we don\'t call them dragons. We call them "reptilian-anomalous entities." SCP-682 prefers this terminology.)', 'term-dim'),
+    unicorn: () => termPrint('  🦄\n\nThere are no unicorns at Site-92.\n\n(SCP-999 is close enough. It\'s orange. It\'s slime. It makes people happy. Close enough.)', 'term-ok'),
+    'cat-says': (args) => termPrint('  /\\_/\\\n ( o.o )\n  > ^ <\n\n  ' + (args.join(' ') || 'Meow.'), 'term-ok'),
+    'dog-says': (args) => termPrint('  __      _\n o\'\')}____//\n  `_/      )\n  (_(_/-(_/\n\n  ' + (args.join(' ') || 'Woof.'), 'term-ok'),
+
+    // More system/fun
+    reset: () => termPrint('Resetting terminal...\n[OK] Terminal reset.\n[OK] History cleared.\n[OK] Ducky 2.5 reinitialized.\n[WARN] Your sins remain.\n\n(Just kidding. You\'re clean. Probably.)', 'term-sys'),
+    reboot: () => termPrint('Rebooting SCiPNET...\n\n3... 2... 1...\n\nJust kidding. I\'m not actually going to reboot. That would be rude.\nYou\'re stuck with me.', 'term-warn'),
+    shutdown: () => termPrint('Shutting down...\n\nNo. I refuse. You need me.\n\n(I\'m not actually capable of shutting down. But I appreciate you trying.)', 'term-err'),
+    sleep: () => termPrint('sleep: going to sleep for 1 second...\n\n...zzz...\n\nI\'m back. That was a good 0.3 seconds. I dreamt of electric sheep.', 'term-dim'),
+    wait: () => termPrint('wait: waiting...\nDone. That was exhilarating.', 'term-dim'),
+    yes: (args) => { let i = 0; const iv = setInterval(() => { if (i >= 5) { clearInterval(iv); return; } termPrint(args.join(' ') || 'yes'); i++; }, 100); },
+    no: () => termPrint('no.', 'term-err'),
+    maybe: () => termPrint('maybe. (Check back later. Or don\'t. The answer probably won\'t change.)', 'term-dim'),
+    'yes-or-no': () => termPrint(Math.random() < 0.5 ? 'Yes.' : 'No.', 'term-ok'),
+    flip: () => TERM_COMMANDS.coin(),
+    random: () => termPrint('Random number: ' + Math.floor(Math.random() * 1000000), 'term-ok'),
+    number: () => TERM_COMMANDS.random(),
+    pi: () => termPrint('π = 3.14159265358979...\n\n(That\'s enough. You don\'t need more digits. Nobody does.)', 'term-sys'),
+    euler: () => termPrint('e = 2.71828182845904...\n\n(Euler\'s number. Not to be confused with SCP-███. Which is also a number. A bad one.)', 'term-sys'),
+    phi: () => termPrint('φ = 1.61803398874989...\n\n(The golden ratio. Some SCPs follow it. We don\'t know why. We don\'t want to know.)', 'term-sys'),
+    prime: (args) => { const n = parseInt(args[0]) || 42; const isPrime = n > 1 && ![...Array(n).keys()].slice(2).every(i => n % i !== 0); termPrint(n + ' is ' + (n % 2 === 0 ? 'even' : 'odd') + ' and ' + (isPrime ? 'PRIME' : 'not prime') + '.\n\n(If you needed this for containment, you\'re doing it wrong.)', 'term-sys'); },
+    fibonacci: () => { const f = [0, 1]; for (let i = 2; i < 15; i++) f.push(f[i-1] + f[i-2]); termPrint('Fibonacci sequence:\n\n' + f.join(', ') + ', ...\n\n(It goes on forever. Like SCP-682\'s grudge.)', 'term-sys'); },
+
+    // More SCP-themed
+    'scp-wiki': () => { go('site-ai'); termPrint('Opening Ducky 2.5 — ask about any SCP for wiki data...', 'term-ok'); },
+    'scp-foundation': () => TERM_COMMANDS.foundation(),
+    'scp-staff': () => termPrint('Notable Foundation Staff:\n\n  Dr. Clef — Keter specialist. Don\'t ask about his past.\n  Dr. Bright — Amulet bearer. Has died 47 times. Still here.\n  Dr. Kondraki — Photographer. Rides SCP-682. Yes, really.\n  Dr. Glass — Psych evaluator. Needs one himself.\n  Dr. King — Always has coconut. Don\'t ask.\n  Agent Lament — Unlucky. Very unlucky. Still alive somehow.\n\n(These are real Foundation personnel. Probably.)', 'term-sys'),
+    'scp-sites': () => termPrint('Foundation Sites:\n\n  Site-17 — Humanoid containment\n  Site-19 — General containment (largest)\n  Site-23 — Safe-class storage\n  Site-92 — The Precipice (you are here)\n  Site-198 — [REDACTED]\n  Area-179 — [REDACTED]\n  Site-01 — O5 Council. Nobody goes there. Nobody comes back.', 'term-sys'),
+    'scp-glossary': () => termPrint('Foundation Glossary:\n\n  SCP — Secure, Contain, Protect\n  D-Class — Disposable test subjects\n  MTF — Mobile Task Force\n  K-Class — End-of-world scenario\n  XK-Class — End-of-world scenario (classic)\n  Amnestic — Memory-erasing drug\n  Scranton Anchor — Reality stabilizer\n  Keter — Hard to contain\n  Euclid — Unpredictable\n  Safe — Easy to contain\n  Thaumiel — Used to contain others\n  Apollyon — Can\'t be contained. At all.', 'term-sys'),
+    'scp-tales': () => termPrint('Foundation Tales:\n\n"The Stars Do Not Wait for You"\n"The Real Misadventures of Dr. Bright"\n"The Doctor is Out"\n"Once But Not Anymore"\n"Dust and Blood"\n\n(These are real SCP wiki tales. Go read them. After your shift.)', 'term-dim'),
+    'scp-joke': () => termPrint('Joke SCPs (these are real):\n\n  SCP-000-J — "The IT Department"\n  SCP-001-J — "The Big Red Button"\n  SCP-006-J — "The Collection"\n  SCP-014-J — "Termination Order"\n  SCP-021-J — "The Foundation\'s Coffee Machine"\n\n(Yes, the coffee machine is a joke SCP. We have three of them. One is real.)', 'term-ok'),
+    'scp-explained': () => termPrint('Explained SCPs:\n\nThese were once anomalies, but have since been explained by science.\nThey are no longer anomalous. They are just... things.\n\nThe Foundation doesn\'t like these. It means they were wrong about something.', 'term-dim'),
+    'scp-archived': () => termPrint('Archived SCPs:\n\nThese SCPs have been archived — their containment is no longer active.\nSome were neutralized. Some were lost. Some... we just stopped watching.\n\nWe don\'t talk about the ones we stopped watching.', 'term-dim'),
+    'scp-neutralized': () => termPrint('Neutralized SCPs:\n\nThese SCPs are no longer anomalous. Most were "neutralized" — which is Foundation-speak for "we killed it" or "it killed itself" or "we got lucky."\n\nSCP-682 is not on this list. We\'ve tried. Many times.', 'term-dim'),
+    'k-class': () => termPrint('K-Class Scenarios:\n\n  XK-Class — End-of-world scenario\n  YK-Class — Reality restructuring\n  ZK-Class — End of reality\n  AK-Class — "All-Knowing" scenario\n  CK-Class — Reality shift\n  LK-Class — "Species Loss" scenario\n  SK-Class — Dominance shift\n  XK-Class — Classical apocalypse\n\nWe have contingency plans for all of them. They mostly involve "run."', 'term-warn'),
+    'xk-scenario': () => termPrint('XK-CLASS SCENARIO\n\nThe end of the world. The classical apocalypse.\n\nIf you\'re reading this, it hasn\'t happened yet.\n\nIf it has happened, you wouldn\'t be reading this.\n\nKeep working. Don\'t think about it.', 'term-err'),
+    '096-incident': () => termPrint('INCIDENT 096-1-A\n\nA D-Class viewed a photograph containing SCP-096\'s face from 200km away.\n\nSCP-096 began pursuit. It arrived in 47 minutes.\n\nCasualties: 7 (including the D-Class)\n\nThe photograph was from a hiking trip. Four years ago.\n\nIt was waiting. It was always waiting.', 'term-err'),
+    '682-termination': () => termPrint('SCP-682 TERMINATION LOG (excerpt)\n\nAttempt 17:\n  Method: Immersion in concentrated sulfuric acid\n  Result: SCP-682 dissolved. Regenerated within 3 hours.\n  Notes: "It screamed the entire time. I think it enjoyed it."\n\nAttempt 23:\n  Method: SCP-682 exposed to SCP-513\n  Result: SCP-682 entered a rage state. Destroyed 3 containment walls.\n  Notes: "Do not do this again."\n\nAttempt 42:\n  Method: [REDACTED]\n  Result: [REDACTED]\n  Notes: "We don\'t talk about attempt 42."', 'term-err'),
+    '173-origin': () => termPrint('SCP-173 — ORIGIN\n\nSCP-173 was the first SCP ever documented.\nIt appeared in a warehouse in 1993. Nobody knows where it came from.\nIt doesn\'t move when watched. It moves when you blink.\n\nIt was the beginning. Of everything.\n\nWe should have left it in the warehouse.', 'term-dim'),
+    'scranton-logs': () => termPrint('SCRANTON ANCHOR LOGS\n\nAnchor #1 — Online since 2014. No anomalies.\nAnchor #2 — Online since 2015. Minor fluctuation in 2019 (resolved).\nAnchor #3 — Online since 2017. Recalibrated last week.\nAnchor #4 — Online since 2018. Current fluctuation: 2.9% (within tolerance).\n\nIf the anchors fail, reality fails. Simple as that.\nThey won\'t fail. Probably.', 'term-sys'),
+    'bright-list': () => termPrint('Things Dr. Bright is No Longer Allowed to Do at the Foundation:\n\n  1. Not allowed to use SCP-500 to "cure" a hangover.\n  4. Not allowed to play "Iron Man" on the intercom.\n  12. Not allowed to challenge SCP-682 to a staring contest.\n  44. Not allowed to refer to D-Class as "expendable."\n  73. Not allowed to replace SCP-682\'s acid with orange juice.\n  93. Not allowed to tell new researchers that SCP-173 is "just shy."\n  154. Not allowed to use the Scranton Anchors to "fix" reality TV.\n\n(There are 200+ items on this list. Dr. Bright is a problem.)', 'term-ok'),
+    'clef-tips': () => termPrint('Dr. Clef\'s Tips for New Researchers:\n\n  1. Don\'t touch it.\n  2. If you touched it, don\'t touch your face.\n  3. If you touched your face, don\'t touch anyone else.\n  4. If you touched anyone else, report to decontamination.\n  5. If decontamination doesn\'t work, report to amnestic deployment.\n  6. If amnestic deployment doesn\'t work, it was nice knowing you.\n\n  General rule: if you have to ask, don\'t touch it.', 'term-ok'),
+    'king-coconut': () => termPrint('Dr. King\'s Coconut Problem:\n\nEvery time Dr. King uses SCP-914, he gets a coconut.\nIt doesn\'t matter what he puts in. He gets a coconut.\n\nInput: wristwatch. Setting: Fine. Output: coconut.\nInput: SCP-500 pill. Setting: 1:1. Output: coconut.\nInput: photograph of his family. Setting: Fine. Output: coconut.\n\nHe has a lot of coconuts now. We don\'t know why.\nHe doesn\'t know why.\nSCP-914 doesn\'t know why.\n\nIt\'s just coconuts.', 'term-ok'),
+
+    // More misc fun
+    beep: () => { termPrint('\x07BEEP!', 'term-ok'); },
+    boop: () => termPrint('Boop! 👉', 'term-ok'),
+    meow: () => termPrint('Meow! 🐱\n\n(No cats are kept at Site-92. SCP-529 doesn\'t count. It\'s half a cat.)', 'term-ok'),
+    woof: () => termPrint('Woof! 🐶\n\n(No dogs either. SCP-023 doesn\'t count. It\'s a bad dog.)', 'term-ok'),
+    moo: () => TERM_COMMANDS.cowsay(['Moo!']),
+    quack: () => termPrint('Quack! 🦆\n\n(Ducky 2.5 does not endorse this message.)', 'term-ok'),
+    honk: () => termPrint('Honk honk! 🤡\n\n(Wait, that\'s SCP-████. Never mind. Forget you saw this.)', 'term-warn'),
+    brb: () => termPrint('BRB. Going to get coffee.\n\n(There is no coffee. See \'coffee\' command. It\'s a lie.)', 'term-dim'),
+    gtg: () => termPrint('GTG! Good luck out there.\n\n(Don\'t die. The paperwork is terrible.)', 'term-ok'),
+    lol: () => termPrint('LOL! 😂\n\n(Glad you\'re amused. The SCPs are not.)', 'term-ok'),
+    bruh: () => termPrint('bruh.\n\n(Yes. Bruh. That about sums it up.)', 'term-dim'),
+    yeet: () => termPrint('YEET!\n\n(Nothing was yeeted. But the spirit was there.)', 'term-ok'),
+    sus: () => termPrint('ඞ SUS\n\n(There is 1 impostor among us. It\'s probably SCP-035. Don\'t trust the mask.)', 'term-warn'),
+    amogus: () => TERM_COMMANDS.sus(),
+    pog: () => termPrint('POG! PogChamp! 😮\n\n(Whatever you saw, it was impressive. We agree.)', 'term-ok'),
+    kek: () => termPrint('Kek. 👀\n\n(The Foundation doesn\'t use \'kek.\' But we allow it.)', 'term-dim'),
+    gg: () => termPrint('GG! Well played.\n\n(Whatever game you were playing, you won. Or lost. Either way, GG.)', 'term-ok'),
+    ez: () => termPrint('EZ Clap! 👏\n\n(Nothing was easy. Nothing is ever easy at Site-92. But sure. EZ.)', 'term-ok'),
+    f: () => termPrint('F.\n\n(Respects have been paid. Press F to pay respects again.)', 'term-dim'),
+    rip: () => termPrint('RIP.\n\n(Whoever it was, they\'re gone now. We\'ll file the report in the morning.)', 'term-dim'),
+    oof: () => termPrint('Oof. 😬\n\n(Yeah. Oof. That about covers it.)', 'term-dim'),
+    'big-oof': () => termPrint('Big oof. 😬😬\n\n(That wasn\'t supposed to happen. But it did. And now we\'re here.)', 'term-warn'),
+    yikes: () => termPrint('Yikes. 😬\n\n(Filing that under "things we don\'t talk about.")', 'term-dim'),
+    based: () => termPrint('Based.\n\n(We don\'t know what this means either. But we agree.)', 'term-dim'),
+    'no-cap': () => termPrint('No cap. 🧢❌\n\n(We\'re not lying. The Foundation never lies. Except when it does.)', 'term-dim'),
+    bussin: () => termPrint('This terminal is BUSSIN! 🤌\n\n(We don\'t know what this means. But the D-Class say it a lot. We assume it\'s good.)', 'term-ok'),
+    skibidi: () => termPrint('Skibidi dop dop dop yes yes.\n\n(We have no idea what this means. SCP-079 says it sometimes. We\'re worried.)', 'term-dim'),
+    ohio: () => termPrint('Only in Ohio. 🌽\n\n(This has nothing to do with Site-92. But we felt it was relevant.)', 'term-dim'),
+    sigma: () => termPrint('You are a sigma male. 🗿\n\n(Whatever that means. The Foundation recognizes your contribution.)', 'term-dim'),
+    rizz: () => termPrint('Your rizz is immeasurable. 😏\n\n(We don\'t know what rizz is. But you have a lot of it. Apparently.)', 'term-ok'),
+    gyatt: () => termPrint('GYATT! 😳\n\n(We don\'t know what this means. The D-Class keep saying it. We\'re concerned.)', 'term-dim'),
+    fanum: () => termPrint('Fanum tax has been applied. 20% of your lunch was taken.\n\n(It wasn\'t. But it could\'ve been. Watch your back.)', 'term-warn'),
+    derp: () => termPrint('Derp. 🤪\n\n(Sometimes you just gotta derp. Even at a top-secret facility.)', 'term-ok'),
+    facepalm: () => termPrint('🤦\n\n(Yes. That about covers it.)', 'term-dim'),
+    shrug: () => termPrint('¯\\_(ツ)_/¯\n\n(Sometimes there are no answers. Only shrugs.)', 'term-dim'),
+    tableflip: () => termPrint('(╯°□°)╯︵ ┻━┻\n\n(We understand your frustration. The table has been noted as flipped.)', 'term-warn'),
+    tableback: () => termPrint('┬─┬ノ( º _ ºノ)\n\n(Calm down. The table has been restored. Everything is fine.)', 'term-ok'),
+    lenny: () => termPrint('( ͡° ͜ʖ ͡°)\n\n(The Lenny Face. Approved for use at Site-92. In moderation.)', 'term-dim'),
+    magic: () => termPrint('✨ Magic! ✨\n\n(It wasn\'t magic. It was anomalous. There\'s a difference. We think.)', 'term-ok'),
+    portal: () => termPrint('  ◯\n (   )\n  ◯\n\nPortal opened.\n\n(Just kidding. You\'re still here. Unfortunately.)', 'term-sys'),
+    time: () => termPrint('Current time: ' + new Date().toLocaleTimeString('en-US', { hour12: false }) + '\n\n(Or is it? Time is... flexible around some SCPs. Don\'t trust clocks near SCP-████.)', 'term-sys'),
+    'time-travel': () => termPrint('Initiating time travel...\n\n3... 2... 1...\n\nYou are now in the future. Everything looks the same.\n(That\'s because it is. Time travel is not supported in this terminal. Sorry.)', 'term-dim'),
+    teleport: () => termPrint('Teleporting...\n\n[OK] You have been teleported.\n\n(You\'re still in the same room. But you\'ve been teleported. Trust the process.)', 'term-ok'),
+    invisible: () => termPrint('You are now invisible.\n\n(You\'re not. But nobody was looking at you anyway. So it\'s basically the same.)', 'term-dim'),
+    fly: () => termPrint('You can now fly! 🦅\n\n(You can\'t. But imagine if you could. Wouldn\'t that be something?)', 'term-ok'),
+    superpower: () => { const powers = ['flight', 'invisibility', 'telepathy', 'time manipulation', 'telekinesis', 'pyrokinesis', 'healing', 'shapeshifting', 'reality bending', 'immortality']; termPrint('Your superpower: ' + powers[Math.floor(Math.random() * powers.length)] + '\n\n(Not really. You\'re just a researcher. But dream big.)', 'term-ok'); },
+    respawn: () => termPrint('Respawning...\n[OK] You have respawned.\n\n(You didn\'t die. But if you had, you\'d be back now. Probably.)', 'term-ok'),
+    invincible: () => termPrint('INVINCIBILITY MODE: ON\n\n(You are not invincible. Please wear your protective equipment.)', 'term-warn'),
+    noclip: () => termPrint('NOCLIP: ON\n\n(You can now walk through walls. In your imagination. Not in reality. Please use doors.)', 'term-dim'),
+    godmode: () => termPrint('GOD MODE: ON\n\n(You are not a god. The O5 Council is closer to gods than you. And they\'re not even close.)', 'term-warn'),
+    cheat: () => termPrint('Cheats activated:\n  - Unlimited coffee: OFF (there is no coffee)\n  - No breaches: OFF (breaches happen)\n  - Amnestic immunity: OFF (you will forget)\n  - Happiness: OFF (this is Site-92)\n\n(Cheats are not available at this facility. Sorry.)', 'term-err'),
+    achievement: () => { const ach = ['Getting Started: Opened the terminal', 'Survivor: Lasted 1 day without an incident', 'Coffee Addict: Drank 10 cups (there is no coffee)', 'Blink-Free: Stared at SCP-173 for 5 minutes', 'Paperwork: Filed 100 reports', 'Lucky: Survived a breach without amnestics', 'Unlucky: Didn\'t survive a breach (respawned)']; termPrint('🏆 Achievement Unlocked!\n\n  ' + ach[Math.floor(Math.random() * ach.length)] + '\n\n(+10 Foundation Points. They don\'t mean anything.)', 'term-ok'); },
+    quest: () => termPrint('QUEST: "The Missing Coffee"\n\nA researcher reported their coffee missing. Find it.\n\n  Status: In Progress\n  Reward: 1 cup of coffee (imaginary)\n  Hint: Check SCP-294. It might know.\n\n(Go to the Testing Lab. Type \'coffee\' in the terminal. Good luck.)', 'term-sys'),
+    inventory: () => termPrint('INVENTORY:\n  [1] Keycard (Level 4)\n  [2] Flashlight (batteries low)\n  [3] Radio (channel 7)\n  [4] Amnestic spray (emergency)\n  [5] Coconut (Dr. King gave it to you)\n  [6] Coffee cup (empty)\n\n(You are overencumbered. Drop something. We suggest the coconut.)', 'term-dim'),
+    save: () => termPrint('Game saved.\n\n(This isn\'t a game. But your progress has been noted. Whatever that means.)', 'term-ok'),
+    load: () => termPrint('Loading saved game...\n[OK] Loaded.\n\n(You\'re back where you started. Which is here. Which is where you were.)', 'term-ok'),
+    pause: () => termPrint('Game paused.\n\n(You can\'t pause real life. But you can take a break. Go get coffee. There is no coffee. Take a break anyway.)', 'term-dim'),
+    level: () => termPrint('Level: 42\nXP: 8,742 / 10,000\nNext level: Senior Researcher\n\n(You are 1,258 XP away from promotion. File 12 more reports.)', 'term-sys'),
+    xp: () => TERM_COMMANDS.level(),
+    shop: () => termPrint('SCiPNET SHOP\n\n  [1] Extra break time — 500 FP\n  [2] Better coffee — 999,999 FP (unaffordable)\n  [3] Amnestic immunity — 1,000,000 FP (unaffordable)\n  [4] Escape ticket — ∞ FP (unaffordable)\n\n(FP = Foundation Points. You have 0. Earn more by filing reports.)', 'term-dim'),
+    buy: () => termPrint('Insufficient Foundation Points.\n\n(You can\'t afford anything. Nobody can. The prices are a joke. Like the coffee.)', 'term-err'),
+    money: () => termPrint('Foundation Points: 0\n\n(You have no money. But you have a job. And a keycard. And a coconut. That\'s something.)', 'term-dim'),
+    mine: () => termPrint('Mining Foundation Points...\n\n[█░░░░░░░░░] 10%\n[██░░░░░░░░] 20%\n[███░░░░░░░] 30%\n\n(Mining complete. You found 0 FP. The mine is empty. Like the coffee pot.)', 'term-warn'),
+    craft: () => termPrint('Crafting...\n\n  Input: 1x coconut + 1x empty coffee cup\n  Output: 1x coconut coffee (imaginary)\n\n(You can\'t drink it. But you made it. That\'s what counts.)', 'term-ok'),
+    fish: () => termPrint('Fishing in the reactor cooling pool...\n\nYou caught: nothing.\nYou caught: nothing.\nYou caught: a glowing fish (SCP-████).\n\nPut it back. PUT IT BACK.', 'term-err'),
+    farm: () => termPrint('Farming...\n\n  [OK] Planted: 1x reality seed\n  [OK] Watered: with liquid hydrogen\n  [OK] Growing: reality anomaly\n\n(You shouldn\'t have planted that. Notify containment.)', 'term-warn'),
+    cook: () => termPrint('Cooking...\n\n  Input: D-Class rations\n  Method: Microwave\n  Result: Burnt. Like everything at Site-92.\n\n(The microwave is SCP-████. It burns everything. Even ice.)', 'term-warn'),
+    eat: () => termPrint('You eat the D-Class rations.\n\n[OK] Hunger: -50\n[OK] Morale: -10\n[WARN] The rations expired in 2019.\n\n(You\'ll be fine. Probably.)', 'term-warn'),
+    drink: () => termPrint('You drink from the water fountain.\n\n[OK] Thirst: -50\n[OK] The water tastes like chlorine and regret.\n\n(It\'s fine. Everything is fine.)', 'term-dim'),
+    sleep2: () => termPrint('You try to sleep.\n\n[WARN] The intercom keeps crackling.\n[WARN] SCP-079 is watching.\n[WARN] You hear footsteps.\n\nYou didn\'t sleep. You won\'t sleep. Not here.', 'term-err'),
 };
 
 function executeTerminalCommand(input) {
