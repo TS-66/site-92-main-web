@@ -330,12 +330,12 @@ body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1
 .mob-nav{display:none;position:fixed;top:102px;left:0;right:0;background:rgba(4,6,5,.99);border-bottom:1px solid var(--bd2);padding:10px;z-index:98;flex-direction:column;gap:2px;max-height:80vh;overflow-y:auto}
 .mob-nav.open{display:flex}
 .mob-nav .nav-link{padding:14px 16px;font-size:12px}
-.page{max-width:1400px;margin:0 auto;padding:30px 20px 44px;position:relative;z-index:1}
+.page{flex:1;min-width:0;max-width:1400px;padding:30px 20px 44px;position:relative;z-index:1}
 .page-head{margin-bottom:28px;border-left:4px solid var(--ac);padding-left:18px;position:relative}
 .page-head::before{content:'';position:absolute;left:-4px;top:0;width:4px;height:40%;background:var(--ac);box-shadow:0 0 20px var(--ac);animation:pulse 2s infinite}
 .page-head h1{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--t1);margin-bottom:6px;letter-spacing:1px;animation:flicker 6s infinite,chroma 4s infinite}
 .page-head p{font-size:12px;color:var(--t3);letter-spacing:.5px}
-.pg-sec{display:none}.pg-sec.active{display:block;animation:fadeUp .4s ease forwards}
+.pg-sec{display:none}.pg-sec.active{display:block;animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards}
 .warn{padding:16px 20px;border:1px solid var(--rd);display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;font-size:11px;line-height:1.6;cursor:none;transition:all .3s;background:rgba(255,46,94,.08);letter-spacing:1px;text-transform:uppercase;position:relative;overflow:hidden}
 .warn::after{content:'';position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,46,94,.3),transparent);animation:scanH 3s linear infinite}
 .warn:hover{background:rgba(255,46,94,.12);box-shadow:0 0 30px rgba(255,46,94,.2)}
@@ -706,7 +706,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .admin-status-input:focus{outline:none;border-color:var(--ac3)}
 .admin-save-row{display:flex;justify-content:flex-end;margin-top:8px}
 .admin-panel{display:none}
-.admin-panel.active{display:block}
 .scp-src-tag{display:inline-block;margin-left:6px;padding:1px 5px;font-size:8px;letter-spacing:1px;color:var(--gn);border:1px solid var(--gn);border-radius:2px;vertical-align:middle}
 .admin-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
 .admin-stat{flex:1;min-width:120px;padding:12px 14px;background:var(--b3);border:1px solid var(--bd2);border-radius:2px}
@@ -762,8 +761,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes glowPulse{0%,100%{box-shadow:0 0 5px var(--ac)}50%{box-shadow:0 0 20px var(--ac)}}
 
-/* Page transitions — smooth fade-up on every page switch */
-.pg-sec.active{animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards}
+/* Page transitions handled by .pg-sec.active in main CSS */
 
 /* SCP card hover — lift + glow */
 .scp-card{transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
@@ -1198,7 +1196,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .sidebar-link{display:block;padding:8px 20px;font-size:11px;color:var(--t2);text-decoration:none;letter-spacing:.5px;transition:all .2s;border-left:2px solid transparent}
 .sidebar-link:hover{background:var(--b3);color:var(--t1);border-left-color:var(--ac)}
 .sidebar-link.active{background:var(--b3);color:var(--ac);border-left-color:var(--ac);font-weight:600}
-.page{flex:1;min-width:0}
 @media(max-width:1024px){.sidebar{width:170px}}
 @media(max-width:768px){.sidebar{display:none}.app-body{display:block}}
 </style>
@@ -1999,7 +1996,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <button class="admin-btn" style="background:var(--b4)" onclick="clearAiMemory()">CLEAR AI MEMORY</button>
 </div>
 
-<div class="admin-panel active" id="admin-scps">
+<div class="admin-panel" id="admin-scps" style="display:block">
 <div class="admin-form">
 <div class="fg"><label class="fl">SCP ID</label><div class="fi-wrap"><input class="fi" type="text" id="newScpId" placeholder="SCP-XXX" spellcheck="false"><iconify-icon icon="lucide:hash"></iconify-icon></div></div>
 <div class="fg"><label class="fl">Name</label><div class="fi-wrap"><input class="fi" type="text" id="newScpName" placeholder="Object name..." spellcheck="false"><iconify-icon icon="lucide:file-text"></iconify-icon></div></div>
