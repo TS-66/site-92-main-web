@@ -1455,10 +1455,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-personnel">
-<div class="page-head"><h1>Personnel</h1><p>Who's on duty right now</p></div>
-<div class="per-list" id="perList">
-<div class="search-empty">Connecting to Discord...</div>
+<div class="page-head"><h1>Personnel</h1><p>All members and their roles</p></div>
+<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+<input type="text" id="perSearch" placeholder="Search by name or role..." style="flex:1;min-width:200px;padding:10px 14px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;letter-spacing:.5px;border-radius:2px;box-sizing:border-box">
+<select id="perRoleFilter" style="padding:10px 14px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;border-radius:2px">
+<option value="">ALL ROLES</option>
+</select>
 </div>
+<div class="table-wrap"><table class="tbl" id="perTable">
+<thead><tr><th>Member</th><th>Highest Role</th><th>All Roles</th></tr></thead>
+<tbody><tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Loading personnel...</td></tr></tbody>
+</table></div>
+<div id="perCount" style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-top:10px;text-align:right"></div>
 </div>
 
 <div class="pg-sec" id="page-departments">
@@ -2904,9 +2912,13 @@ function animateValue(id, start, end, duration) {
 }
 
 let personnelCache = [];
-let _roleTierMap = {};
+let _perSearchQuery = '';
+let _perRoleFilter = '';
+
 async function fetchPersonnel() {
-    const list = document.getElementById('perList');
+    const tbody = document.querySelector('#perTable tbody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Loading personnel...</td></tr>';
+
     let rankData = {};
     let rankMap = {};
     const defaultRole = 'Foundation Personnel';
@@ -2924,16 +2936,22 @@ async function fetchPersonnel() {
         }
     } catch(e) { rankMap = {}; }
 
-    // Build role-name -> tier map for sorting
-    _roleTierMap = {};
-    _roleTierMap[defaultRole] = defaultTier;
+    // Build role filter dropdown
+    const roleSet = new Set();
+    roleSet.add(defaultRole);
     for (const [, val] of Object.entries(rankMap)) {
-        if (val && val.role) _roleTierMap[val.role] = val.tier;
+        if (val && val.role) roleSet.add(val.role);
+    }
+    const filterEl = document.getElementById('perRoleFilter');
+    if (filterEl) {
+        const current = filterEl.value;
+        filterEl.innerHTML = '<option value="">ALL ROLES</option>' + [...roleSet].sort().map(r => '<option value="' + r + '"' + (r === current ? ' selected' : '') + '>' + r + '</option>').join('');
     }
 
     try {
         const res = await fetch('/api/personnel');
         const data = await res.json();
+
         if(data.length === 0 || !data[0].members || data[0].members.length === 0) {
             // Fallback: show ranked members only
             if (Object.keys(rankMap).length > 0) {
@@ -2943,42 +2961,46 @@ async function fetchPersonnel() {
                     highestRole: { name: r.role, color: r.color || defaultColor, tier: r.tier },
                     allRoles: [{ name: r.role, color: r.color || defaultColor }]
                 }));
-                renderPersonnel();
             } else {
-                list.innerHTML = '<div class="search-empty">Could not connect to Discord.</div>';
+                personnelCache = [];
+                if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Could not connect to Discord.</td></tr>';
+                return;
             }
-            return;
-        }
+        } else {
+            const members = data[0].members;
+            // Show ALL members. Site-92 hierarchy role is the "highest".
+            personnelCache = members.map(m => {
+                const nameLower = (m.name || '').toLowerCase();
+                const displayLower = (m.displayName || '').toLowerCase();
+                const override = rankMap[nameLower] || rankMap[displayLower];
+                const discordRoles = m.discordRoles || [];
 
-        const members = data[0].members;
-        // Show ALL members. The Site-92 hierarchy role overrides Discord for "highest".
-        // Discord roles are kept as "allRoles" for the detail modal.
-        personnelCache = members.map(m => {
-            const nameLower = (m.name || '').toLowerCase();
-            const displayLower = (m.displayName || '').toLowerCase();
-            const override = rankMap[nameLower] || rankMap[displayLower];
-            // Discord roles from the API
-            const discordRoles = m.discordRoles || [];
-            
-            if (override) {
-                // Site-92 hierarchy role is the "highest" — shown on the card + used for sorting
-                // Discord roles are shown in the modal
+                if (override) {
+                    return {
+                        ...m,
+                        highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier },
+                        allRoles: [{ name: override.role, color: override.color || defaultColor }, ...discordRoles]
+                    };
+                }
                 return {
                     ...m,
-                    highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier },
-                    allRoles: [{ name: override.role, color: override.color || defaultColor }, ...discordRoles]
+                    highestRole: { name: defaultRole, color: defaultColor, tier: defaultTier },
+                    allRoles: discordRoles.length > 0 ? discordRoles : [{ name: defaultRole, color: defaultColor }]
                 };
-            }
-            // Not in the hierarchy list → Foundation Personnel
-            return {
-                ...m,
-                highestRole: { name: defaultRole, color: defaultColor, tier: defaultTier },
-                allRoles: discordRoles.length > 0 ? discordRoles : [{ name: defaultRole, color: defaultColor }]
-            };
+            });
+        }
+
+        // Sort by tier (0 = highest first)
+        personnelCache.sort((a, b) => {
+            const ta = a.highestRole ? a.highestRole.tier : 7;
+            const tb = b.highestRole ? b.highestRole.tier : 7;
+            if (ta !== tb) return ta - tb;
+            return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '');
         });
 
         renderPersonnel();
     } catch (err) {
+        // Fallback to ranks only
         if (Object.keys(rankMap).length > 0) {
             const fallback = Object.entries(rankMap).sort((a, b) => a[1].tier - b[1].tier);
             personnelCache = fallback.map(([name, r]) => ({
@@ -2988,43 +3010,52 @@ async function fetchPersonnel() {
             }));
             renderPersonnel();
         } else {
-            list.innerHTML = '<div class="search-empty">Could not connect to Discord.</div>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Could not connect to Discord.</td></tr>';
         }
     }
 }
 
 function renderPersonnel() {
-    const list = document.getElementById('perList');
-    if (!list) return;
+    const tbody = document.querySelector('#perTable tbody');
+    const countEl = document.getElementById('perCount');
+    if (!tbody) return;
 
-    // Group by highest role
-    const roleGroups = {};
-    personnelCache.forEach(m => {
-        const role = m.highestRole ? m.highestRole.name : 'Foundation Personnel';
-        const color = m.highestRole ? m.highestRole.color : '#5a706b';
-        const tier = m.highestRole ? (m.highestRole.tier ?? _roleTierMap[role] ?? 7) : 7;
-        if (!roleGroups[role]) roleGroups[role] = { role, color, tier, members: [] };
-        roleGroups[role].members.push(m);
-    });
+    // Filter
+    let filtered = personnelCache;
+    if (_perSearchQuery) {
+        const q = _perSearchQuery.toLowerCase();
+        filtered = filtered.filter(m => {
+            const name = (m.displayName || m.name || '').toLowerCase();
+            const role = (m.highestRole ? m.highestRole.name : '').toLowerCase();
+            const roles = (m.allRoles || []).map(r => r.name.toLowerCase()).join(' ');
+            return name.includes(q) || role.includes(q) || roles.includes(q);
+        });
+    }
+    if (_perRoleFilter) {
+        filtered = filtered.filter(m => m.highestRole && m.highestRole.name === _perRoleFilter);
+    }
 
-    // Sort groups by tier (0 = highest = first)
-    const sortedGroups = Object.values(roleGroups).sort((a, b) => a.tier - b.tier);
+    if (countEl) countEl.textContent = filtered.length + ' MEMBER' + (filtered.length !== 1 ? 'S' : '');
 
-    list.innerHTML = sortedGroups.map(g => `
-        <div class="per-group-header" style="border-left-color:${g.color}">${g.role} <span>${g.members.length} MEMBER${g.members.length !== 1 ? 'S' : ''}</span></div>
-        ${g.members.map((m, i) => {
-            const idx = personnelCache.indexOf(m);
-            return `
-            <div class="per-item" style="border-left:3px solid ${m.highestRole ? m.highestRole.color : '#5a706b'};cursor:pointer" onclick="openPersonnelModal(${idx})">
-                <div class="per-av" style="${m.avatar ? 'background-image:url(\'' + m.avatar + '\');background-size:cover' : 'background:var(--b4)'}">${m.avatar ? '' : (m.name || '?').charAt(0).toUpperCase()}</div>
-                <div class="per-info">
-                    <div class="per-name">${escHtml(m.displayName || m.name)}</div>
-                    <div class="per-role" style="color:${m.highestRole ? m.highestRole.color : '#5a706b'}">${escHtml(m.highestRole ? m.highestRole.name : 'Foundation Personnel')}</div>
-                </div>
-                <div style="font-size:9px;color:var(--t4);letter-spacing:1px;padding:2px 6px;border:1px solid var(--bd2);border-radius:2px">${m.allRoles ? m.allRoles.length : 1} ROLE${(!m.allRoles || m.allRoles.length === 1) ? '' : 'S'}</div>
-            </div>`;
-        }).join('')}
-    `).join('');
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">No members found.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((m) => {
+        const idx = personnelCache.indexOf(m);
+        const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
+        const roles = m.allRoles || [hr];
+        const avatarHtml = m.avatar
+            ? '<img src="' + m.avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
+            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + (m.name || '?').charAt(0).toUpperCase() + '</div>';
+        const roleBadges = roles.map(r => '<span style="display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44;margin:1px">' + escHtml(r.name) + '</span>').join(' ');
+        return '<tr style="cursor:pointer" onclick="openPersonnelModal(' + idx + ')">' +
+            '<td style="padding:10px 8px">' + avatarHtml + ' <span style="vertical-align:middle;margin-left:8px;color:var(--t1);font-weight:600">' + escHtml(m.displayName || m.name) + '</span></td>' +
+            '<td style="padding:10px 8px"><span style="display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:600;background:' + hr.color + '22;color:' + hr.color + ';border:1px solid ' + hr.color + '44">' + escHtml(hr.name) + '</span></td>' +
+            '<td style="padding:10px 8px">' + roleBadges + '</td>' +
+            '</tr>';
+    }).join('');
 }
 
 function openPersonnelModal(idx) {
@@ -3043,12 +3074,22 @@ function openPersonnelModal(idx) {
     hrEl.style.border = '1px solid ' + hr.color + '44';
     const allEl = document.getElementById('pmAllRoles');
     const roles = m.allRoles || [hr];
-    allEl.innerHTML = roles.map(r => `<span style="display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;background:${r.color}22;color:${r.color};border:1px solid ${r.color}44">${escHtml(r.name)}</span>`).join('') || '<span style="color:var(--t3);font-size:11px">No roles assigned</span>';
+    allEl.innerHTML = roles.map(r => '<span style="display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44">' + escHtml(r.name) + '</span>').join(' ') || '<span style="color:var(--t3);font-size:11px">No roles assigned</span>';
     document.getElementById('personnelModal').classList.add('open');
 }
 function closePersonnelModal() { document.getElementById('personnelModal').classList.remove('open'); }
+
+// Search + filter listeners
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('personnelModal')?.addEventListener('click', (e) => { if (e.target.id === 'personnelModal') closePersonnelModal(); });
+    document.getElementById('perSearch')?.addEventListener('input', (e) => {
+        _perSearchQuery = e.target.value.toLowerCase().trim();
+        renderPersonnel();
+    });
+    document.getElementById('perRoleFilter')?.addEventListener('change', (e) => {
+        _perRoleFilter = e.target.value;
+        renderPersonnel();
+    });
 });
 
 async function loadDepartments() {
