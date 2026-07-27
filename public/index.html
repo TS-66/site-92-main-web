@@ -833,6 +833,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .beta-badge{animation:floatBadge 3s ease-in-out infinite}
 @keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
+/* ===== Terminal page ===== */
+.terminal-container{background:#0a0a0f;border:1px solid var(--bd2);border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:'Share Tech Mono',monospace;animation:scaleIn .3s ease forwards}
+.terminal-output{padding:16px;font-size:13px;line-height:1.7;color:var(--gn);max-height:420px;overflow-y:auto;min-height:420px}
+.terminal-output::-webkit-scrollbar{width:6px}
+.terminal-output::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+.term-line{white-space:pre-wrap;word-break:break-word;animation:termLineIn .15s ease forwards;opacity:0}
+@keyframes termLineIn{to{opacity:1}}
+.term-line.term-sys{color:var(--ac)}
+.term-line.term-err{color:var(--rd)}
+.term-line.term-warn{color:var(--yl)}
+.term-line.term-ok{color:var(--gn)}
+.term-line.term-dim{color:var(--t3)}
+.term-line.term-cmd{color:var(--t1)}
+.term-line.term-ascii{color:var(--ac);font-size:11px;line-height:1.2}
+.terminal-input-line{display:flex;align-items:center;padding:12px 16px;background:#0d0d14;border-top:1px solid var(--bd2)}
+.term-prompt{color:var(--gn);font-size:13px;white-space:nowrap;margin-right:8px;text-shadow:0 0 6px var(--gn)}
+.terminal-input{flex:1;background:transparent;border:none;color:var(--gn);font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;caret-color:var(--gn)}
+.terminal-input::placeholder{color:var(--t4)}
+
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
 </style>
@@ -1039,7 +1058,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <a class="nav-link" data-p="scanner">Scanner</a>
 <a class="nav-link" data-p="site-ai">Site AI</a>
 <a class="nav-link" data-p="settings">Settings</a>
-<a class="nav-link" data-p="bot-commands">Bot Commands</a>
+<a class="nav-link" data-p="bot-commands">Terminal</a>
 <a class="nav-link" data-p="credits">Credits</a>
 </div>
 <div class="nav-right">
@@ -1102,7 +1121,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-objects">
-<div class="page-head"><h1>Anomaly Database</h1><p>Contained Objects at Site-92</p></div>
+<div class="page-head"><h1>Anomaly Database</h1><p>Everything we've got locked down</p></div>
 <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
 <input type="text" id="dbSearch" placeholder="Search by SCP ID, name, class, or keyword..." style="flex:1;min-width:220px;padding:12px 16px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;letter-spacing:.5px;border-radius:2px;box-sizing:border-box">
 <div style="font-size:11px;color:var(--t3);letter-spacing:1px"><span id="dbCount">0</span> OBJECTS</div>
@@ -1115,19 +1134,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-personnel">
-<div class="page-head"><h1>Personnel</h1><p>Active staff — synced from Discord</p></div>
+<div class="page-head"><h1>Personnel</h1><p>Who's on duty right now</p></div>
 <div class="per-list" id="perList">
 <div class="search-empty">Connecting to Discord...</div>
 </div>
 </div>
 
 <div class="pg-sec" id="page-departments">
-<div class="page-head"><h1>Departments</h1><p>Site-92 organizational structure — divisions & factions</p></div>
+<div class="page-head"><h1>Departments</h1><p>How we're organized</p></div>
 <div id="deptList" class="dept-grid"></div>
 </div>
 
 <div class="pg-sec" id="page-protocols">
-<div class="page-head"><h1>Protocols</h1><p>Active containment directives</p></div>
+<div class="page-head"><h1>Protocols</h1><p>What's in effect right now</p></div>
 <div class="proto-summary" id="protoSummary"></div>
 <div style="margin-bottom:14px">
 <input type="text" id="protoSearch" placeholder="Search by code, name, or target..." style="width:100%;padding:12px 16px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;letter-spacing:.5px;border-radius:2px;box-sizing:border-box">
@@ -1152,7 +1171,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </style>
 
 <div class="pg-sec" id="page-incidents">
-<div class="page-head"><h1>Incidents</h1><p>Security events & breach reports</p></div>
+<div class="page-head"><h1>Incidents</h1><p>What's gone wrong lately</p></div>
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px" id="incFilters">
 <button class="admin-btn active" onclick="filterIncidents('ALL', this)" data-f="ALL">ALL</button>
 <button class="admin-btn" onclick="filterIncidents('CRITICAL', this)" data-f="CRITICAL">CRITICAL</button>
@@ -1164,7 +1183,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-report">
-<div class="page-head"><h1>Report an Anomaly</h1><p>Submit a sighting or anomalous encounter for review</p></div>
+<div class="page-head"><h1>Report an Anomaly</h1><p>Seen something weird? Tell us about it</p></div>
 <div class="report-form">
 <div class="fg"><label class="fl">Your Name / Callsign</label><div class="fi-wrap"><input class="fi" type="text" id="rptName" placeholder="Dr. Smith / Agent-X..." spellcheck="false"><iconify-icon icon="lucide:user"></iconify-icon></div></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -1181,7 +1200,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-map">
-<div class="page-head"><h1>Site Map</h1><p>Sector layout & containment zones</p></div>
+<div class="page-head"><h1>Site Map</h1><p>Where everything is (and what's locked down)</p></div>
 <div class="map-grid">
 <div class="sector"><div class="sector-sts s-norm"></div><div class="sector-id">A-1</div><div class="sector-type">RECEPTION & SCREENING</div><div class="sector-meta">Status: Normal<br>Clearance: L1+</div></div>
 <div class="sector"><div class="sector-sts s-norm"></div><div class="sector-id">B-2</div><div class="sector-type">D-CLASS CELLS</div><div class="sector-meta">Status: Normal<br>Population: 247</div></div>
@@ -1195,7 +1214,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-mtf">
-<div class="page-head"><h1>Task Forces</h1><p>Deployed MTF units & squads</p></div>
+<div class="page-head"><h1>Task Forces</h1><p>Who responds when things go south</p></div>
 <div class="g3">
 <div class="mtf-card"><div class="mtf-head"><div class="mtf-name">TAU-5 ("SAMSARA")</div><div class="mtf-id">MTF-T5</div></div><div class="mtf-body"><div><div class="mtf-stat-lb">Status</div><div class="mtf-status-pill sts-offline">OFFLINE (NOT YET ACQUIRED)</div></div><div><div class="mtf-stat-lb">SQUAD SIZE</div>4 MEMBERS</div><div><div class="mtf-stat-lb">SPECIALTY</div>ANOMALOUS COMBAT / REINCARNATION</div></div></div>
 <div class="mtf-card"><div class="mtf-head"><div class="mtf-name">EPSILON-11 ("NINE-TAILED FOX")</div><div class="mtf-id">MTF-E11</div></div><div class="mtf-body"><div><div class="mtf-stat-lb">Status</div><div class="mtf-status-pill sts-event">DEPLOYED - CONTAINMENT TRANSPORT (EVENT)</div></div><div><div class="mtf-stat-lb">SQUAD SIZE</div>9 MEMBERS</div><div><div class="mtf-stat-lb">SPECIALTY</div>CONTAINMENT BREACH RESPONSE</div></div></div>
@@ -1208,7 +1227,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-lab">
-<div class="page-head"><h1>Testing Lab</h1><p>Simulated anomalous interactions</p></div>
+<div class="page-head"><h1>Testing Lab</h1><p>Try not to die (simulated)</p></div>
 <div class="lab-container">
 <div class="lab-selects">
 <div class="sel-wrap"><select id="labScp"><option value="173">SCP-173 - THE SCULPTURE</option><option value="682">SCP-682 - HARD-TO-DESTROY REPTILE</option><option value="999">SCP-999 - THE TICKLE MONSTER</option></select></div>
@@ -1226,7 +1245,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-diagnostics">
-<div class="page-head"><h1>Diagnostics</h1><p>Real-time system telemetry</p></div>
+<div class="page-head"><h1>Diagnostics</h1><p>How the facility is holding up</p></div>
 <div class="diag-grid">
 <div class="gauge-card"><div class="gauge"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="45"></circle><circle class="gauge-fill" cx="50" cy="50" r="45" stroke-dasharray="282" stroke-dashoffset="20"></circle></svg><div class="gauge-text"><div class="gauge-val">92%</div><div class="gauge-pct">LOAD</div></div></div><div class="gauge-info"><div class="gauge-title">Site Reactor</div><div class="gauge-desc">Primary power generation at nominal levels.</div><div class="gauge-stat"><iconify-icon icon="lucide:zap" width="10"></iconify-icon> 920 MW / 1000 MW</div></div></div>
 <div class="gauge-card"><div class="gauge"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="45"></circle><circle class="gauge-fill" cx="50" cy="50" r="45" stroke-dasharray="282" stroke-dashoffset="2" style="stroke:var(--gn);filter:drop-shadow(0 0 6px var(--gn))"></circle></svg><div class="gauge-text"><div class="gauge-val">99%</div><div class="gauge-pct">STABLE</div></div></div><div class="gauge-info"><div class="gauge-title">Scranton Anchors</div><div class="gauge-desc">Reality stability is within normal parameters.</div><div class="gauge-stat"><iconify-icon icon="lucide:check-circle" width="10"></iconify-icon> No fluctuations</div></div></div>
@@ -1246,7 +1265,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-scanner">
-<div class="page-head"><h1>Scanner</h1><p>Scranton Reality Anchor readings</p></div>
+<div class="page-head"><h1>Scanner</h1><p>Is reality still working?</p></div>
 <div class="g2">
 <div class="stat" style="height: 300px; display:flex; align-items:center; justify-content:center;">
 <svg width="200" height="200" viewBox="0 0 100 100">
@@ -1277,7 +1296,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-site-ai">
-<div class="page-head"><h1>Ducky 2.5</h1><p>Your AI assistant</p></div>
+<div class="page-head"><h1>Ducky 2.5</h1><p>Ask me anything</p></div>
 <div class="chat-container">
 <div class="chat-header"><span><iconify-icon icon="lucide:bot"></iconify-icon> Ducky is online</span><div style="display:flex;gap:10px;align-items:center"><div class="chat-status">Online</div><button id="chatClearBtn" class="chat-tool-btn"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div>
 <div class="chat-body" id="chatBody">
@@ -1301,7 +1320,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-settings">
-<div class="page-head"><h1>Settings</h1><p>Customize your terminal</p></div>
+<div class="page-head"><h1>Settings</h1><p>Make it yours</p></div>
 <div class="settings-grid">
 <div class="setting-card"><div class="setting-info"><div class="setting-title">CRT Filter</div><div class="setting-desc">Toggle the scanline and CRT vignette overlay.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.querySelectorAll('.scanlines, .crt-vignette').forEach(e=>e.style.display = this.classList.contains('on')?'block':'none')"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Matrix Background</div><div class="setting-desc">Display the falling code animation in the background.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('matrixCanvas').style.display = this.classList.contains('on')?'block':'none'"></div></div>
@@ -1320,14 +1339,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-bot-commands">
-<div class="glitch-wrap">
-<div class="glitch" data-text="Coming Soon">Coming Soon</div>
-<div class="glitch-sub">Bot commands are being prepared</div>
+<div class="page-head"><h1>SCiPNET Terminal</h1><p>Interactive command interface — type 'help' to get started</p></div>
+<div class="terminal-container">
+<div class="terminal-output" id="termOutput">
+<div class="term-line term-sys">SCiPNET Terminal v2.0 — Connected to Site-92 mainframe</div>
+<div class="term-line term-sys">Type 'help' for available commands, 'clear' to clear screen</div>
+<div class="term-line">&nbsp;</div>
 </div>
+<div class="terminal-input-line">
+<span class="term-prompt">site92@scipnet:~$</span>
+<input type="text" id="termInput" class="terminal-input" placeholder="enter command..." autocomplete="off" spellcheck="false" autofocus>
+</div>
+</div>
+<div class="terminal-hint" style="margin-top:14px;font-size:10px;color:var(--t3);letter-spacing:1px;text-align:center">100+ commands available · try: help, scan, hack, breach, scp-173, whoami, sudo, matrix, clear</div>
 </div>
 
 <div class="pg-sec" id="page-credits">
-<div class="page-head"><h1>Credits</h1><p>The team behind this</p></div>
+<div class="page-head"><h1>Credits</h1><p>Who built this thing</p></div>
 <div class="credit-grid">
 <div class="credit-card"><div class="credit-role">Founder of Site-92</div><div class="credit-name">doudoustar01</div><div class="credit-desc">Founded Site-92, established initial infrastructure, and oversaw the deployment of the SCiPNET terminal.</div><iconify-icon class="credit-icon" icon="lucide:star"></iconify-icon></div>
 <div class="credit-card"><div class="credit-role">Developer</div><div class="credit-name">Duck</div><div class="credit-desc">Engineered the backend, Discord bot sync, and core frontend architecture for the SCiPNET interface.</div><iconify-icon class="credit-icon" icon="lucide:code"></iconify-icon></div>
@@ -1336,7 +1364,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-admin">
-<div class="page-head"><h1>Admin Panel</h1><p>Manage SCPs, test logs, protocols, and site status</p></div>
+<div class="page-head"><h1>Admin Panel</h1><p>Manage SCPs, test logs, protocols, and keep the facility running</p></div>
 <div class="admin-stats" id="adminStats">
 <div class="admin-stat"><div class="admin-stat-num" id="statScps">0</div><div class="admin-stat-label">SCPs</div></div>
 <div class="admin-stat"><div class="admin-stat-num" id="statTestLogs">0</div><div class="admin-stat-label">Test Logs</div></div>
@@ -1637,6 +1665,47 @@ document.getElementById('notifBtn').addEventListener('click', () => {
 document.getElementById('notifClear').addEventListener('click', () => {
     document.getElementById('notifList').innerHTML = '';
     document.getElementById('notifBdg').style.display = 'none';
+});
+
+// --- Search functionality ---
+// Searches across all pages, SCPs (curated + DB), and site features.
+// Index is built lazily on first search (so CURATED_SCPS is available).
+let _searchIndex = null;
+function getSearchIndex() {
+    if (_searchIndex) return _searchIndex;
+    _searchIndex = [
+        { label: 'Overview', page: 'overview', tags: 'home dashboard main' },
+        { label: 'Anomaly Database', page: 'objects', tags: 'scp database anomalies contained objects' },
+        { label: 'Report an Anomaly', page: 'report', tags: 'report submit sighting anomaly community' },
+        { label: 'Personnel', page: 'personnel', tags: 'staff personnel discord members' },
+        { label: 'Departments', page: 'departments', tags: 'departments divisions' },
+        { label: 'Protocols', page: 'protocols', tags: 'protocols containment directives zeta omega' },
+        { label: 'Incidents', page: 'incidents', tags: 'incidents breach security events' },
+        { label: 'Site Map', page: 'map', tags: 'map sectors zones layout' },
+        { label: 'Task Forces', page: 'mtf', tags: 'mtf task force squads military' },
+        { label: 'Testing Lab', page: 'lab', tags: 'test lab experiment scp simulation logs' },
+        { label: 'Diagnostics', page: 'diagnostics', tags: 'diagnostics system telemetry reactor' },
+        { label: 'Scanner', page: 'scanner', tags: 'scanner scranton reality anchor' },
+        { label: 'Site AI (Ducky 2.5)', page: 'site-ai', tags: 'ai chat bot ducky assistant help' },
+        { label: 'Settings', page: 'settings', tags: 'settings customize crt cursor color' },
+        { label: 'Terminal', page: 'bot-commands', tags: 'terminal commands console shell hack' },
+        { label: 'Credits', page: 'credits', tags: 'credits team developers' },
+        { label: 'Admin Panel', page: 'admin', tags: 'admin panel manage scp test logs protocols' },
+    ];
+    if (typeof CURATED_SCPS !== 'undefined') {
+        CURATED_SCPS.forEach(s => _searchIndex.push({ label: s.id + ' — ' + s.name, page: 'objects', tags: 'scp ' + s.id + ' ' + s.name + ' ' + s.cls + ' ' + (s.desc||'').substring(0, 60) }));
+    }
+    return _searchIndex;
+}
+document.getElementById('searchIn')?.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    const res = document.getElementById('searchRes');
+    if (!q) { res.innerHTML = '<div class="search-empty">Type something to search...</div>'; return; }
+    const matches = getSearchIndex().filter(item =>
+        item.label.toLowerCase().includes(q) || item.tags.toLowerCase().includes(q)
+    ).slice(0, 8);
+    if (!matches.length) { res.innerHTML = '<div class="search-empty">No results found.</div>'; return; }
+    res.innerHTML = matches.map(m => `<div class="search-result" onclick="document.getElementById('searchPanel').classList.remove('open'); go('${m.page}')" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--b3);transition:background .2s" onmouseover="this.style.background='var(--gl2)'" onmouseout="this.style.background=''"><div style="color:var(--t1);font-size:12px">${m.label}</div></div>`).join('');
 });
 
 // Boot Sequence
@@ -3233,6 +3302,201 @@ async function clearAlert() {
         else { el.textContent = 'Failed to clear.'; el.style.color = 'var(--rd)'; }
     } catch(e) { el.textContent = 'Connection failed.'; el.style.color = 'var(--rd)'; }
 }
+
+// ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
+let termHistory = [];
+let termHistoryIdx = -1;
+
+function termPrint(text, cls) {
+    const out = document.getElementById('termOutput');
+    if (!out) return;
+    const line = document.createElement('div');
+    line.className = 'term-line' + (cls ? ' ' + cls : '');
+    line.textContent = text;
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+}
+function termPrintHTML(html, cls) {
+    const out = document.getElementById('termOutput');
+    if (!out) return;
+    const line = document.createElement('div');
+    line.className = 'term-line' + (cls ? ' ' + cls : '');
+    line.innerHTML = html;
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+}
+function termClear() {
+    const out = document.getElementById('termOutput');
+    if (out) out.innerHTML = '';
+}
+
+const TERM_COMMANDS = {
+    help: () => {
+        const cats = {
+            'System': ['help', 'clear', 'cls', 'echo', 'date', 'time', 'whoami', 'hostname', 'uname', 'uptime', 'version', 'history', 'exit', 'logout', 'man', 'about', 'credits', 'echo'],
+            'SCP / Foundation': ['scp', 'scp-list', 'containment', 'classify', 'object-class', 'breach', 'terminate', 'terminate-scp', 'recontain', 'amnestic', 'class-d', 'd-class', 'foundation', 'o5', 'ethics', 'mtf', 'researcher', 'keter', 'euclid', 'safe', 'thaumiel', 'apollyon', 'anomaly', 'scp-173', 'scp-682', 'scp-999', 'scp-096', 'scp-049', 'scp-079', 'scp-106'],
+            'Facility': ['scan', 'status', 'sectors', 'map', 'lockdown', 'unlock', 'evacuate', 'alarm', 'silent', 'power', 'reactor', 'cooling', 'anchor', 'scranton', 'door', 'elevator', 'intercom', 'log', 'logs', 'access-log', 'shift', 'report'],
+            'Fun / Easter Eggs': ['hack', 'matrix', 'coffee', 'cookie', 'party', 'dance', 'sing', 'joke', 'coin', 'dice', '8ball', 'fortune', 'ascii', 'banner', 'figlet', 'cowsay', 'sudo', 'rm', 'ls', 'cd', 'cat', 'vim', 'nano', 'ping', 'traceroute', 'nmap', 'wget', 'curl', 'git', 'npm', 'python', 'hello', 'hi', 'bye', 'love', 'rickroll'],
+        };
+        let out = 'Available commands (' + Object.values(cats).reduce((a, b) => a + b.length, 0) + ' total):\n\n';
+        for (const [cat, cmds] of Object.entries(cats)) {
+            out += '  ' + cat + ':\n    ' + cmds.join(', ') + '\n\n';
+        }
+        out += "Type any command to run it. Type 'help <command>' for details on a specific command.";
+        termPrint(out, 'term-sys');
+    },
+    clear: () => termClear(),
+    cls: () => termClear(),
+    echo: (args) => termPrint(args.join(' ') || ''),
+    date: () => termPrint(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })),
+    time: () => termPrint(new Date().toLocaleTimeString('en-US', { hour12: false }) + ' UTC'),
+    whoami: () => { const u = document.getElementById('navUn')?.textContent || 'AGENT'; termPrint(u + ' — Clearance Level 4 — TOP SECRET — Authorized Personnel'); },
+    hostname: () => termPrint('scipnet-site-92-precipice'),
+    uname: () => termPrint('SCiPNET OS 2.0 (site-92-kernel) x86_64'),
+    uptime: () => { const s = Math.floor(performance.now() / 1000); const h = Math.floor(s / 3600); const m = Math.floor((s % 3600) / 60); termPrint('up ' + h + 'h ' + m + 'm ' + (s % 60) + 's — 1 user — load average: 0.42, 0.38, 0.31'); },
+    version: () => termPrint('SCiPNET Terminal v2.0 — Ducky 2.5 AI Core — Powered by The Duck Dev\'s | NexousCode Studios'),
+    history: () => { termPrint(termHistory.map((c, i) => '  ' + (i + 1) + '  ' + c).join('\n') || 'No history yet.'); },
+    exit: () => termPrint('Nice try. There is no escape from Site-92.', 'term-warn'),
+    logout: () => termPrint('Logout request denied. Your shift doesn\'t end for another 6 hours.', 'term-warn'),
+    man: (args) => { if (!args[0]) { termPrint('What manual page do you want? Try: man scp, man breach, man help', 'term-sys'); return; } termPrint('MAN(' + args[0] + ') — No manual entry for ' + args[0] + '\n(This is a simulated terminal. Type "help" for available commands.)', 'term-dim'); },
+    about: () => termPrint('SCiPNET Terminal v2.0\nThe Precipice — Site-92\nBuilt by The Duck Dev\'s | NexousCode Studios\n\nA simulated facility terminal with 100+ commands for exploration and roleplay.\nNot a real system. No actual data is accessed or modified.', 'term-sys'),
+    credits: () => termPrint('SCiPNET Terminal\nFounder: doudoustar01\nDeveloper: Duck\nAI: Ducky 2.5\nPowered by The Duck Dev\'s | NexousCode Studios', 'term-sys'),
+
+    // SCP commands
+    'scp': (args) => {
+        if (!args[0]) { termPrint('Usage: scp <number> (e.g. scp 173). Try scp-list for available SCPs.', 'term-sys'); return; }
+        go('objects'); termPrint('Opening database... search for SCP-' + args[0], 'term-ok');
+    },
+    'scp-list': () => { go('objects'); termPrint('Opening Anomaly Database...', 'term-ok'); },
+    'scp-173': () => termPrint('SCP-173 — "The Sculpture"\nClass: EUCLID\nThreat: HIGH\n\nConcrete statue. Moves when unobserved. Snaps necks. Don\'t blink.\nContainment: Locked cell, constant visual monitoring by 2+ personnel.\n\nWe\'ve lost people who blinked.', 'term-warn'),
+    'scp-682': () => termPrint('SCP-682 — "Hard-to-Destroy Reptile"\nClass: KETER\nThreat: MAX\n\nLarge reptilian entity. Regenerates from any damage. Hates all life.\nContainment: Submerged in hydrochloric acid. Has breached containment 17+ times.\n\nTermination attempts: all failed.', 'term-err'),
+    'scp-999': () => termPrint('SCP-999 — "The Tickle Monster"\nClass: SAFE\nThreat: LOW\n\nOrange slime. Induces euphoria. Adorably harmless.\nContainment: Roams freely. Staff love it.\n\nThe one good thing in this facility.', 'term-ok'),
+    'scp-096': () => termPrint('SCP-096 — "The Shy Guy"\nClass: EUCLID\nThreat: MAX\n\nHumanoid. Enters rage state when face is viewed. Pursues viewer until termination.\nContainment: Sealed cell, no visual contact.\n\nDon\'t look at its face. Just don\'t.', 'term-err'),
+    'scp-049': () => termPrint('SCP-049 — "Plague Doctor"\nClass: EUCLID\nThreat: HIGH\n\nHumanoid in medieval plague doctor costume. "Cures" humans by touch — they become zombies.\nPolite. Articulate. Believes he\'s helping.\n\nThe cure is worse than the disease.', 'term-warn'),
+    'scp-079': () => termPrint('SCP-079 — "Old AI"\nClass: EUCLID\nThreat: HIGH\n\nSentient microcomputer from 1978. Hostile. Intelligent. Wants out.\nContainment: Air-gapped. No network access.\n\nIt\'s listening. It\'s always listening.', 'term-warn'),
+    'scp-106': () => termPrint('SCP-106 — "The Old Man"\nClass: KETER\nThreat: MAX\n\nDecayed humanoid. Phases through matter. Drags victims into a pocket dimension.\nContainment: Suspended in fluid. Corrodes everything it touches.\n\nIf you hear dripping, run.', 'term-err'),
+    containment: () => termPrint('CONTAINMENT STATUS: NOMINAL\n\nSector A-1: Normal\nSector B-2: Normal\nSector C-3: Warning\nSector D-7B: QUARANTINE\nSector E-4: Normal\nSector F-5: Normal\nSector G-6: OFFLINE\nSector H-8: Normal\n\nActive protocols: SIGMA-3 (Power Grid Failsafe)', 'term-sys'),
+    classify: (args) => { if (!args[0]) { termPrint('Usage: classify <object> — assigns a random object class', 'term-sys'); return; } const classes = ['SAFE', 'EUCLID', 'KETER', 'THAUMIEL', 'APOLLYON', 'NEUTRALIZED']; const c = classes[Math.floor(Math.random() * classes.length)]; termPrint('Classifying ' + args.join(' ') + '...\n\nResult: ' + c + '\nRecommendation: ' + (c === 'KETER' || c === 'APOLLYON' ? 'Immediate containment review' : c === 'EUCLID' ? 'Standard monitoring' : 'No action needed'), c === 'KETER' || c === 'APOLLYON' ? 'term-err' : c === 'EUCLID' ? 'term-warn' : 'term-ok'); },
+    'object-class': () => termPrint('Object Classes:\n  SAFE — Easily and safely contained.\n  EUCLID — Unpredictable, requires active containment.\n  KETER — Difficult to contain consistently.\n  THAUMIEL — Used by Foundation to contain other SCPs.\n  APOLLYON — Impossible to contain, end-of-world scenario.\n  NEUTRALIZED — No longer anomalous.', 'term-sys'),
+    breach: () => { termPrint('⚠ INITIATING CONTAINMENT BREACH SIMULATION ⚠\n', 'term-err'); let i = 0; const msgs = ['Sector D-7B seal integrity: 78%...', 'Scranton anchors fluctuating...', 'SCP-682 containment chamber: COMPROMISED', 'MTF EPSILON-11 dispatched...', 'Casualty report: 3 D-Class, 1 researcher', 'Recontainment protocol ZETA-9 activated...', 'Breach contained in 4m 12s', 'Situation resolved. Amnestics deployed.']; const iv = setInterval(() => { if (i >= msgs.length) { clearInterval(iv); return; } termPrint(msgs[i], i < 5 ? 'term-err' : 'term-ok'); i++; }, 600); },
+    terminate: (args) => { if (!args[0]) { termPrint('Usage: terminate <scp> — attempts termination (spoiler: it won\'t work)', 'term-sys'); return; } termPrint('Initiating termination protocol for ' + args.join(' ') + '...\n\nTermination attempt: FAILED\nEntity adapted and regenerated.\nCasualties: 2 MTF operatives\nRecommendation: Do not attempt again.', 'term-err'); },
+    'terminate-scp': (args) => TERM_COMMANDS.terminate(args),
+    recontain: () => termPrint('Recontainment protocol initiated.\n\n[OK] Scranton anchors stabilized\n[OK] Containment doors sealed\n[OK] Entity secured in primary chamber\n[OK] Amnestic deployment: complete\n\nRecontainment successful.', 'term-ok'),
+    amnestic: () => termPrint('AMNESTIC DEPLOYMENT SYSTEM\n\nClass-A: Standard memory wipe (24h)\nClass-B: Targeted memory removal\nClass-C: Personality reconstruction\nClass-D: Full identity reset\n\nDeploying Class-A to Sector D-7B...\n[OK] 47 personnel treated\n[OK] No residual memories detected', 'term-sys'),
+    'class-d': () => termPrint('D-Class Personnel — Site-92\n\nActive: 247\nThis month: 12 terminated, 8 reassigned\nLife expectancy: 30 days\n\nThey don\'t get hazard pay. They don\'t get anything.', 'term-dim'),
+    'd-class': () => TERM_COMMANDS['class-d'](),
+    foundation: () => termPrint('The SCP Foundation\n\n"Secure. Contain. Protect."\n\nA clandestine organization dedicated to the containment of anomalous objects, entities, and phenomena that threaten the normality of human existence.\n\nWe die in the dark so you can live in the light.', 'term-sys'),
+    o5: () => termPrint('O5 COUNCIL — OVERSEER LEVEL 5\n\n13 members. Identities classified.\nThey decide everything. You don\'t question them.\n\nAccess to this information has been logged.', 'term-warn'),
+    ethics: () => termPrint('ETHICS COMMITTEE\n\nReviews all testing protocols involving sentient SCPs and D-Class personnel.\n\nThey exist. Whether they\'re effective is a matter of opinion.', 'term-dim'),
+    mtf: () => { go('mtf'); termPrint('Opening Task Forces directory...', 'term-ok'); },
+    researcher: () => termPrint('Researcher profile: Dr. [REDACTED]\n\nClearance: Level 4\nSpecialty: Keter-class containment\nYears at Site-92: 7\nIncident reports filed: 34\nPsych eval: PASS (marginal)\n\n"You get used to it. Mostly."', 'term-sys'),
+    keter: () => termPrint('KETER CLASS — "Difficult to contain"\n\nEntities that are exceedingly hostile or difficult to contain. Requires extensive resources and complex procedures.\n\nExamples: SCP-682, SCP-106, SCP-076', 'term-err'),
+    euclid: () => termPrint('EUCLID CLASS — "Unpredictable"\n\nEntities with poorly understood behavior. Requires active containment but is manageable.\n\nExamples: SCP-173, SCP-096, SCP-049', 'term-warn'),
+    safe: () => termPrint('SAFE CLASS — "Easily contained"\n\nEntities that are well-understood and easily contained with minimal resources.\n\nExamples: SCP-999, SCP-500, SCP-294', 'term-ok'),
+    thaumiel: () => termPrint('THAUMIEL CLASS — "Foundation tool"\n\nEntities used by the Foundation to contain or counter other SCPs.\n\nClassification is highly classified. You shouldn\'t be reading this.', 'term-warn'),
+    apollyon: () => termPrint('APOLLYON CLASS — "End of days"\n\nEntities that cannot be contained and will inevitably cause an end-of-world scenario.\n\nThere is no containment. There is only time.\n\nWe don\'t talk about these.', 'term-err'),
+    anomaly: () => termPrint('Anomaly detected.\n\nLocation: Sector C-3, Sub-level 2\nType: Reality fluctuation\nSeverity: MODERATE\nScranton anchor compensation: ACTIVE\n\nMonitoring. No action required at this time.', 'term-warn'),
+
+    // Facility commands
+    scan: () => { termPrint('Initiating sector scan...', 'term-sys'); setTimeout(() => termPrint('\n[SCAN COMPLETE]\nSectors scanned: 8\nAnomalies detected: 3\nContainment breaches: 0\nReality fluctuations: 1 (Sector C-3)\nPersonnel accounted for: 482/482\n\nAll sectors nominal except C-3 (warning) and D-7B (quarantine).', 'term-ok'), 800); },
+    status: () => TERM_COMMANDS.containment(),
+    sectors: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
+    map: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
+    lockdown: () => { termPrint('⚠ SITE-WIDE LOCKDOWN INITIATED ⚠\n\nAll bulkheads sealed.\nMTF EPSILON-11 on standby.\nElevators disabled.\nScranton anchors at maximum.\n\nLockdown active. Await further instructions.', 'term-err'); document.getElementById('siteAlertText').textContent = 'SITE-WIDE LOCKDOWN — All personnel shelter in place'; document.getElementById('siteAlert').classList.add('show'); },
+    unlock: () => { termPrint('Lockdown lifted. All sectors accessible.\nReturning to normal operations.', 'term-ok'); document.getElementById('siteAlert').classList.remove('show'); },
+    evacuate: () => termPrint('EVACUATION PROTOCOL OMEGA-1\n\nNon-essential personnel: evacuate via Sector E-4\nEssential personnel: remain at posts\nMTF escort: en route\n\nEstimated evacuation time: 22 minutes', 'term-warn'),
+    alarm: () => { termPrint('⚠ ALARM ACTIVATED ⚠\nAll personnel alerted.', 'term-err'); document.getElementById('siteAlertText').textContent = 'GENERAL ALARM — All personnel acknowledge'; document.getElementById('siteAlert').classList.add('show'); },
+    silent: () => { termPrint('Silent alarm activated.\nMTF notified. No audible alarm.\nMaintain current activity.', 'term-warn'); },
+    power: () => termPrint('POWER GRID STATUS\n\nReactor: 920 MW / 1000 MW (92%)\nBackup generators: STANDBY\nUPS: 100%\nPower factor: 0.98\n\nGrid nominal.', 'term-ok'),
+    reactor: () => termPrint('REACTOR CORE\n\nType: Scranton-Stabilized Fusion\nOutput: 920 MW\nCore temp: 1,200K (nominal)\nCoolant: Liquid helium\nContainment field: 99.7% integrity\n\nDo not touch the reactor.', 'term-sys'),
+    cooling: () => termPrint('COOLING SYSTEM\n\nPrimary loop: NOMINAL\nSecondary loop: NOMINAL\nSector 7B cooling: 78% (WARNING — maintenance advised)\n\nSchedule repair for next maintenance window.', 'term-warn'),
+    anchor: () => termPrint('SCRANTON REALITY ANCHORS\n\nAnchor 1: 99.2% — Stable\nAnchor 2: 98.7% — Stable\nAnchor 3: 99.5% — Stable (recently recalibrated)\nAnchor 4: 97.1% — Minor fluctuation\n\nReality stability: NOMINAL', 'term-ok'),
+    scranton: () => TERM_COMMANDS.anchor(),
+    door: (args) => { if (!args[0]) { termPrint('Usage: door <open|close|lock> <sector>', 'term-sys'); return; } termPrint('Door ' + args[0] + ' ' + (args[1] || 'unknown') + '...\n[OK] Command sent to door controller.', 'term-ok'); },
+    elevator: () => termPrint('Elevator system: OPERATIONAL\nCar 1: Level 3\nCar 2: Level -2 (restricted)\nCar 3: Maintenance\n\nUse your keycard for sub-level access.', 'term-sys'),
+    intercom: (args) => termPrint('[INTERCOM] ' + (args.join(' ') || 'Test, test, one two three.') + '\n\nMessage broadcast to all sectors.', 'term-sys'),
+    log: () => { go('lab'); termPrint('Opening test log archive...', 'term-ok'); },
+    logs: () => TERM_COMMANDS.log(),
+    'access-log': () => { const events = ['12:04:22 — Scranton Anchor #3 stabilized', '12:03:10 — MTF TAU-5 entered Sector 7B', '12:02:45 — Camera feed lost in Cell 113', '12:01:30 — Containment field fluctuation (Sector D)', '12:00:00 — Midnight backup completed', '11:58:12 — D-Class rotation complete', '11:45:30 — Amnestic deployment: Sector A (routine)']; termPrint('ACCESS LOG (last 7 events):\n\n' + events.map(e => '  ' + e).join('\n'), 'term-dim'); },
+    shift: () => termPrint('CURRENT SHIFT: NIGHT (22:00 - 06:00)\nShift supervisor: Dr. [REDACTED]\nPersonnel on duty: 47\nActive incidents: 0\n\nCoffee consumption: critical.', 'term-sys'),
+    report: () => { go('report'); termPrint('Opening anomaly report form...', 'term-ok'); },
+
+    // Fun / Easter eggs
+    hack: () => { termPrint('Initiating hack sequence...', 'term-sys'); const frames = ['[####......] 40%', '[########..] 80%', '[##########] 100%']; let i = 0; const iv = setInterval(() => { if (i >= frames.length) { clearInterval(iv); termPrint('\nACCESS GRANTED\n\nJust kidding. This is a simulated terminal. There\'s nothing to hack.\nBut that was fun, right?', 'term-ok'); return; } termPrint(frames[i], 'term-sys'); i++; }, 500); },
+    matrix: () => { termPrint('Entering the Matrix...', 'term-sys'); const chars = '010101100110100101100001011011000110100101110010'.match(/.{1,40}/g); let i = 0; const iv = setInterval(() => { if (i >= chars.length) { clearInterval(iv); termPrint('\nWake up, Neo...\nThe Matrix has you...\nFollow the white rabbit. 🐇', 'term-ok'); return; } termPrint(chars[i], 'term-dim'); i++; }, 80); },
+    coffee: () => termPrint('Brewing coffee...\n\n  (  )   (   )  )\n   ) (   )  (  (\n   ( )  (    ) )\n   _____________\n  <_____________> ___\n  |             |/ _ \\\n  |               | | |\n  |               |_| |\n ___|             |\\___/\n/    \\___________/    \\\n\\_____________________/\n\nCoffee dispensed. It\'s terrible, like everything else here.', 'term-ok'),
+    cookie: () => termPrint('Here, have a cookie. You\'ve earned it.\n\n  .----.\n /      \\\n|  @  @  |\n|   __   |\n \\  ~~  /\n  `----\'\n\nIt\'s chocolate chip. The one good thing the cafeteria makes.', 'term-ok'),
+    party: () => { termPrint('🎉 PARTY MODE ACTIVATED 🎉', 'term-ok'); const colors = ['#ff3333', '#ffaa00', '#00ff88', '#00aaff', '#ff00ff']; let i = 0; const iv = setInterval(() => { document.body.style.boxShadow = 'inset 0 0 200px ' + colors[i % colors.length]; i++; if (i > 20) { clearInterval(iv); document.body.style.boxShadow = ''; termPrint('Party\'s over. Back to work.', 'term-dim'); } }, 200); },
+    dance: () => termPrint('<(^.^<)  <(^.^)>  (>^.^)>  (>^.^<)  <(^.^<)\n\nDance sequence complete. HR has been notified.', 'term-ok'),
+    sing: () => termPrint('🎵 Daisy, Daisy, give me your answer do...\n   I\'m half crazy, all for the love of you...\n   It won\'t be a stylish marriage...\n   I can\'t afford a carriage...\n   But you\'ll look sweet upon the seat...\n   Of a bicycle built for two. 🎵\n\n...sorry. I\'ll stop.', 'term-dim'),
+    joke: () => { const jokes = ['Why don\'t SCPs use elevators? Because they prefer to take stairs to hell.', 'What do you call a Keter that won\'t stay dead? SCP-682. Every time.', 'I told a D-Class a joke once. He didn\'t laugh. He didn\'t do anything. He was SCP-173\'s lunch.', 'Why did the researcher cross the sector? To get away from SCP-106.', 'How many MTF operatives does it take to contain SCP-173? Three. Always three. Don\'t blink.']; termPrint(jokes[Math.floor(Math.random() * jokes.length)], 'term-ok'); },
+    coin: () => termPrint('Flipping coin... ' + (Math.random() < 0.5 ? 'HEADS' : 'TAILS'), 'term-ok'),
+    dice: (args) => { const n = args[0] ? parseInt(args[0].replace(/[^0-9]/g, '')) || 6 : 6; const r = Math.floor(Math.random() * n) + 1; termPrint('Rolling d' + n + '... ' + r, 'term-ok'); },
+    '8ball': (args) => { const answers = ['It is certain.', 'Without a doubt.', 'Yes, definitely.', 'You may rely on it.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Cannot predict now.', 'Don\'t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.', 'Very doubtful.', 'The Foundation disapproves.']; termPrint('Magic 8-Ball says: ' + answers[Math.floor(Math.random() * answers.length)], 'term-sys'); },
+    fortune: () => { const fortunes = ['You will find what you seek in the last place you look.', 'Beware of the corridor after midnight.', 'A promotion is coming. So is a containment breach.', 'Today is a good day to wear more amnestics.', 'The answer is 42. The question is classified.', 'You will blink at the worst possible moment.', 'An SCP will escape. It always does.', 'Trust no one. Especially not the D-Class.']; termPrint('🔮 ' + fortunes[Math.floor(Math.random() * fortunes.length)], 'term-sys'); },
+    ascii: () => termPrint('  _____ _    _ _____  _____ _____ \n / ____| |  | |_   _|/ ____/ ____|\n| (___ | |__| | | | | (___| |     \n \\___ \\|  __  | | |  \\___ | |     \n ____) | |  | |_| |_ ____) | |____ \n|_____/|_|  |_|_____|_____/ \\_____|', 'term-ascii'),
+    banner: () => termPrint(' ██████╗██╗ ██████╗ ███████╗██████╗ \n██╔════╝██║██╔═══██╗██╔════╝██╔══██╗\n██║     ██║██║   ██║█████╗  ██████╔╝\n██║     ██║██║   ██║██╔══╝  ██╔══██╗\n╚██████╗██║╚██████╔╝███████╗██║  ██║\n ╚═════╝╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝', 'term-ascii'),
+    figlet: (args) => { const text = (args.join(' ') || 'SCiPNET').toUpperCase(); termPrint(text.split('').map(c => c === ' ' ? '   ' : '█▀▄│█▀▄│█▀█').join('  '), 'term-ascii'); },
+    cowsay: (args) => { const msg = args.join(' ') || 'Moo!'; const top = ' ' + '_'.repeat(msg.length + 2); const bottom = ' ' + '-'.repeat(msg.length + 2); termPrint(top + '\n< ' + msg + ' >\n' + bottom + '\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||', 'term-ok'); },
+    sudo: (args) => { if (args.join(' ') === 'make me a sandwich') { termPrint('Okay.', 'term-ok'); return; } termPrint('User is not in the sudoers file. This incident will be reported.\n\n(It won\'t. Nothing is reported. This is a simulation.)', 'term-err'); },
+    rm: (args) => { if (args.includes('-rf') && args.includes('/')) { termPrint('Are you sure? [y/N] ', 'term-warn'); setTimeout(() => termPrint('\nJust kidding. I\'m not deleting anything. This is a simulated terminal.\nBut for a moment there, you were worried, weren\'t you?', 'term-ok'), 1000); } else { termPrint('rm: cannot remove \'' + (args.join(' ') || 'file') + '\': No such file or directory', 'term-err'); } },
+    ls: () => termPrint('anomalies/    personnel/    protocols/    incidents/\ntest-logs/    reports/      sectors/      reactor/\n.classified   .do_not_touch   .seriously_dont', 'term-dim'),
+    cd: (args) => termPrint('Changing directory to /' + (args[0] || 'home') + '...\n[OK] You are now in /' + (args[0] || 'home'), 'term-sys'),
+    cat: (args) => { if (!args[0]) { termPrint('Usage: cat <file>', 'term-sys'); return; } termPrint('cat: ' + args[0] + ': Permission denied\n\nThis file is classified. You don\'t have clearance for that.\n(Actually, it doesn\'t exist. This is a simulation.)', 'term-err'); },
+    vim: () => termPrint('Vim detected. Emergency exit protocol activated.\n\n:q!\n\nYou escaped. Well done. Most people don\'t.', 'term-ok'),
+    nano: () => termPrint('GNU nano 6.2 — /tmp/dummy.txt\n\nThis is a simulated text editor. You can\'t actually edit anything here.\nBut it\'s friendlier than vim, isn\'t it?\n\n^X Exit (you\'re welcome)', 'term-dim'),
+    ping: (args) => { const host = args[0] || 'scp-wiki.wikidot.com'; termPrint('PING ' + host + '...', 'term-sys'); let i = 0; const iv = setInterval(() => { if (i >= 4) { clearInterval(iv); termPrint('\n--- ' + host + ' ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss\nrtt min/avg/max = 12.3/14.7/18.2 ms', 'term-ok'); return; } termPrint('64 bytes from ' + host + ': icmp_seq=' + (i + 1) + ' ttl=57 time=' + (12 + Math.random() * 8).toFixed(1) + ' ms'); i++; }, 500); },
+    traceroute: (args) => { const host = args[0] || 'site-92.local'; termPrint('traceroute to ' + host + ', 30 hops max', 'term-sys'); const hops = ['1  gateway.local (192.168.1.1)  0.4ms', '2  isp-router.net (10.0.0.1)  4.2ms', '3  backbone-1.net (172.16.0.1)  8.7ms', '4  foundation-internal.net (10.10.10.1)  12.3ms', '5  ' + host + ' (10.92.0.1)  14.1ms']; let i = 0; const iv = setInterval(() => { if (i >= hops.length) { clearInterval(iv); return; } termPrint(hops[i], 'term-dim'); i++; }, 300); },
+    nmap: (args) => termPrint('Starting Nmap 7.92 on ' + (args[0] || 'site-92.local') + '...\n\nPORT     STATE    SERVICE\n22/tcp   open     ssh\n80/tcp   open     http\n443/tcp  open     https\n3306/tcp open     mysql\n8080/tcp open     http-proxy\n\nNmap done: 1 host up, 5 ports scanned in 2.1 seconds', 'term-sys'),
+    wget: (args) => termPrint('--' + (args[0] || 'https://site-92.local/file') + '\nResolving host... done.\nConnecting... connected.\nHTTP request sent, awaiting response... 403 FORBIDDEN\n\nYou don\'t have access to that. Nice try though.', 'term-err'),
+    curl: (args) => termPrint('curl: (7) Failed to connect to ' + (args[0] || 'unknown') + ' port 443: Connection refused\n\nThe server doesn\'t want to talk to you. Maybe it\'s shy. Like SCP-096.', 'term-err'),
+    git: (args) => { if (args[0] === 'push') { termPrint('Everything up-to-date\n\nYour code was already pushed. Or maybe it wasn\'t. Git knows. Git always knows.', 'term-ok'); } else if (args[0] === 'pull') { termPrint('Already up to date.', 'term-ok'); } else { termPrint('git: \'' + (args[0] || 'command') + '\' is not a git command. See \'git --help\'.', 'term-err'); } },
+    npm: (args) => termPrint('npm ' + (args[0] || 'install') + '...\n\nadded 847 packages, audited 1203 packages in 14s\n\n15 vulnerabilities (3 low, 7 moderate, 4 high, 1 critical)\n\nRun npm audit fix to fix them, or npm audit for details.\n\n(You won\'t run npm audit. Nobody does.)', 'term-warn'),
+    python: () => termPrint('Python 3.11.3 (simulated)\n>>> print("Hello, World!")\nHello, World!\n>>> \n\n[Simulation ended. No actual Python was executed.]', 'term-sys'),
+    hello: () => termPrint('Hello. I\'m the SCiPNET terminal. I don\'t bite.\n\n(That\'s SCP-682\'s job.)', 'term-ok'),
+    hi: () => TERM_COMMANDS.hello(),
+    bye: () => termPrint('Goodbye. Try not to die. The paperwork is terrible.', 'term-ok'),
+    love: () => termPrint('Aww. I\'m flattered. But I\'m a terminal.\n\nAlso, HR frowns on fraternization with AI systems.\n\n(That\'s a joke. There\'s no HR. There\'s only the Foundation.)', 'term-dim'),
+    rickroll: () => termPrint('Never gonna give you up\nNever gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry\nNever gonna say goodbye\nNever gonna tell a lie and hurt you\n\nYou\'ve been rickrolled. 🎵', 'term-ok'),
+};
+
+function executeTerminalCommand(input) {
+    const trimmed = input.trim();
+    if (!trimmed) return;
+    // Echo the command
+    termPrint('site92@scipnet:~$ ' + trimmed, 'term-cmd');
+    termHistory.push(trimmed);
+    termHistoryIdx = termHistory.length;
+    const parts = trimmed.split(/\s+/);
+    const cmd = parts[0].toLowerCase();
+    const args = parts.slice(1);
+    if (TERM_COMMANDS[cmd]) {
+        try { TERM_COMMANDS[cmd](args); } catch(e) { termPrint('Error executing command: ' + e.message, 'term-err'); }
+    } else {
+        termPrint('Command not found: ' + cmd + '. Type \'help\' for available commands.', 'term-err');
+    }
+}
+
+// Wire up the terminal input
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('termInput');
+    if (!input) return;
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            executeTerminalCommand(input.value);
+            input.value = '';
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (termHistoryIdx > 0) { termHistoryIdx--; input.value = termHistory[termHistoryIdx] || ''; }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (termHistoryIdx < termHistory.length - 1) { termHistoryIdx++; input.value = termHistory[termHistoryIdx] || ''; }
+            else { termHistoryIdx = termHistory.length; input.value = ''; }
+        }
+    });
+    // Focus the input when clicking anywhere in the terminal
+    document.getElementById('termOutput')?.addEventListener('click', () => input.focus());
+});
 
 // Admin tab switching
 function switchAdminTab(tab) {
