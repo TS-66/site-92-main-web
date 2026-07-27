@@ -406,7 +406,7 @@ body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1
 .p-off{background:var(--t3)}
 .per-group-header{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--ac);letter-spacing:2px;margin:30px 0 12px 0;padding:12px 16px;background:var(--b3);border-left:4px solid var(--ac);display:flex;align-items:center;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,.3)}
 .per-group-header span{color:var(--t2);font-size:10px;margin-left:auto;background:var(--b1);padding:3px 8px;border:1px solid var(--bd2)}
-.table-wrap{background:var(--b2);border:1px solid var(--bd2);overflow:hidden;clip-path:polygon(0 0, 100% 0, 99% 100%, 1% 100%)}
+.table-wrap{background:var(--b2);border:1px solid var(--bd2);overflow-x:auto;clip-path:polygon(0 0, 100% 0, 99% 100%, 1% 100%)}.table-wrap .tbl{min-width:500px}
 .tbl{width:100%;border-collapse:collapse;font-size:11px}
 .tbl thead th{text-align:left;padding:14px;font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bd2);font-weight:700;background:var(--b3)}
 .tbl tbody tr{border-bottom:1px solid var(--b3);transition:background .15s;cursor:none}
@@ -755,6 +755,84 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .scp-detail-desc{font-size:12px;line-height:1.7;color:var(--t2);margin:14px 0;padding:12px;background:var(--b3);border-radius:2px}
 .scp-detail-actions{display:flex;gap:10px;margin-top:16px}
 
+/* ===== Enhanced animations ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 5px var(--ac)}50%{box-shadow:0 0 20px var(--ac)}}
+
+/* Page transitions — smooth fade-up on every page switch */
+.pg-sec.active{animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards}
+
+/* SCP card hover — lift + glow */
+.scp-card{transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+.scp-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.4);border-color:var(--ac)}
+
+/* Incident card hover */
+.incident{transition:transform .25s,box-shadow .25s,border-color .25s}
+.incident:hover{transform:translateX(4px);box-shadow:0 4px 16px rgba(0,0,0,.3);border-color:var(--ac)}
+
+/* Admin button — press feedback */
+.admin-btn{transition:transform .15s,background .2s,box-shadow .2s}
+.admin-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.admin-btn:active{transform:translateY(0) scale(.97)}
+
+/* Nav links — underline sweep */
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:var(--ac);transition:width .3s,left .3s}
+.nav-link:hover::after,.nav-link.active::after{width:80%;left:10%}
+
+/* Modal/editor open animation */
+.editor-modal.open .editor-box,.scp-detail-modal.open .scp-detail-box,.admin-modal.open .admin-modal-box{animation:scaleIn .25s cubic-bezier(.2,.8,.2,1) forwards}
+
+/* Table row hover */
+.tbl tbody tr{transition:background .2s}
+.tbl tbody tr:hover{background:var(--gl2)}
+
+/* Stat numbers — count-up glow */
+.admin-stat-num{transition:text-shadow .3s}
+.admin-stat:hover .admin-stat-num{text-shadow:0 0 12px var(--ac)}
+
+/* Chat message slide-in */
+.chat-msg{animation:slideInRight .3s ease forwards}
+.chat-msg.ai{animation:fadeIn .4s ease forwards}
+
+/* Loading skeleton shimmer — only on elements with .loading class */
+.loading-shimmer{background:linear-gradient(90deg,var(--b3) 25%,var(--b4) 50%,var(--b3) 75%)!important;background-size:200% 100%!important;animation:shimmer 1.5s infinite}
+
+/* Input focus glow */
+.fi:focus,.admin-status-input:focus,.editor-row input:focus,.editor-row textarea:focus,.editor-row select:focus{box-shadow:0 0 0 2px rgba(var(--ac-rgb,0,200,255),.15)}
+
+/* RPT card hover */
+.rpt-card{transition:transform .25s,box-shadow .25s}
+.rpt-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+
+/* MTF / dept cards */
+.mtf-card,.dept-card,.gauge-card{transition:transform .3s,box-shadow .3s}
+.mtf-card:hover,.dept-card:hover,.gauge-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+
+/* Sector cards */
+.sector{transition:transform .25s,box-shadow .25s}
+.sector:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+
+/* Quick action tiles */
+.qa{transition:transform .25s,background .2s}
+.qa:hover{transform:translateY(-3px) scale(1.02)}
+
+/* Feed items */
+.feed-item{transition:background .2s,padding-left .2s}
+.feed-item:hover{background:var(--gl2);padding-left:8px}
+
+/* Scrollbar styling */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--b1)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--ac)}
+
+/* Beta badge subtle float */
+.beta-badge{animation:floatBadge 3s ease-in-out infinite}
+@keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
 @media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
 </style>
@@ -1008,7 +1086,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <span class="tg">[OK]</span> Kernel modules loaded.<br>
 <span class="tg">[OK]</span> Scranton Reality Anchors online.<br>
 <span class="tw">[WARN]</span> Sector 7B security cameras offline.<br>
-<span class="tg">[OK]</span> AI Module "SCiPNET AI 2.0" initialized.<br>
+<span class="tg">[OK]</span> AI Module "Ducky 2.5" initialized.<br>
 <span class="te">[ERR]</span> Containment field fluctuation detected in Cell 113.<br>
 ><span class="cursor-b"></span>
 </div>
@@ -1199,11 +1277,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-site-ai">
-<div class="page-head"><h1>SCiPNET AI 2.0</h1><p>Your AI assistant</p></div>
+<div class="page-head"><h1>Ducky 2.5</h1><p>Your AI assistant</p></div>
 <div class="chat-container">
-<div class="chat-header"><span><iconify-icon icon="lucide:bot"></iconify-icon> SCiPNET AI online</span><div style="display:flex;gap:10px;align-items:center"><div class="chat-status">Online</div><button id="chatClearBtn" class="chat-tool-btn"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div>
+<div class="chat-header"><span><iconify-icon icon="lucide:bot"></iconify-icon> Ducky is online</span><div style="display:flex;gap:10px;align-items:center"><div class="chat-status">Online</div><button id="chatClearBtn" class="chat-tool-btn"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div>
 <div class="chat-body" id="chatBody">
-<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Hey. I'm the SCiPNET AI, the Site-92 research assistant. I've got 19 tools connected to live data — SCP database, web search, weather, system diagnostics, you name it. What do you need?<span class="chat-time">now</span></div></div>
+<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Hey. I'm Ducky, the Site-92 AI. I've got 19 tools connected to live data — SCP database, web search, weather, system diagnostics, you name it. What do you need?<span class="chat-time">now</span></div></div>
 </div>
 <div class="chat-suggestions">
     <button class="chat-suggest-btn" onclick="sendSuggestion('What time is it?')">Time</button>
@@ -1215,7 +1293,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <button class="chat-suggest-btn" onclick="clearChatSession()" style="border-color:rgba(255,46,94,.3);color:var(--rd)">Clear</button>
 </div>
 <div class="chat-input-area">
-<input type="text" id="chatInput" placeholder="Ask SCiPNET AI anything...">
+<input type="text" id="chatInput" placeholder="Ask Ducky anything...">
 <button id="chatMicBtn" class="chat-tool-btn"><iconify-icon icon="lucide:mic" width="18"></iconify-icon></button>
 <button id="chatSendBtn" onclick="sendChat()"><iconify-icon icon="lucide:send" width="14"></iconify-icon> SEND</button>
 </div>
@@ -1253,7 +1331,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="credit-grid">
 <div class="credit-card"><div class="credit-role">Founder of Site-92</div><div class="credit-name">doudoustar01</div><div class="credit-desc">Founded Site-92, established initial infrastructure, and oversaw the deployment of the SCiPNET terminal.</div><iconify-icon class="credit-icon" icon="lucide:star"></iconify-icon></div>
 <div class="credit-card"><div class="credit-role">Developer</div><div class="credit-name">Duck</div><div class="credit-desc">Engineered the backend, Discord bot sync, and core frontend architecture for the SCiPNET interface.</div><iconify-icon class="credit-icon" icon="lucide:code"></iconify-icon></div>
-<div class="credit-card"><div class="credit-role">AI Developer</div><div class="credit-name">The Site-92 Development Team</div><div class="credit-desc">Built and integrated the SCiPNET AI 2.0 AI assistant for the terminal.</div><iconify-icon class="credit-icon" icon="lucide:bot"></iconify-icon></div>
+<div class="credit-card"><div class="credit-role">AI Developer</div><div class="credit-name">The Duck Dev's</div><div class="credit-desc">Built and integrated the Ducky 2.5 AI assistant. Powered by The Duck Dev's | NexousCode Studios.</div><iconify-icon class="credit-icon" icon="lucide:bot"></iconify-icon></div>
 </div>
 </div>
 
@@ -1373,7 +1451,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 </div>
-<div class="footer"><span>The Precipice // Site-92 // SCiPNET v2.0</span><span>Built with AI — © 2025</span></div>
+<div class="footer"><span>The Precipice // Site-92 // SCiPNET v2.0</span><span>Powered by The Duck Dev's | NexousCode Studios</span></div>
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
@@ -1414,6 +1492,121 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="lc-minimized-btn" id="lcMinBtn" onclick="restoreLiveChat()"><iconify-icon icon="lucide:message-circle" width="24"></iconify-icon><div class="lc-min-badge" id="lcMinBadge">0</div></div>
 
 <script>
+// =============================================
+// ANTI-CHEAT / ANTI-INSPECTION SYSTEM
+// Powered by The Duck Dev's | NexousCode Studios
+// =============================================
+(function antiCheat() {
+    'use strict';
+    const BANNER = '%c⚠ ANTI-CHEAT ACTIVE ⚠\n%cThis terminal is protected by the Site-92 Anti-Cheat System.\nPowered by The Duck Dev\'s | NexousCode Studios\n\nUnauthorized access, inspection, or modification of this terminal\'s code, data, or network traffic is prohibited and logged.\n\nIf you reached this message by opening DevTools, that action has been recorded.';
+    const BANNER_STYLE_1 = 'color:#ff3333;font-size:20px;font-weight:bold;text-shadow:0 0 8px #ff3333';
+    const BANNER_STYLE_2 = 'color:#ffaa00;font-size:12px;';
+
+    // --- 1. Console tampering detection ---
+    // Override console methods to detect when someone is poking around.
+    const origLog = console.log;
+    const origWarn = console.warn;
+    const origError = console.error;
+    let devtoolsOpen = false;
+    let warned = false;
+
+    function showWarning() {
+        if (warned) return;
+        warned = true;
+        origLog.call(console, BANNER, BANNER_STYLE_1, BANNER_STYLE_2);
+        // Send to backend for logging (fire-and-forget)
+        try {
+            fetch('/api/anti-cheat/log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event: 'devtools_detected', ts: Date.now(), ua: navigator.userAgent, url: location.href })
+            }).catch(() => {});
+        } catch(e) {}
+        // Show a visible in-page warning that auto-dismisses after 5 seconds
+        let banner = document.getElementById('anticheat-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'anticheat-banner';
+            banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:linear-gradient(90deg,#ff3333,#ff6600);color:#fff;padding:12px 16px;font-family:monospace;font-size:12px;text-align:center;box-shadow:0 2px 12px rgba(255,51,51,.6);transform:translateY(-100%);transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .4s;opacity:0';
+            banner.innerHTML = '⚠ ANTI-CHEAT: DevTools detected. This session is being monitored. — Powered by The Duck Dev\'s | NexousCode Studios';
+            document.body.appendChild(banner);
+            // Trigger slide-in
+            requestAnimationFrame(() => { banner.style.transform = 'translateY(0)'; banner.style.opacity = '1'; });
+        }
+        // Clear any existing dismiss timer and set a new one (5 seconds)
+        if (banner._dismissTimer) clearTimeout(banner._dismissTimer);
+        banner._dismissTimer = setTimeout(() => {
+            banner.style.transform = 'translateY(-100%)';
+            banner.style.opacity = '0';
+            setTimeout(() => { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
+        }, 5000);
+        // Allow re-triggering after the banner is dismissed
+        setTimeout(() => { warned = false; }, 5500);
+    }
+
+    // --- 2. DevTools detection via window size diff ---
+    const threshold = 160;
+    setInterval(function() {
+        const widthDiff = window.outerWidth - window.innerWidth;
+        const heightDiff = window.outerHeight - window.innerHeight;
+        if (widthDiff > threshold || heightDiff > threshold) {
+            if (!devtoolsOpen) { devtoolsOpen = true; showWarning(); }
+        } else {
+            devtoolsOpen = false;
+        }
+    }, 1000);
+
+    // --- 3. Debugger statement timing (catches "pause on exceptions" / step-through) ---
+    setInterval(function() {
+        const start = performance.now();
+        // eslint-disable-next-line no-debugger
+        debugger;
+        if (performance.now() - start > 100) {
+            showWarning();
+        }
+    }, 4000);
+
+    // --- 4. Block common inspection shortcuts ---
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123) { e.preventDefault(); showWarning(); return false; }
+        // Ctrl+Shift+I / Cmd+Shift+I (DevTools)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { e.preventDefault(); showWarning(); return false; }
+        // Ctrl+U (view source)
+        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); showWarning(); return false; }
+        // Ctrl+Shift+C (inspect element)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.keyCode === 67) { e.preventDefault(); showWarning(); return false; }
+    });
+
+    // --- 5. Block right-click context menu (inspect element) ---
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showWarning();
+        return false;
+    });
+
+    // --- 6. Detect when someone tries to select + copy source code ---
+    let copyAttempts = 0;
+    document.addEventListener('copy', function(e) {
+        copyAttempts++;
+        if (copyAttempts > 2) {
+            e.preventDefault();
+            showWarning();
+            return false;
+        }
+    });
+
+    // --- 7. Print the banner on initial console open ---
+    // Most browsers only show console output when DevTools is open, so this
+    // naturally appears when someone inspects.
+    setTimeout(function() { origLog.call(console, BANNER, BANNER_STYLE_1, BANNER_STYLE_2); }, 500);
+
+    // Add the pulse animation
+    const style = document.createElement('style');
+    style.textContent = '@keyframes anticheatPulse{0%,100%{opacity:1}50%{opacity:.7}}';
+    document.head.appendChild(style);
+})();
+
 // Navigation Logic
 function go(page) {
     document.querySelectorAll('.pg-sec').forEach(s => s.classList.remove('active'));
@@ -2925,7 +3118,7 @@ async function loadAnomalyReports() {
 
 // --- Admin: Clear AI Memory ---
 async function clearAiMemory() {
-    if (!confirm("Clear all AI conversation memory? This resets SCiPNET AI's context for all sessions.")) return;
+    if (!confirm("Clear all AI conversation memory? This resets Ducky's context for all sessions.")) return;
     try {
         const res = await fetch('/api/stream/clear', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({}) });
         if (res.ok) alert('AI memory cleared.');
