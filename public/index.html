@@ -4169,7 +4169,7 @@ async function addNews() {
             document.getElementById('newNewsBody').value = '';
             setAdminMsg('newsMsg', 'News published.', false);
             loadAdminNews();
-        } else { setAdminMsg('newsMsg', 'Failed: ' + (data.error || res.status), true); }
+        } else { setAdminMsg('newsMsg', 'Failed: ' + (data.error || res.status) + (data.detail ? ' — ' + data.detail : ''), true); }
     } catch(e) { setAdminMsg('newsMsg', 'Connection failed.', true); }
 }
 function editNews(id) {
