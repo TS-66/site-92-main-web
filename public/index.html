@@ -2944,22 +2944,15 @@ async function fetchPersonnel() {
         }
 
         const members = data[0].members;
-        // Enrich with rank overrides — override takes priority over Discord role for display
+        // ONLY show members that have a custom rank in the personnel-ranks list.
+        // Everyone else is excluded — no "Foundation Personnel" spam from random Discord members.
         personnelCache = members.map(m => {
             const nameLower = (m.name || '').toLowerCase();
             const displayLower = (m.displayName || '').toLowerCase();
             const override = rankMap[nameLower] || rankMap[displayLower];
-            // If we have an override for this user, use it (it's the custom Site-92 hierarchy)
-            if (override) {
-                return { ...m, highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
-            } else if (m.highestRole) {
-                // Discord role — look up tier from our map, or use position from Discord if available
-                const tier = _roleTierMap[m.highestRole.name] ?? 7;
-                return { ...m, highestRole: { ...m.highestRole, tier } };
-            } else {
-                return { ...m, highestRole: { name: 'Foundation Personnel', color: defaultColor, tier: 7 }, allRoles: [{ name: 'Foundation Personnel', color: defaultColor }] };
-            }
-        });
+            if (!override) return null; // exclude non-ranked members
+            return { ...m, highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
+        }).filter(Boolean);
 
         renderPersonnel();
     } catch (err) {

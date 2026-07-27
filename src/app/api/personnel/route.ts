@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAllGuildMembers, getGuildRoles } from '@/lib/discord';
 
 function intToHex(color: number): string {
-  if (color === 0) return '#99aab5'; // Discord's default grey
+  if (color === 0) return '#99aab5';
   return '#' + color.toString(16).padStart(6, '0');
 }
 
@@ -14,18 +14,16 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    // Build a role lookup map: roleId -> { name, color, position, hoist }
     const roleMap: Record<string, { name: string; color: string; position: number; hoist: boolean }> = {};
     for (const r of guildRoles) {
       roleMap[r.id] = { name: r.name, color: intToHex(r.color), position: r.position, hoist: r.hoist };
     }
 
-    // For each member, resolve their roles and find the highest one
     const enrichedMembers = members.map((m) => {
       const memberRoles = (m.roles || [])
         .map(rid => roleMap[rid])
         .filter(Boolean)
-        .sort((a, b) => b.position - a.position); // highest position first
+        .sort((a, b) => b.position - a.position);
 
       const highestRole = memberRoles[0] || null;
 
