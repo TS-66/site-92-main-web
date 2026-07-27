@@ -1184,6 +1184,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .license-version{display:inline-block;padding:4px 10px;background:var(--b3);border:1px solid var(--bd2);border-radius:3px;font-size:10px;color:var(--t2);font-family:'Share Tech Mono',monospace;transition:border-color .2s}
 .license-version:hover{border-color:var(--ac);color:var(--t1)}
 @media(max-width:768px){.license-container{padding:16px}}
+
+/* ===== Sidebar navigation ===== */
+.app-body{display:flex;min-height:calc(100vh - 140px)}
+.sidebar{width:200px;flex-shrink:0;background:var(--b1);border-right:1px solid var(--bd2);padding:16px 0;overflow-y:auto;position:sticky;top:102px;height:calc(100vh - 102px)}
+.sidebar-cat{margin-bottom:4px}
+.sidebar-cat-title{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;font-size:9px;letter-spacing:2px;color:var(--t3);cursor:pointer;font-weight:700;transition:color .2s}
+.sidebar-cat-title:hover{color:var(--ac)}
+.sidebar-cat-title iconify-icon{transition:transform .2s}
+.sidebar-cat.collapsed .sidebar-cat-title iconify-icon{transform:rotate(-90deg)}
+.sidebar-cat.collapsed .sidebar-cat-items{display:none}
+.sidebar-cat-items{display:flex;flex-direction:column}
+.sidebar-link{display:block;padding:8px 20px;font-size:11px;color:var(--t2);text-decoration:none;letter-spacing:.5px;transition:all .2s;border-left:2px solid transparent}
+.sidebar-link:hover{background:var(--b3);color:var(--t1);border-left-color:var(--ac)}
+.sidebar-link.active{background:var(--b3);color:var(--ac);border-left-color:var(--ac);font-weight:600}
+.page{flex:1;min-width:0}
+@media(max-width:1024px){.sidebar{width:170px}}
+@media(max-width:768px){.sidebar{display:none}.app-body{display:block}}
 </style>
 </head>
 <body>
@@ -1410,6 +1427,57 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="search-panel" id="searchPanel"><div class="search-w"><iconify-icon icon="lucide:search"></iconify-icon><input class="search-in" id="searchIn" placeholder="Search the database..." autofocus></div><div class="search-res" id="searchRes"><div class="search-empty">Type something to search...</div></div></div>
 <div class="notif-panel" id="notifPanel"><div class="notif-h"><span>Notifications</span><button class="notif-cl" id="notifClear">CLEAR ALL</button></div><div id="notifList"></div></div>
 
+<div class="app-body">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-cat">
+<div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">FACILITY <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
+<div class="sidebar-cat-items">
+<a class="sidebar-link" data-p="overview" onclick="go('overview')">Overview</a>
+<a class="sidebar-link" data-p="map" onclick="go('map')">Site Map</a>
+<a class="sidebar-link" data-p="diagnostics" onclick="go('diagnostics')">Diagnostics</a>
+<a class="sidebar-link" data-p="scanner" onclick="go('scanner')">Scanner</a>
+<a class="sidebar-link" data-p="cameras" onclick="go('cameras')">Cameras</a>
+<a class="sidebar-link" data-p="comms" onclick="go('comms')">Comms</a>
+</div>
+</div>
+<div class="sidebar-cat">
+<div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">ANOMALIES <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
+<div class="sidebar-cat-items">
+<a class="sidebar-link" data-p="objects" onclick="go('objects')">Database</a>
+<a class="sidebar-link" data-p="lab" onclick="go('lab')">Testing Lab</a>
+<a class="sidebar-link" data-p="protocols" onclick="go('protocols')">Protocols</a>
+<a class="sidebar-link" data-p="incidents" onclick="go('incidents')">Incidents</a>
+<a class="sidebar-link" data-p="report" onclick="go('report')">Report</a>
+<a class="sidebar-link" data-p="generator" onclick="go('generator')">Generator</a>
+<a class="sidebar-link" data-p="breach-sim" onclick="go('breach-sim')">Breach Sim</a>
+</div>
+</div>
+<div class="sidebar-cat">
+<div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">PERSONNEL <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
+<div class="sidebar-cat-items">
+<a class="sidebar-link" data-p="personnel" onclick="go('personnel')">Personnel</a>
+<a class="sidebar-link" data-p="departments" onclick="go('departments')">Departments</a>
+<a class="sidebar-link" data-p="mtf" onclick="go('mtf')">Task Forces</a>
+<a class="sidebar-link" data-p="archives" onclick="go('archives')">Archives</a>
+</div>
+</div>
+<div class="sidebar-cat">
+<div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">SYSTEMS <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
+<div class="sidebar-cat-items">
+<a class="sidebar-link" data-p="site-ai" onclick="go('site-ai')">Site AI</a>
+<a class="sidebar-link" data-p="bot-commands" onclick="go('bot-commands')">Terminal</a>
+<a class="sidebar-link" data-p="news" onclick="go('news')">News Feed</a>
+<a class="sidebar-link" data-p="settings" onclick="go('settings')">Settings</a>
+</div>
+</div>
+<div class="sidebar-cat">
+<div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">INFO <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
+<div class="sidebar-cat-items">
+<a class="sidebar-link" data-p="credits" onclick="go('credits')">Credits</a>
+<a class="sidebar-link" data-p="license" onclick="go('license')">License</a>
+</div>
+</div>
+</aside>
 <div class="page">
 
 <div class="pg-sec active" id="page-overview">
@@ -2038,6 +2106,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 <div class="footer"><span>The Precipice // Site-92 // SCiPNET v2.0</span><span>Powered by The Duck Dev's | NexousCode Studios</span></div>
 </div>
+</div>
 
 <div class="toast-container" id="toastContainer"></div>
 
@@ -2200,6 +2269,7 @@ function go(page) {
     document.querySelector(`.nav-link[data-p="${page}"]`)?.classList.add('active');
     document.getElementById('mobNav').classList.remove('open');
     window.scrollTo(0, 0);
+    updateSidebarActive(page);
     if (page === 'protocols') loadPublicProtocols();
     if (page === 'objects') loadDatabase();
     if (page === 'lab') loadLabTestLogs();
@@ -2244,6 +2314,17 @@ document.getElementById('ham').addEventListener('click', () => {
     }
     mobNav.classList.toggle('open');
 });
+
+function toggleSidebarCat(el) {
+    el.parentElement.classList.toggle('collapsed');
+}
+
+// Update sidebar active link when navigating
+function updateSidebarActive(page) {
+    document.querySelectorAll('.sidebar-link').forEach(l => {
+        l.classList.toggle('active', l.dataset.p === page);
+    });
+}
 
 // ===== MOBILE DEVICE DETECTION =====
 // Detects phone, tablet, or desktop and adds a class to <body> for CSS targeting.
@@ -3239,9 +3320,9 @@ async function loadDepartments() {
         const res = await fetch('/api/public/departments');
         const depts = await res.json();
         const container = document.getElementById('deptList');
-        container.innerHTML = depts.map(dept => `
-            <div class="dept-card">
-                <div class="dept-head" onclick="this.parentElement.classList.toggle('open')">
+        container.innerHTML = depts.map((dept, i) => `
+            <div class="dept-card" id="deptCard${i}">
+                <div class="dept-head" onclick="toggleDept(${i})">
                     <iconify-icon icon="lucide:building-2"></iconify-icon>
                     <h3>${dept.title}</h3>
                     <span class="dept-count">${dept.divisions.length}</span>
@@ -3260,6 +3341,10 @@ async function loadDepartments() {
     } catch(e) {
         document.getElementById('deptList').innerHTML = '<div class="search-empty">Failed to load departments.</div>';
     }
+}
+function toggleDept(i) {
+    const card = document.getElementById('deptCard' + i);
+    if (card) card.classList.toggle('open');
 }
 
 // AI Chat Logic (Enhanced with Session Memory)
