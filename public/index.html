@@ -3243,21 +3243,31 @@ document.getElementById('protoSearch')?.addEventListener('input', (e) => {
 // Curated fallback entries — shown when the DB has no matching SCP so the
 // page is never empty. DB entries always take precedence (deduped by scpId).
 const CURATED_SCPS = [
+    // Low Containment Zone (Safe)
     { id: 'SCP-999', name: 'The Tickle Monster', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'A gelatinous mass that induces euphoria in any living creature it touches. Used for stress relief.' },
     { id: 'SCP-131', name: 'The "Eye" Pods', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'Two teardrop-shaped creatures bearing a single blue eye. They act as sentient surveillance cameras.' },
     { id: 'SCP-294', name: 'The Coffee Machine', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'A standard vending machine that dispenses any liquid typed into its keypad, including impossible substances.' },
     { id: 'SCP-500', name: 'Panacea', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'A small plastic can which at the time of recovery contained fifty (50) red pills. One pill completely cures any ailment.' },
     { id: 'SCP-714', name: 'The Jaded Ring', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'A jade ring that, when worn, induces extreme exhaustion and slows the wearer\'s cognitive processes, offering memetic protection.' },
     { id: 'SCP-2950', name: 'Just A Chair', cls: 'SAFE', threat: 'LOW', zone: 'LOW', desc: 'A metal folding chair. As long as it is treated as a chair, it remains completely harmless. Do not let it be seen as anything else.' },
-    { id: 'SCP-034', name: 'The Obsidian Knife', cls: 'EUCLID', threat: 'MED', zone: 'STANDARD', desc: 'A black obsidian knife. When used to cut a piece of flesh from a person, the user takes on the physical appearance of that person.' },
-    { id: 'SCP-066', name: "Eric's Toy", cls: 'EUCLID', threat: 'MED', zone: 'STANDARD', desc: 'An amorphous mass of braided yarn and thread. It produces random Beethoven compositions and can alter local reality.' },
-    { id: 'SCP-035', name: 'The Possessive Mask', cls: 'KETER', threat: 'HIGH', zone: 'HEAVY', desc: 'A theatrical mask that constantly secretes a corrosive black liquid. It takes control of whoever wears it.' },
-    { id: 'SCP-682', name: 'Hard-to-Destroy Reptile', cls: 'KETER', threat: 'MAX', zone: 'HEAVY', desc: 'A large, vaguely reptilian creature of unknown origin. Extremely hostile and intelligent. Must be destroyed on sight.' },
-    { id: 'SCP-049', name: 'Plague Doctor', cls: 'EUCLID', threat: 'HIGH', zone: 'HEAVY', desc: 'A humanoid entity wearing a medieval plague doctor costume. It seeks to "cure" humans by turning them into mindless zombies.' },
-    { id: 'SCP-457', name: 'The Burning Man', cls: 'EUCLID', threat: 'HIGH', zone: 'HEAVY', desc: 'A being composed entirely of ambient fire. It requires fuel to survive and will aggressively seek out combustible materials.' },
-    { id: 'SCP-610', name: 'The Flesh That Hates', cls: 'KETER', threat: 'MAX', zone: 'HEAVY', desc: 'A highly contagious skin disease that mutates victims into horrific, aggressive flesh-monsters. Site of origin quarantined.' },
-    { id: 'SCP-008', name: 'Zombie Plague', cls: 'KETER', threat: 'MAX', zone: 'HEAVY', desc: 'A complex prion disease that reanimates dead tissue into violent, mindless hosts. No known cure exists.' },
+    // Supervised Anomalies (Low SCPs that are still deadly)
+    { id: 'SCP-034', name: 'The Obsidian Knife', cls: 'EUCLID', threat: 'MED', zone: 'SUPERVISED', desc: 'A black obsidian knife. When used to cut a piece of flesh from a person, the user takes on the physical appearance of that person.' },
+    { id: 'SCP-066', name: "Eric's Toy", cls: 'EUCLID', threat: 'MED', zone: 'SUPERVISED', desc: 'An amorphous mass of braided yarn and thread. It produces random Beethoven compositions and can alter local reality.' },
+    // Moderate Containment Zone
+    { id: 'SCP-049', name: 'Plague Doctor', cls: 'EUCLID', threat: 'HIGH', zone: 'MODERATE', desc: 'A humanoid entity wearing a medieval plague doctor costume. It seeks to "cure" humans by turning them into mindless zombies.' },
+    { id: 'SCP-457', name: 'The Burning Man', cls: 'EUCLID', threat: 'HIGH', zone: 'MODERATE', desc: 'A being composed entirely of ambient fire. It requires fuel to survive and will aggressively seek out combustible materials.' },
+    { id: 'SCP-173', name: 'The Sculpture', cls: 'EUCLID', threat: 'HIGH', zone: 'MODERATE', desc: 'A concrete statue that moves at high speed when not directly observed. Snaps the neck of any within range.' },
+    // Biological Containment Zone
+    { id: 'SCP-008', name: 'Zombie Plague', cls: 'KETER', threat: 'MAX', zone: 'BIOLOGICAL', desc: 'A complex prion disease that reanimates dead tissue into violent, mindless hosts. No known cure exists.' },
+    { id: 'SCP-016', name: 'Sentient Microorganism', cls: 'KETER', threat: 'MAX', zone: 'BIOLOGICAL', desc: 'A blood-borne pathogen that causes rapid, extreme biological mutations in its host, effectively weaponizing the infected.' },
+    { id: 'SCP-610', name: 'The Flesh That Hates', cls: 'KETER', threat: 'MAX', zone: 'BIOLOGICAL', desc: 'A highly contagious skin disease that mutates victims into horrific, aggressive flesh-monsters. Site of origin quarantined.' },
+    { id: 'SCP-409', name: 'Contagious Crystal', cls: 'KETER', threat: 'MAX', zone: 'BIOLOGICAL', desc: 'A crystalline structure. Any material that comes into contact with it gradually transforms into a similar crystal, spreading until total conversion.' },
+    // Heavy Containment (Keter)
     { id: 'SCP-939', name: 'With Many Voices', cls: 'KETER', threat: 'MAX', zone: 'HEAVY', desc: 'Pack-hunting, blind, red reptilian creatures that perfectly mimic human voices to lure their prey.' },
+    { id: 'SCP-035', name: 'The Possessive Mask', cls: 'KETER', threat: 'HIGH', zone: 'HEAVY', desc: 'A theatrical mask that constantly secretes a corrosive black liquid. It takes control of whoever wears it.' },
+    { id: 'SCP-096', name: 'The Shy Guy', cls: 'EUCLID', threat: 'MAX', zone: 'HEAVY', desc: 'A humanoid entity that enters a rage state when its face is viewed. It will pursue and terminate anyone who sees it, regardless of distance.' },
+    { id: 'SCP-002', name: 'The "Room"', cls: 'EUCLID', threat: 'MED', zone: 'HEAVY', desc: 'A tumor-like mass containing a modified living room. It consumes biological matter to expand its interior.' },
+    { id: 'SCP-682', name: 'Hard-to-Destroy Reptile', cls: 'KETER', threat: 'MAX', zone: 'HEAVY', desc: 'A large, vaguely reptilian creature of unknown origin. Extremely hostile and intelligent. Must be destroyed on sight.' },
 ];
 
 function escHtml(s) {
@@ -3295,13 +3305,16 @@ function renderDatabase(scps) {
     if (countEl) countEl.textContent = scps.length;
     if (!scps.length) { grid.innerHTML = '<div class="search-empty">No anomalies match your search.</div>'; return; }
 
-    const groups = { SAFE: [], EUCLID: [], KETER: [], OTHER: [] };
-    scps.forEach(s => { const c = (s.cls || '').toUpperCase(); (groups[c] || groups.OTHER).push(s); });
+    // Group by containment zone (not object class)
+    const groups = { LOW: [], SUPERVISED: [], MODERATE: [], BIOLOGICAL: [], HEAVY: [], OTHER: [] };
+    scps.forEach(s => { const z = (s.zone || s.cls || 'OTHER').toUpperCase(); (groups[z] || groups.OTHER).push(s); });
     const meta = {
-        SAFE:   { label: 'Low Containment Zone (Safe)', icon: 'lucide:shield-check', color: 'var(--gn)', tag: 'cl-s' },
-        EUCLID: { label: 'Supervised Anomalies (Euclid)', icon: 'lucide:eye', color: 'var(--ac)', tag: 'cl-e' },
-        KETER:  { label: 'Heavy Containment (Keter)', icon: 'lucide:alert-octagon', color: 'var(--rd)', tag: 'cl-k' },
-        OTHER:  { label: 'Other / Unclassified', icon: 'lucide:help-circle', color: 'var(--t3)', tag: 'cl-e' },
+        LOW:        { label: 'Low Containment Zone (Safe)', icon: 'lucide:shield-check', color: 'var(--gn)', tag: 'cl-s' },
+        SUPERVISED: { label: 'Supervised Anomalies', icon: 'lucide:eye', color: 'var(--ac)', tag: 'cl-e' },
+        MODERATE:   { label: 'Moderate Containment Zone', icon: 'lucide:flask-conical', color: 'var(--yl)', tag: 'cl-e' },
+        BIOLOGICAL: { label: 'Biological Containment Zone', icon: 'lucide:biohazard', color: '#9acd32', tag: 'cl-k' },
+        HEAVY:      { label: 'Heavy Containment (Keter)', icon: 'lucide:alert-octagon', color: 'var(--rd)', tag: 'cl-k' },
+        OTHER:      { label: 'Other / Unclassified', icon: 'lucide:help-circle', color: 'var(--t3)', tag: 'cl-e' },
     };
     grid.innerHTML = Object.entries(groups).filter(([, arr]) => arr.length).map(([k, arr]) => `
         <div class="sec-head"><div class="sec-title"><iconify-icon icon="${meta[k].icon}"></iconify-icon>${meta[k].label}</div></div>

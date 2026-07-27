@@ -1,20 +1,18 @@
 import { NextResponse } from 'next/server';
 
 const personnelRanks = {
-  ranks: {
-    doudoustar01: { role: 'The Administrator', tier: 0, color: '#ff2e5e' },
-    Adam: { role: 'UIU Leader', tier: 1, color: '#ffd60a' },
-    Duck: { role: 'Server Manager', tier: 2, color: '#00ffcc' },
-    Bilow: { role: 'Server Manager', tier: 2, color: '#00ffcc' },
-    Kevin: { role: 'Developer', tier: 2, color: '#00ffcc' },
-    Netox66: { role: 'VIP', tier: 3, color: '#ff8c42' },
-    Liam: { role: 'Server Affiliate', tier: 4, color: '#8aa39d' },
-    'MR CELL': { role: 'Server Affiliate', tier: 4, color: '#8aa39d' },
-    feuerninja: { role: 'Server Affiliate', tier: 4, color: '#8aa39d' },
-    fisch900: { role: 'Server Affiliate', tier: 4, color: '#8aa39d' },
-  },
+  doudoustar01: { role: 'The Administrator', tier: 0, color: '#ff2e5e' },
+  Duck: { role: 'Developer', tier: 1, color: '#00ffcc' },
+  Bilow: { role: 'Server Management', tier: 2, color: '#00aaff' },
+  Kevin: { role: 'Developer', tier: 1, color: '#00ffcc' },
+  Adam: { role: 'Faction Leader', tier: 3, color: '#ffd60a' },
+  Netox66: { role: 'Partnership Affiliate', tier: 4, color: '#ff8c42' },
+  Liam: { role: 'UCSO Representative', tier: 5, color: '#8aa39d' },
+  'MR CELL': { role: 'UCSO Representative', tier: 5, color: '#8aa39d' },
+  feuerninja: { role: 'VIP', tier: 6, color: '#a855f7' },
+  fisch900: { role: 'VIP', tier: 6, color: '#a855f7' },
   defaultRole: 'Foundation Personnel',
-  defaultTier: 5,
+  defaultTier: 7,
   defaultColor: '#5a706b',
 };
 
