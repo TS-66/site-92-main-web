@@ -2904,24 +2904,29 @@ function animateValue(id, start, end, duration) {
 }
 
 let personnelCache = [];
-let _roleTierMap = {}; // role name -> tier number (built from personnel-ranks API)
+let _roleTierMap = {};
 async function fetchPersonnel() {
     const list = document.getElementById('perList');
-    let rankOverrides = {};
+    let rankData = {};
+    let rankMap = {};
+    const defaultRole = 'Foundation Personnel';
+    const defaultTier = 7;
     const defaultColor = '#5a706b';
 
     try {
         const rr = await fetch('/api/public/personnel-ranks');
-        rankOverrides = await rr.json();
-    } catch(e) { rankOverrides = {}; }
+        rankData = await rr.json();
+        // The API returns { ranks: { username: {role, tier, color} }, defaultRole, defaultTier, defaultColor }
+        const ranks = rankData.ranks || rankData; // fallback to flat object if no .ranks
+        for (const [key, val] of Object.entries(ranks)) {
+            if (val && typeof val === 'object' && val.role) {
+                rankMap[key.toLowerCase()] = val;
+            }
+        }
+    } catch(e) { rankMap = {}; }
 
-    const rankMap = {};
-    for (const [key, val] of Object.entries(rankOverrides)) {
-        rankMap[key.toLowerCase()] = val;
-    }
-
-    // Build a role-name -> tier map for sorting (from the overrides)
-    _roleTierMap = { 'Foundation Personnel': 7 }; // default
+    // Build role-name -> tier map for sorting
+    _roleTierMap = { 'Foundation Personnel': defaultTier };
     for (const [, val] of Object.entries(rankMap)) {
         if (val && val.role) {
             _roleTierMap[val.role] = val.tier;
@@ -2932,7 +2937,7 @@ async function fetchPersonnel() {
         const res = await fetch('/api/personnel');
         const data = await res.json();
         if(data.length === 0 || !data[0].members || data[0].members.length === 0) {
-            // Fallback to rank overrides if no Discord data
+            // Fallback: show only the ranked members from personnel-ranks
             if (Object.keys(rankMap).length > 0) {
                 const fallback = Object.entries(rankMap).sort((a, b) => a[1].tier - b[1].tier);
                 personnelCache = fallback.map(([name, r]) => ({ name, displayName: name, avatar: '', userId: '', highestRole: { name: r.role, color: r.color || defaultColor, tier: r.tier }, allRoles: [{ name: r.role, color: r.color || defaultColor }] }));
@@ -2944,9 +2949,9 @@ async function fetchPersonnel() {
         }
 
         const members = data[0].members;
-        // Show ALL Discord members. Replace their role with the Site-92 hierarchy:
-        // - If they're in the personnel-ranks list, use their custom role
-        // - If not, they get "Foundation Personnel" (tier 7)
+        // Show ALL members. Assign roles from the Site-92 hierarchy:
+        // - Ranked members get their custom role
+        // - Everyone else gets "Foundation Personnel"
         personnelCache = members.map(m => {
             const nameLower = (m.name || '').toLowerCase();
             const displayLower = (m.displayName || '').toLowerCase();
@@ -2954,7 +2959,7 @@ async function fetchPersonnel() {
             if (override) {
                 return { ...m, highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
             }
-            return { ...m, highestRole: { name: 'Foundation Personnel', color: defaultColor, tier: 7 }, allRoles: [{ name: 'Foundation Personnel', color: defaultColor }] };
+            return { ...m, highestRole: { name: defaultRole, color: defaultColor, tier: defaultTier }, allRoles: [{ name: defaultRole, color: defaultColor }] };
         });
 
         renderPersonnel();
