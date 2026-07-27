@@ -2944,15 +2944,18 @@ async function fetchPersonnel() {
         }
 
         const members = data[0].members;
-        // ONLY show members that have a custom rank in the personnel-ranks list.
-        // Everyone else is excluded — no "Foundation Personnel" spam from random Discord members.
+        // Show ALL Discord members. Replace their role with the Site-92 hierarchy:
+        // - If they're in the personnel-ranks list, use their custom role
+        // - If not, they get "Foundation Personnel" (tier 7)
         personnelCache = members.map(m => {
             const nameLower = (m.name || '').toLowerCase();
             const displayLower = (m.displayName || '').toLowerCase();
             const override = rankMap[nameLower] || rankMap[displayLower];
-            if (!override) return null; // exclude non-ranked members
-            return { ...m, highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
-        }).filter(Boolean);
+            if (override) {
+                return { ...m, highestRole: { name: override.role, color: override.color || defaultColor, tier: override.tier }, allRoles: [{ name: override.role, color: override.color || defaultColor }] };
+            }
+            return { ...m, highestRole: { name: 'Foundation Personnel', color: defaultColor, tier: 7 }, allRoles: [{ name: 'Foundation Personnel', color: defaultColor }] };
+        });
 
         renderPersonnel();
     } catch (err) {
