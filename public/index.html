@@ -952,7 +952,223 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 @keyframes camStaticTxt{0%{opacity:.3}25%{opacity:.8}50%{opacity:.2}75%{opacity:.6}100%{opacity:.4}}
 
 @media(max-width:1024px){.g2,.g3{grid-template-columns:1fr}.obj-grid{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:repeat(2,1fr)}.lab-selects,.credit-grid,.diag-grid,.settings-grid{grid-template-columns:1fr}}
-@media(max-width:768px){html,body{cursor:auto}.cursor-dot,.cursor-ring,.cursor-trail{display:none}.nav-links,.nav-user{display:none}.ham{display:flex}.page{padding:18px 12px 32px}.g4{grid-template-columns:1fr 1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:5px;text-align:center}.tbl{font-size:10px}.tbl thead th,.tbl td{padding:8px}.notif-panel,.search-panel{left:10px;right:10px;transform:none;width:auto}.modal-bg{padding:16px 10px}.modal{max-width:100%}.gauge-card{flex-direction:column;text-align:center}.page-head h1{font-size:22px}.loader-title{font-size:28px}.chat-msg{max-width:90%}.glitch{font-size:32px}.dept-grid{grid-template-columns:1fr}}
+
+/* ===== TABLET (iPad) — 768px to 1024px ===== */
+@media(max-width:1024px) and (min-width:769px){
+  .page{padding:24px 16px 40px}
+  .nav-links{font-size:9px}
+  .nav-link{padding:8px 10px}
+  .topbar{font-size:9px;padding:8px 12px}
+  .topbar-l>span,.topbar-r>span{margin:0 2px}
+  .g3{grid-template-columns:repeat(2,1fr)!important}
+  .camera-grid{grid-template-columns:repeat(2,1fr)}
+  .admin-stats{flex-wrap:wrap}
+  .admin-stat{min-width:100px}
+  .terminal-output{max-height:350px}
+  .breach-sim-status{flex-wrap:wrap}
+  .comms-freq-value{font-size:26px}
+  .news-feed,.breach-sim-container,.comms-container,.gen-container{max-width:100%}
+}
+
+/* ===== MOBILE (Phone) — 768px and below ===== */
+@media(max-width:768px){
+  html,body{cursor:auto!important}
+  .cursor-dot,.cursor-ring,.cursor-trail{display:none!important}
+  .nav-links{display:none!important}
+  .nav-user{display:none!important}
+  .ham{display:flex!important}
+  .page{padding:14px 10px 30px}
+  .topbar{font-size:8px;padding:6px 10px;overflow:hidden;white-space:nowrap}
+  .topbar-l>span{margin:0 1px}
+  .topbar-r>span{margin:0 1px}
+  .topbar-r .cls-badge{display:none}
+
+  /* Grids */
+  .g2,.g3,.g4{grid-template-columns:1fr!important}
+  .qa-grid{grid-template-columns:repeat(2,1fr)!important}
+  .map-grid{grid-template-columns:repeat(2,1fr)!important}
+  .dept-grid{grid-template-columns:1fr!important}
+  .camera-grid{grid-template-columns:1fr!important}
+  .archive-docs{grid-template-columns:1fr!important}
+
+  /* Page heads */
+  .page-head h1{font-size:20px}
+  .page-head p{font-size:10px}
+  .loader-title{font-size:24px}
+
+  /* Footer */
+  .footer{flex-direction:column;gap:5px;text-align:center;font-size:8px}
+
+  /* Tables */
+  .tbl{font-size:9px}
+  .tbl thead th,.tbl td{padding:6px 4px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  /* Panels */
+  .notif-panel,.search-panel{left:8px;right:8px;transform:none;width:auto;max-width:none}
+  .search-panel{max-height:60vh;overflow-y:auto}
+
+  /* Modals */
+  .modal-bg{padding:12px 6px}
+  .modal{max-width:100%}
+  .editor-box,.scp-detail-box,.admin-modal-box{max-width:100%!important;max-height:80vh;padding:16px}
+  .editor-row input,.editor-row select,.editor-row textarea{font-size:14px!important}
+
+  /* Gauges */
+  .gauge-card{flex-direction:column;text-align:center}
+
+  /* Chat */
+  .chat-msg{max-width:92%}
+  .chat-container{max-width:100%}
+  .chat-content{font-size:12px}
+
+  /* Glitch text */
+  .glitch{font-size:28px}
+
+  /* Admin panel */
+  .admin-stats{flex-wrap:wrap;gap:6px}
+  .admin-stat{min-width:80px;padding:8px 10px}
+  .admin-stat-num{font-size:18px}
+  .admin-tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .admin-tab{white-space:nowrap;padding:8px 10px;font-size:9px}
+  .admin-form{gap:8px}
+  .admin-form-inline{grid-template-columns:1fr 1fr!important}
+  .admin-btn{padding:8px 12px;font-size:10px}
+
+  /* Terminal */
+  .terminal-container{border-radius:4px}
+  .terminal-output{max-height:300px;font-size:11px;padding:10px}
+  .terminal-input{font-size:12px}
+  .term-prompt{font-size:11px}
+
+  /* Camera canvas */
+  .cam-canvas-wrap{height:180px}
+  .camera-info{padding:8px 10px}
+
+  /* Breach simulator */
+  .breach-sim-status{flex-wrap:wrap;gap:6px}
+  .breach-stat{min-width:80px;padding:8px}
+  .breach-stat-val{font-size:18px}
+  .breach-sim-story{padding:14px;font-size:12px}
+  .breach-choice{padding:10px 12px}
+
+  /* Comms */
+  .comms-freq-value{font-size:24px}
+  .comms-controls{flex-wrap:wrap}
+  .comms-output{min-height:120px;font-size:11px}
+
+  /* News feed */
+  .news-item{padding:12px}
+  .news-title{font-size:13px}
+  .news-body{font-size:11px}
+
+  /* Personnel */
+  .per-item{padding:8px}
+  .per-av{width:36px;height:36px}
+  .per-name{font-size:12px}
+  .per-role{font-size:10px}
+  .per-group-header{font-size:11px;padding:8px 10px}
+
+  /* SCP detail modal */
+  .scp-detail-id{font-size:16px}
+  .scp-detail-name{font-size:12px}
+  .scp-detail-desc{font-size:11px;padding:10px}
+
+  /* Generator */
+  .gen-output{padding:16px}
+  .gen-scp-id{font-size:20px}
+  .gen-controls{flex-wrap:wrap}
+
+  /* Settings */
+  .setting-card{flex-direction:column;gap:8px;text-align:center}
+
+  /* Credit cards */
+  .credit-card{padding:14px}
+
+  /* Scanner / diagnostics */
+  .diag-grid{grid-template-columns:1fr!important}
+
+  /* MTF cards */
+  .mtf-card{padding:12px}
+
+  /* Incidents */
+  .incident{padding:12px}
+  .inc-code{font-size:11px}
+  .inc-title{font-size:13px}
+  .inc-desc{font-size:11px}
+
+  /* Login screen adjustments */
+  .login-box{padding:20px 16px;max-width:100%;margin:10px}
+  .login-step{padding:0}
+  .fi{font-size:14px;padding:10px 12px}
+  .login-btn{font-size:12px;padding:10px}
+
+  /* Boot screen */
+  .boot-body{font-size:10px;padding:10px}
+
+  /* Loader */
+  .loader-bar{width:90%}
+  .loadPct{font-size:24px}
+}
+
+/* ===== SMALL PHONES — 380px and below ===== */
+@media(max-width:380px){
+  .page{padding:10px 6px 24px}
+  .page-head h1{font-size:18px}
+  .topbar{font-size:7px}
+  .topbar-l span:nth-child(n+5){display:none}
+  .qa-grid{grid-template-columns:1fr!important}
+  .map-grid{grid-template-columns:1fr!important}
+  .admin-stats{gap:4px}
+  .admin-stat{min-width:60px;padding:6px}
+  .admin-stat-num{font-size:16px}
+  .breach-sim-status .breach-stat{flex:1 1 calc(50% - 3px)}
+  .footer{font-size:7px}
+  .login-box{padding:16px 12px}
+  .terminal-output{font-size:10px}
+}
+
+/* ===== Landscape phone adjustments ===== */
+@media(max-width:900px) and (orientation:landscape) and (max-height:500px){
+  .terminal-output{max-height:200px}
+  .cam-canvas-wrap{height:140px}
+  .boot-body{max-height:150px;overflow-y:auto}
+}
+
+/* ===== Touch device improvements (phones + tablets) ===== */
+.touch-device .admin-btn,.touch-device .nav-link,.touch-device .breach-choice,
+.touch-device .search-result,.touch-device .per-item,.touch-device .scp-card,
+.touch-device .camera-feed,.touch-device .archive-doc,.touch-device .news-item,
+.touch-device .mtf-card,.touch-device .gauge-card,.touch-device .sector,
+.touch-device .feed-item,.touch-device .rpt-card,.touch-device .incident{
+  cursor:pointer!important;
+}
+.touch-device .admin-btn:hover,.touch-device .scp-card:hover,
+.touch-device .camera-feed:hover{
+  transform:none;
+}
+/* Larger tap targets on touch */
+.device-mobile .admin-btn{min-height:40px;padding:10px 14px}
+.device-mobile .nav-link{min-height:44px}
+.device-mobile .per-item{min-height:56px}
+.device-mobile .breach-choice{min-height:56px;padding:14px}
+.device-mobile .search-result{min-height:44px;padding:12px 14px}
+/* Prevent text selection on UI elements (feels more app-like) */
+.device-mobile .nav-link,.device-mobile .admin-btn,.device-mobile .breach-choice,
+.device-mobile .per-item,.device-mobile .scp-card,.device-mobile .sector{
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+/* Smooth scrolling on iOS */
+.device-mobile,.device-tablet{
+  -webkit-overflow-scrolling:touch;
+}
+/* Prevent iOS input zoom (inputs must be >= 16px font) */
+.device-mobile input,.device-mobile select,.device-mobile textarea{
+  font-size:16px!important;
+}
+.device-mobile .terminal-input,.device-mobile .term-prompt{
+  font-size:14px!important;
+}
 </style>
 </head>
 <body>
@@ -1849,7 +2065,92 @@ document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => go(e.target.dataset.p));
 });
 
-document.getElementById('ham').addEventListener('click', () => document.getElementById('mobNav').classList.toggle('open'));
+document.getElementById('ham').addEventListener('click', () => {
+    const mobNav = document.getElementById('mobNav');
+    // Populate mobile nav links on first open
+    if (!mobNav.dataset.populated) {
+        const links = document.querySelectorAll('.nav-links .nav-link');
+        links.forEach(link => {
+            const clone = link.cloneNode(true);
+            clone.addEventListener('click', () => {
+                go(link.dataset.p);
+                mobNav.classList.remove('open');
+            });
+            mobNav.appendChild(clone);
+        });
+        // Add admin toggle to mobile nav
+        const adminBtn = document.getElementById('adminToggle');
+        if (adminBtn) {
+            const adminLink = document.createElement('a');
+            adminLink.className = 'nav-link';
+            adminLink.style.color = 'var(--ac)';
+            adminLink.innerHTML = '<iconify-icon icon="lucide:shield" width="14"></iconify-icon> Admin Panel';
+            adminLink.addEventListener('click', () => {
+                adminBtn.click();
+                mobNav.classList.remove('open');
+            });
+            mobNav.appendChild(adminLink);
+        }
+        mobNav.dataset.populated = 'true';
+    }
+    mobNav.classList.toggle('open');
+});
+
+// ===== MOBILE DEVICE DETECTION =====
+// Detects phone, tablet, or desktop and adds a class to <body> for CSS targeting.
+// Desktop/laptop stays exactly the same — only phones and tablets get adjustments.
+(function detectDevice() {
+    const ua = navigator.userAgent;
+    const isTablet = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))|(Windows NT.*Touch)/i.test(ua) || (navigator.maxTouchPoints > 1 && window.innerWidth >= 768 && window.innerWidth <= 1024);
+    const isMobile = /iPhone|Android.*Mobile|BlackBerry|Opera Mini|IEMobile|WPDesktop/i.test(ua) || (window.innerWidth <= 768 && navigator.maxTouchPoints > 0);
+    const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+
+    if (isMobile) {
+        document.body.classList.add('device-mobile');
+        document.documentElement.classList.add('device-mobile');
+    } else if (isTablet) {
+        document.body.classList.add('device-tablet');
+        document.documentElement.classList.add('device-tablet');
+    } else {
+        document.body.classList.add('device-desktop');
+        document.documentElement.classList.add('device-desktop');
+    }
+
+    // Add touch class for touch-specific styles
+    if (isTouch) {
+        document.body.classList.add('touch-device');
+        document.documentElement.classList.add('touch-device');
+    }
+
+    // Prevent double-tap zoom on mobile (improves button responsiveness)
+    let lastTouch = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouch <= 350) { e.preventDefault(); }
+        lastTouch = now;
+    }, { passive: false });
+
+    // Re-detect on orientation change (iPad rotation, phone flip)
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            const w = window.innerWidth;
+            document.body.classList.remove('device-mobile', 'device-tablet', 'device-desktop');
+            if (w <= 768) {
+                document.body.classList.add('device-mobile');
+                document.documentElement.classList.add('device-mobile');
+                document.documentElement.classList.remove('device-tablet', 'device-desktop');
+            } else if (w <= 1024) {
+                document.body.classList.add('device-tablet');
+                document.documentElement.classList.add('device-tablet');
+                document.documentElement.classList.remove('device-mobile', 'device-desktop');
+            } else {
+                document.body.classList.add('device-desktop');
+                document.documentElement.classList.add('device-desktop');
+                document.documentElement.classList.remove('device-mobile', 'device-tablet');
+            }
+        }, 100);
+    });
+})();
 document.getElementById('searchBtn').addEventListener('click', () => {
     document.getElementById('searchPanel').classList.toggle('open');
     document.getElementById('notifPanel').classList.remove('open');
@@ -3955,18 +4256,6 @@ function chooseBreach(scenarioIdx, choiceIdx) {
 }
 
 // ===== NEWS FEED =====
-const NEWS_ITEMS = [
-    { tag: 'urgent', date: '2 HOURS AGO', title: 'Sector D-7B Quarantine Lifted', body: 'Following successful recontainment of SCP-████, the quarantine on Sector D-7B has been lifted. All personnel may resume normal activities. Amnestic deployment is not required at this time.' },
-    { tag: 'info', date: '5 HOURS AGO', title: 'New D-Class Personnel Arriving', body: 'A transport of 24 D-Class personnel will arrive at 14:00. All researchers with pending test proposals should submit their requests to the scheduling office by 12:00. First come, first served.' },
-    { tag: 'warning', date: '8 HOURS AGO', title: 'Scranton Anchor #4 Maintenance', body: 'Anchor #4 will be taken offline for routine maintenance from 22:00 to 02:00. During this time, reality fluctuations in Sector C may increase by up to 0.4%. All personnel should report any anomalies to their supervisor immediately.' },
-    { tag: 'good', date: '1 DAY AGO', title: 'SCP-999 Interaction Session Success', body: 'Yesterday\'s morale-boosting session with SCP-999 was a complete success. 47 personnel participated. Stress levels dropped by an average of 34%. The next session is scheduled for next Thursday. Sign-up sheet is in the break room.' },
-    { tag: 'admin', date: '1 DAY AGO', title: 'Amnestic Compliance Reminder', body: 'This is a reminder that all personnel must complete their annual amnestic compliance training by the end of the month. The online module takes approximately 45 minutes. Failure to complete training will result in... well, you won\'t remember. Complete it.' },
-    { tag: 'urgent', date: '2 DAYS AGO', title: 'Coffee Machine (SCP-294) Malfunction', body: 'SCP-294 has begun dispensing liquids without input. So far it has produced: 3 cups of coffee (normal), 1 cup of liquid nitrogen (contained), and 1 cup of a substance that sings when you look at it (contained, under study). The machine has been unplugged. Again.' },
-    { tag: 'info', date: '3 DAYS AGO', title: 'Dr. Bright\'s Birthday Party', body: 'The staff lounge will be reserved from 16:00 to 18:00 for Dr. Bright\'s birthday celebration. Cake will be served. Dr. Bright is not allowed to blow out the candles himself (see Incident Report 2019-BR-7). Someone else will do it.' },
-    { tag: 'warning', date: '4 DAYS AGO', title: 'Intercom System Upgrade', body: 'The facility intercom system will be upgraded over the weekend. During the upgrade, emergency announcements will be routed through backup speakers. The new system includes improved audio quality and... for some reason, a feature that plays elevator music during non-emergency broadcasts. We did not request this.' },
-    { tag: 'good', date: '5 DAYS AGO', title: 'MTF Epsilon-11 Commendation', body: 'MTF Epsilon-11 ("Nine-Tailed Fox") has been commended for their response to Incident 2025-0412-A. All 9 members received the Foundation Containment Medal. Agent [REDACTED] also received a personal commendation for "extraordinary bravery in the face of an entity that should not have been approached." ' },
-    { tag: 'admin', date: '1 WEEK AGO', title: 'Parking Reallocation', body: 'Due to the arrival of new containment equipment, parking spaces 1-12 in the sub-level garage have been reassigned. Personnel previously assigned to these spaces should report to Facilities Management for reassignment. We apologize for the inconvenience. The SCPs don\'t park, so they get priority.' },
-];
 async function loadNewsFeed() {
     const el = document.getElementById('newsFeed');
     if (!el) return;
@@ -3975,13 +4264,12 @@ async function loadNewsFeed() {
         const res = await fetch('/api/public/news');
         const items = await res.json();
         if (!Array.isArray(items) || !items.length) {
-            // Fallback to hardcoded items if DB is empty
-            el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+            el.innerHTML = '<div class="search-empty">No news items published yet. An admin can publish news from the admin panel.</div>';
             return;
         }
         el.innerHTML = items.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag || 'info'}">${(n.tag || 'info').toUpperCase()}</span><span class="news-date">${timeAgo(n.createdAt)}</span></div><div class="news-title">${escHtml(n.title)}</div><div class="news-body">${escHtml(n.body)}</div></div>`).join('');
     } catch(e) {
-        el.innerHTML = NEWS_ITEMS.map(n => `<div class="news-item"><div class="news-head"><span class="news-tag ${n.tag}">${n.tag.toUpperCase()}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-body">${n.body}</div></div>`).join('');
+        el.innerHTML = '<div class="search-empty">Failed to load news. Please try again.</div>';
     }
 }
 

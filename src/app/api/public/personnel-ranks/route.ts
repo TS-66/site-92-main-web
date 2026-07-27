@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 const personnelRanks = {
   doudoustar01: { role: 'The Administrator', tier: 0, color: '#ff2e5e' },
-  Duck: { role: 'Developer', tier: 1, color: '#00ffcc' },
+  Duck: { role: 'Server Management', tier: 2, color: '#00aaff' },
   Bilow: { role: 'Server Management', tier: 2, color: '#00aaff' },
   Kevin: { role: 'Developer', tier: 1, color: '#00ffcc' },
   Adam: { role: 'Faction Leader', tier: 3, color: '#ffd60a' },
