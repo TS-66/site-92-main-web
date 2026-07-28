@@ -335,7 +335,7 @@ body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1
 .page-head::before{content:'';position:absolute;left:-4px;top:0;width:4px;height:40%;background:var(--ac);box-shadow:0 0 20px var(--ac);animation:pulse 2s infinite}
 .page-head h1{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--t1);margin-bottom:6px;letter-spacing:1px;animation:flicker 6s infinite,chroma 4s infinite}
 .page-head p{font-size:12px;color:var(--t3);letter-spacing:.5px}
-.pg-sec{display:none}.pg-sec.active{display:block;animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards}
+.pg-sec{display:none;width:100%}.pg-sec.active{display:block;width:100%;animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) forwards}
 .warn{padding:16px 20px;border:1px solid var(--rd);display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;font-size:11px;line-height:1.6;cursor:none;transition:all .3s;background:rgba(255,46,94,.08);letter-spacing:1px;text-transform:uppercase;position:relative;overflow:hidden}
 .warn::after{content:'';position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,46,94,.3),transparent);animation:scanH 3s linear infinite}
 .warn:hover{background:rgba(255,46,94,.12);box-shadow:0 0 30px rgba(255,46,94,.2)}
@@ -832,7 +832,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 @keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
 /* ===== Terminal page ===== */
-.terminal-container{background:#0a0a0f;border:1px solid var(--bd2);border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:'Share Tech Mono',monospace;animation:scaleIn .3s ease forwards}
+.terminal-container{width:100%;background:#0a0a0f;border:1px solid var(--bd2);border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:'Share Tech Mono',monospace;animation:scaleIn .3s ease forwards}
 .terminal-output{padding:16px;font-size:13px;line-height:1.7;color:var(--gn);max-height:420px;overflow-y:auto;min-height:420px}
 .terminal-output::-webkit-scrollbar{width:6px}
 .terminal-output::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
@@ -866,7 +866,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .archive-doc-excerpt{font-size:11px;color:var(--t3);line-height:1.6}
 
 /* ===== Comms page ===== */
-.comms-container{max-width:640px;margin:0 auto}
+.comms-container{max-width:640px;width:100%;margin:0 auto}
 .comms-freq-display{background:var(--b2);border:1px solid var(--bd2);border-radius:4px;padding:24px;text-align:center;margin-bottom:16px}
 .comms-freq-label{font-size:9px;letter-spacing:2px;color:var(--t3);margin-bottom:8px}
 .comms-freq-value{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:var(--gn);text-shadow:0 0 12px var(--gn);margin-bottom:12px;transition:color .3s}
@@ -882,7 +882,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .comms-signal.warn{color:var(--yl)}
 
 /* ===== Generator page ===== */
-.gen-container{max-width:640px;margin:0 auto}
+.gen-container{max-width:640px;width:100%;margin:0 auto}
 .gen-controls{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
 .gen-output{background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:24px;min-height:200px}
 .gen-placeholder{color:var(--t3);text-align:center;font-size:12px;padding:40px 0}
@@ -895,7 +895,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .gen-scp-proc{font-size:11px;line-height:1.6;color:var(--yl);margin-top:10px;padding:10px;background:rgba(255,170,0,.05);border-left:2px solid var(--yl);border-radius:0 4px 4px 0}
 
 /* ===== Breach Simulator ===== */
-.breach-sim-container{max-width:700px;margin:0 auto}
+.breach-sim-container{max-width:700px;width:100%;margin:0 auto}
 .breach-sim-status{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 .breach-stat{flex:1;min-width:120px;background:var(--b2);border:1px solid var(--bd2);padding:12px 14px;border-radius:4px;text-align:center}
 .breach-stat-label{font-size:9px;letter-spacing:1px;color:var(--t3);margin-bottom:4px}
@@ -912,7 +912,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .breach-end.bad{background:rgba(255,51,51,.1);border:1px solid var(--rd);color:var(--rd)}
 
 /* ===== News Feed ===== */
-.news-feed{max-width:700px;margin:0 auto}
+.news-feed{max-width:700px;width:100%;margin:0 auto}
 .news-item{background:var(--b2);border:1px solid var(--bd2);border-radius:4px;padding:16px;margin-bottom:14px;transition:transform .25s,box-shadow .25s;animation:fadeUp .35s ease forwards}
 .news-item:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
 .news-head{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:8px}
@@ -927,7 +927,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .news-body{font-size:12px;color:var(--t2);line-height:1.7}
 
 /* ===== Security Cameras — Canvas 3D ===== */
-.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;width:100%}
 .camera-feed{background:#06060a;border:1px solid var(--bd2);border-radius:6px;overflow:hidden;transition:transform .25s,box-shadow .25s;animation:scaleIn .3s ease forwards}
 .camera-feed:hover{transform:scale(1.03);box-shadow:0 8px 32px rgba(0,0,0,.6)}
 .cam-canvas-wrap{position:relative;height:220px;overflow:hidden;background:#040408}
@@ -1169,7 +1169,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 }
 
 /* ===== License page ===== */
-.license-container{max-width:800px;margin:0 auto;background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:32px;animation:fadeUp .4s ease forwards}
+.license-container{max-width:800px;width:100%;margin:0 auto;background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:32px;animation:fadeUp .4s ease forwards}
 .license-header{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--bd2)}
 .license-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--ac);letter-spacing:1px;margin-bottom:6px}
 .license-copyright{font-size:11px;color:var(--t3);letter-spacing:.5px}
