@@ -3861,22 +3861,51 @@ function runTest() {
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
-// Default ON for desktop, OFF for true touch/mobile devices.
-// NOTE: many modern laptops report maxTouchPoints > 0 even with a real
-// pointer attached — only disable if it's actually a phone/tablet UA.
-const isPhoneTablet = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
-let cursorEnabled = !isPhoneTablet;
+
+// Detect phone/tablet: UA-based OR narrow viewport (matches CSS @media max-width:768px).
+// If we detect "mobile" but JS still enabled the custom cursor, the CSS
+// `@media(max-width:768px){.cursor-dot,.cursor-ring{display:none!important}}`
+// would hide the custom cursor while the body still gets cursor:none →
+// NO CURSOR AT ALL. So we must keep these in sync.
+function isMobileViewport() { return window.innerWidth <= 768; }
+const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
+let cursorEnabled = !isPhoneTabletUA && !isMobileViewport();
 let cursorActivated = false; // becomes true on first mousemove
 let cursorRAF = null;
 
-if (!cursorEnabled) {
-    // Touch device — no custom cursor at all, OS cursor stays default.
-    if (dot) dot.style.display = 'none';
-    if (ring) ring.style.display = 'none';
+function applyCursorDisabled() {
+    // Hide custom cursor elements + remove cursor-active so OS cursor returns.
+    cursorActivated = false;
+    document.documentElement.classList.remove('cursor-active');
+    document.body.classList.remove('cursor-active');
+    if (dot) { dot.style.display = 'none'; dot.classList.remove('cursor-active'); }
+    if (ring) { ring.style.display = 'none'; ring.classList.remove('cursor-active', 'hover', 'click'); }
+    if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
     // Sync the settings toggle to OFF state.
     const curTgl = document.getElementById('cursorToggle');
     if (curTgl) curTgl.classList.remove('on');
 }
+
+if (!cursorEnabled) {
+    applyCursorDisabled();
+}
+
+// Re-evaluate on viewport resize (e.g., user resizes browser window narrow).
+window.addEventListener('resize', () => {
+    const shouldEnable = !isPhoneTabletUA && !isMobileViewport();
+    if (shouldEnable && !cursorEnabled) {
+        // Window grew — re-enable cursor (will activate on next mousemove).
+        cursorEnabled = true;
+        if (dot) dot.style.display = '';
+        if (ring) ring.style.display = '';
+        const curTgl = document.getElementById('cursorToggle');
+        if (curTgl) curTgl.classList.add('on');
+    } else if (!shouldEnable && cursorEnabled) {
+        // Window shrank to mobile — disable cursor.
+        cursorEnabled = false;
+        applyCursorDisabled();
+    }
+});
 
 function activateCustomCursor() {
     if (!cursorEnabled || cursorActivated) return;
@@ -3918,19 +3947,20 @@ document.addEventListener('mouseup', () => { if (cursorEnabled && cursorActivate
 
 // Settings toggle: enable/disable custom cursor at runtime.
 function toggleCustomCursor(enabled) {
+    // Never allow enabling on mobile viewport — CSS hides the custom cursor
+    // there, so enabling would just hide the OS cursor too (no cursor at all).
+    if (enabled && isMobileViewport()) {
+        const curTgl = document.getElementById('cursorToggle');
+        if (curTgl) curTgl.classList.remove('on');
+        return;
+    }
     cursorEnabled = !!enabled;
     if (cursorEnabled) {
         // Will activate on next mousemove (so we don't grab cursor position out of nowhere)
         if (dot) dot.style.display = '';
         if (ring) ring.style.display = '';
     } else {
-        // Disable: remove cursor-active so OS cursor comes back, stop rAF.
-        cursorActivated = false;
-        document.documentElement.classList.remove('cursor-active');
-        document.body.classList.remove('cursor-active');
-        if (dot) { dot.style.display = 'none'; dot.classList.remove('cursor-active'); }
-        if (ring) { ring.style.display = 'none'; ring.classList.remove('cursor-active', 'hover', 'click'); }
-        if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
+        applyCursorDisabled();
     }
 }
 

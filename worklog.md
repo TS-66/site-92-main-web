@@ -241,3 +241,25 @@ Stage Summary:
 - Anti-cheat no longer spams dev.log (one backend log per session per event type; threshold raised to 250 to avoid iframe false positives; debugger-statement detector disabled in sandbox).
 - Memory leaks on page navigation fixed (clear breachTimeInterval, cancel camera rAF loops).
 - XSS hotspots in the protocols public table and partial-escape patterns in showAdminNotification / keyGenResult / appendChatMessage hardened via escHtml/escAttr (single quotes now escaped for use inside onclick attributes).
+
+---
+Task ID: 11
+Agent: Z.ai Code (orchestrator, direct execution)
+Task: Fix the "still bugged" cursor — found and fixed a no-cursor-at-all bug on mobile viewport
+
+Work Log:
+- Used agent-browser to inspect the actual cursor state across scenarios.
+- Discovered the real bug: the JS detected "mobile" only via `navigator.userAgent` (regex `/Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/`), but the CSS hid the custom cursor via `@media(max-width:768px){.cursor-dot,.cursor-ring{display:none!important}}`. On a desktop browser narrowed to ≤768px (or a desktop UA on a mobile-width preview), the JS still had `cursorEnabled = true`, so the first mousemove added `cursor-active` to body, which triggered `html.cursor-active, html.cursor-active *{cursor:none !important}` (hiding the OS cursor). Meanwhile the CSS media query hid the custom cursor. Result: NO CURSOR AT ALL on a narrow viewport.
+- Fix: detect mobile via BOTH UA AND viewport width (`window.innerWidth <= 768`, matching the CSS media query). Added `isMobileViewport()` helper. `cursorEnabled` is now `!isPhoneTabletUA && !isMobileViewport()`.
+- Added a `resize` listener so the cursor auto-disables when the window shrinks to mobile width and re-enables when it grows back to desktop. Toggle and `cursor-active` class are kept in sync on every transition.
+- Added a guard in `toggleCustomCursor`: if user tries to enable the cursor while `isMobileViewport()` is true, the toggle is forced back OFF (prevents the "no cursor at all" state from being re-introduced via the Settings panel).
+- Extracted `applyCursorDisabled()` helper so the initial-disable path, the resize-shrink path, and the toggle-off path all use the exact same cleanup (remove `cursor-active` from html+body, hide dot+ring, cancel rAF, sync toggle UI). No more duplicated cleanup code that could drift.
+
+Stage Summary:
+- Verified via agent-browser at 375x812 (mobile viewport, desktop UA — the exact scenario that was broken):
+  - Before fix: mousemove → `bodyCursor="none"`, `dotDisplay="none"` → NO CURSOR AT ALL.
+  - After fix: initial `cursorEnabled=false`, `cursorToggleOn=false`, `dotDisplay="none"`, `bodyCursor="auto"`. After mousemove: `htmlCursorActive=false`, `bodyCursor="auto"` (OS cursor stays visible). Toggle click is refused (stays OFF).
+- Verified at 1280x800 (desktop): initial `cursorEnabled=true`, `cursorToggleOn=true`, `dotOpacity=0`, `bodyCursor="auto"`. After mousemove to (500,400): `dotAt=[500,400]`, `bodyCursor="none"`, `htmlCursorActive=true`. After mousemove to (300,200): `dotAt=[300,200]` (cursor tracks correctly across multiple moves).
+- Verified resize: 1280x800 → 400x800: `cursorEnabled` flips to `false`, `cursorToggleOn` flips to `false`, `bodyCursor="auto"`. Resize back to 1280x800: `cursorEnabled=true`, `cursorToggleOn=true`, custom cursor re-enabled (activates on next mousemove).
+- Lint clean, no dev.log errors.
+- Files changed: public/index.html (cursor JS + toggle + resize listener + isMobileViewport helper + applyCursorDisabled helper).
