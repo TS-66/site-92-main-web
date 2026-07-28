@@ -19,7 +19,11 @@
 --grad-ac:linear-gradient(135deg,#00ffcc 0%,#00d4aa 100%);
 --grad-rd:linear-gradient(135deg,#ff2e5e 0%,#ff8c42 100%);
 }
-html,body{cursor:none;overflow-x:hidden}
+html,body{overflow-x:hidden}
+/* Default mode: show OS cursor everywhere (overrides per-element cursor:none so the page is never "invisible") */
+html:not(.cursor-active) body,html:not(.cursor-active) body *{cursor:revert !important}
+/* Custom cursor mode (after first mousemove): hide OS cursor everywhere */
+html.cursor-active,html.cursor-active *{cursor:none !important}
 body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(0,255,204,.05) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(255,46,94,.03) 0%,transparent 60%)}
 ::selection{background:var(--ac);color:var(--b0)}
 ::-webkit-scrollbar{width:6px;height:6px}
@@ -714,7 +718,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .admin-msg{font-size:11px;margin:8px 0;min-height:16px;font-family:'Share Tech Mono',monospace}
 .admin-form-inline{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
 @media(max-width:768px){.admin-form-inline{grid-template-columns:1fr 1fr}}
-.editor-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.editor-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100001;align-items:center;justify-content:center;padding:20px}
 .editor-modal.open{display:flex}
 .editor-box{background:var(--b2);border:1px solid var(--bd2);max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:22px}
 .editor-title{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:1px;color:var(--ac);margin-bottom:14px;text-transform:uppercase}
@@ -743,7 +747,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .rpt-status-DISMISSED{background:var(--t3);color:var(--b1)}
 .watchlist-sec{margin-bottom:30px}
 .watchlist-empty{color:var(--t3);font-size:12px;padding:14px;text-align:center;background:var(--b3);border:1px dashed var(--bd2);border-radius:2px}
-.scp-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.scp-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100001;align-items:center;justify-content:center;padding:20px}
 .scp-detail-modal.open{display:flex}
 .scp-detail-box{background:var(--b2);border:1px solid var(--bd2);max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:24px}
 .scp-detail-id{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--ac);margin-bottom:4px}
@@ -1983,7 +1987,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <div class="settings-grid">
 <div class="setting-card"><div class="setting-info"><div class="setting-title">CRT Filter</div><div class="setting-desc">Toggle the scanline and CRT vignette overlay.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.querySelectorAll('.scanlines, .crt-vignette').forEach(e=>e.style.display = this.classList.contains('on')?'block':'none')"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Matrix Background</div><div class="setting-desc">Display the falling code animation in the background.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('matrixCanvas').style.display = this.classList.contains('on')?'block':'none'"></div></div>
-<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Use the animated reticle cursor instead of the default OS cursor.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
+<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Use the animated reticle cursor instead of the default OS cursor. Move your mouse to activate.</div></div><div class="toggle on" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Sound Effects</div><div class="setting-desc">Play UI sounds on interaction.</div></div><div class="toggle"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Noise Opacity</div><div class="setting-desc">Adjust the background CRT noise.</div></div><div class="slider-wrap"><span class="slider-val" id="noiseVal">4%</span><input type="range" min="0" max="20" value="4" oninput="document.querySelector('.noise').style.opacity = this.value / 100; document.getElementById('noiseVal').innerText = this.value + '%'"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Scanline Opacity</div><div class="setting-desc">Adjust the horizontal CRT scanlines.</div></div><div class="slider-wrap"><span class="slider-val" id="scanVal">40%</span><input type="range" min="0" max="100" value="40" oninput="document.querySelector('.scanlines').style.opacity = this.value / 100; document.getElementById('scanVal').innerText = this.value + '%'"></div></div>
@@ -2346,18 +2350,20 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
     let devtoolsOpen = false;
     let warned = false;
 
-    function showWarning() {
+    function showWarning(logToBackend) {
         if (warned) return;
         warned = true;
         origLog.call(console, BANNER, BANNER_STYLE_1, BANNER_STYLE_2);
-        // Send to backend for logging (fire-and-forget)
-        try {
-            fetch('/api/anti-cheat/log', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ event: 'devtools_detected', ts: Date.now(), ua: navigator.userAgent, url: location.href })
-            }).catch(() => {});
-        } catch(e) {}
+        // Send to backend for logging (fire-and-forget) — only on first detection per session
+        if (logToBackend === 'log') {
+            try {
+                fetch('/api/anti-cheat/log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event: 'devtools_detected', ts: Date.now(), ua: navigator.userAgent, url: location.href })
+                }).catch(() => {});
+            } catch(e) {}
+        }
         // Show a visible in-page warning that auto-dismisses after 5 seconds
         let banner = document.getElementById('anticheat-banner');
         if (!banner) {
@@ -2376,48 +2382,55 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
             banner.style.opacity = '0';
             setTimeout(() => { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
         }, 5000);
-        // Allow re-triggering after the banner is dismissed
+        // Allow re-triggering after the banner is dismissed (but no re-POST to backend — once per session is enough)
         setTimeout(() => { warned = false; }, 5500);
     }
 
     // --- 2. DevTools detection via window size diff ---
-    const threshold = 160;
+    // Threshold raised from 160 -> 250 to reduce false positives in iframe / preview environments
+    // where the outer/inner window diff is naturally larger.
+    const threshold = 250;
+    let backendLoggedThisSession = false; // Only POST to the backend ONCE per page load
     setInterval(function() {
         const widthDiff = window.outerWidth - window.innerWidth;
         const heightDiff = window.outerHeight - window.innerHeight;
         if (widthDiff > threshold || heightDiff > threshold) {
-            if (!devtoolsOpen) { devtoolsOpen = true; showWarning(); }
+            if (!devtoolsOpen) { devtoolsOpen = true; showWarning(backendLoggedThisSession ? null : 'log'); backendLoggedThisSession = backendLoggedThisSession || true; }
         } else {
             devtoolsOpen = false;
         }
     }, 1000);
 
     // --- 3. Debugger statement timing (catches "pause on exceptions" / step-through) ---
-    setInterval(function() {
-        const start = performance.now();
-        // eslint-disable-next-line no-debugger
-        debugger;
-        if (performance.now() - start > 100) {
-            showWarning();
-        }
-    }, 4000);
+    // DISABLED in sandbox/preview environments (where it can fire spuriously);
+    // only runs when the host looks like a real production domain.
+    if (!/preview|localhost|127\.0\.0\.1|space-z\.ai/i.test(location.hostname || '')) {
+        setInterval(function() {
+            const start = performance.now();
+            // eslint-disable-next-line no-debugger
+            debugger;
+            if (performance.now() - start > 100) {
+                showWarning('log');
+            }
+        }, 4000);
+    }
 
     // --- 4. Block common inspection shortcuts ---
     document.addEventListener('keydown', function(e) {
         // F12
-        if (e.keyCode === 123) { e.preventDefault(); showWarning(); return false; }
+        if (e.keyCode === 123) { e.preventDefault(); showWarning('log'); return false; }
         // Ctrl+Shift+I / Cmd+Shift+I (DevTools)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { e.preventDefault(); showWarning(); return false; }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { e.preventDefault(); showWarning('log'); return false; }
         // Ctrl+U (view source)
-        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); showWarning(); return false; }
+        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); showWarning('log'); return false; }
         // Ctrl+Shift+C (inspect element)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.keyCode === 67) { e.preventDefault(); showWarning(); return false; }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.keyCode === 67) { e.preventDefault(); showWarning('log'); return false; }
     });
 
     // --- 5. Block right-click context menu (inspect element) ---
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
-        showWarning();
+        showWarning(null);
         return false;
     });
 
@@ -2427,7 +2440,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
         copyAttempts++;
         if (copyAttempts > 2) {
             e.preventDefault();
-            showWarning();
+            showWarning(null);
             return false;
         }
     });
@@ -2445,8 +2458,20 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 
 // Navigation Logic
 function go(page) {
+    // === Clean up page-specific timers/rAF loops when leaving pages ===
+    // (prevents CPU waste on hidden pages + GPU leak on detached canvases)
+    if (page !== 'breach-sim' && typeof breachTimeInterval !== 'undefined' && breachTimeInterval) {
+        clearInterval(breachTimeInterval);
+        breachTimeInterval = null;
+    }
+    if (page !== 'cameras' && typeof camAnimations !== 'undefined' && camAnimations.length) {
+        camAnimations.forEach(id => cancelAnimationFrame(id));
+        camAnimations.length = 0;
+    }
+
     document.querySelectorAll('.pg-sec').forEach(s => s.classList.remove('active'));
-    document.getElementById(`page-${page}`).classList.add('active');
+    const pg = document.getElementById(`page-${page}`);
+    if (pg) pg.classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelector(`.nav-link[data-p="${page}"]`)?.classList.add('active');
     document.getElementById('mobNav').classList.remove('open');
@@ -2708,7 +2733,11 @@ async function realBootSequence() {
 }
 
 async function startRealLoader(pingMs, quality) {
+    // Bail out if a remembered DB credential already auto-logged-in the user
+    // while the boot animation was running (prevents the loader flashing over the app).
+    if (document.getElementById('app').classList.contains('show')) return;
     const loader = document.getElementById('loader');
+    if (!loader) return;
     loader.style.display = 'flex';
 
     // Update the loader to show real connection info
@@ -2888,7 +2917,7 @@ async function generateWebKey() {
         if (res.ok && data.success) {
             msg.textContent = data.message; msg.style.color = 'var(--gn)';
             result.style.display = 'block';
-            result.innerHTML = '<div style="color:var(--t3);font-size:9px;letter-spacing:1px">USERNAME</div><div style="color:var(--ac);font-size:14px;margin-bottom:6px">' + data.username.replace(/</g,'&lt;') + '</div><div style="color:var(--t3);font-size:9px;letter-spacing:1px">PASSWORD</div><div style="color:var(--gn);font-size:14px">' + data.password.replace(/</g,'&lt;') + '</div>';
+            result.innerHTML = '<div style="color:var(--t3);font-size:9px;letter-spacing:1px">USERNAME</div><div style="color:var(--ac);font-size:14px;margin-bottom:6px">' + escHtml(data.username) + '</div><div style="color:var(--t3);font-size:9px;letter-spacing:1px">PASSWORD</div><div style="color:var(--gn);font-size:14px">' + escHtml(data.password) + '</div>';
             // Refresh the credential cache so the login form recognizes the new key immediately.
             await fetchCreds();
         } else {
@@ -3037,7 +3066,7 @@ function requestNotifPermission() {
 function showAdminNotification(text) {
     const toast = document.createElement('div');
     toast.className = 'lc-notif-toast';
-    toast.innerHTML = '<div class="notif-title">// ADMIN RESPONSE</div><div class="notif-body">' + text.replace(/</g,'&lt;') + '</div>';
+    toast.innerHTML = '<div class="notif-title">// ADMIN RESPONSE</div><div class="notif-body">' + escHtml(text) + '</div>';
     document.body.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
     if (chatMinimized || !document.hasFocus()) {
@@ -3171,7 +3200,7 @@ function appendChatMessage(sender, text, senderName, timestamp, scroll = true) {
     const label = isAdmin ? (senderName || 'ADMIN').toUpperCase() : (isSystem ? 'SYSTEM' : 'YOU');
     const div = document.createElement('div');
     div.className = 'lc-msg ' + sender;
-    div.innerHTML = '<div class="lc-msg-avatar"><iconify-icon icon="' + icon + '"></iconify-icon></div><div><div class="lc-msg-bubble">' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div><div class="lc-msg-time">' + label + ' // ' + time + '</div></div>';
+    div.innerHTML = '<div class="lc-msg-avatar"><iconify-icon icon="' + icon + '"></iconify-icon></div><div><div class="lc-msg-bubble">' + escHtml(text) + '</div><div class="lc-msg-time">' + escHtml(label) + ' // ' + escHtml(time) + '</div></div>';
     mc.appendChild(div);
     if (scroll) mc.scrollTop = mc.scrollHeight;
 }
@@ -3193,6 +3222,9 @@ function sendLiveChatMessage() {
 document.getElementById('lcInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendLiveChatMessage();
 });
+
+// Track the logged-in user across the app (so initApp can populate navUn/navAv).
+let currentUser = 'AGENT';
 
 // Fetch Dynamic Discord Credentials
 let dynamicCreds = {};
@@ -3216,14 +3248,27 @@ async function fetchCreds() {
 fetchCreds();
 
 // Login Form
+document.getElementById('pwToggle').addEventListener('click', () => {
+    const inp = document.getElementById('inPass');
+    if (!inp) return;
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+});
 document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const u = document.getElementById('inUser').value;
     const p = document.getElementById('inPass').value;
     const err = document.getElementById('loginErr');
+    const errTxt = document.getElementById('loginErrTxt');
     const remember = document.getElementById('rememberMe').checked;
     
+    if (!u || !p) {
+        if (errTxt) errTxt.textContent = 'Please enter your credentials';
+        err.classList.add('show');
+        setTimeout(() => err.classList.remove('show'), 3000);
+        return;
+    }
     if (dynamicCreds[u] === p || (u === 'TEST' && p === 'TEST') || (u === 'AGENT' && p === 'DELTA9') || (u === 'ADMIN' && p === 'O5-X927')) {
+        currentUser = u; // store for initApp
         err.classList.remove('show');
         // Store or clear remembered credentials.
         if (remember) {
@@ -3236,6 +3281,7 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
         document.getElementById('step2').classList.add('active');
         startBioScan();
     } else {
+        if (errTxt) errTxt.textContent = 'Access denied — check your credentials';
         err.classList.add('show');
         setTimeout(() => err.classList.remove('show'), 3000);
     }
@@ -3281,6 +3327,11 @@ document.getElementById('tfaForm').addEventListener('submit', (e) => {
     setTimeout(() => {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').classList.add('show');
+        // Update the topbar with the actual logged-in user.
+        const navUn = document.getElementById('navUn');
+        const navAv = document.getElementById('navAv');
+        if (navUn) navUn.textContent = currentUser;
+        if (navAv) navAv.textContent = currentUser.substring(0, 2).toUpperCase();
         initApp();
     }, 500);
 });
@@ -3457,8 +3508,8 @@ function renderPersonnel() {
         const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
         const roles = m.allRoles || [hr];
         const avatarHtml = m.avatar
-            ? '<img src="' + m.avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
-            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + (m.name || '?').charAt(0).toUpperCase() + '</div>';
+            ? '<img src="' + escAttr(m.avatar) + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
+            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + escHtml((m.name || '?').charAt(0).toUpperCase()) + '</div>';
         const roleBadges = roles.map(r => '<span style="display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44;margin:1px">' + escHtml(r.name) + '</span>').join(' ');
         return '<tr style="cursor:pointer" onclick="openPersonnelModal(' + idx + ')">' +
             '<td style="padding:10px 8px">' + avatarHtml + ' <span style="vertical-align:middle;margin-left:8px;color:var(--t1);font-weight:600">' + escHtml(m.displayName || m.name) + '</span></td>' +
@@ -3540,9 +3591,9 @@ const chatInput = document.getElementById('chatInput');
 
 // Session management — persists across refreshes, per-tab
 if (!sessionStorage.getItem('scipnet_session')) {
-    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).substr(2, 12));
+    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).slice(2, 14));
 }
-const sessionId = sessionStorage.getItem('scipnet_session');
+let sessionId = sessionStorage.getItem('scipnet_session');
 
 async function sendChat() {
     unlockAchievement('ai_chat');
@@ -3780,8 +3831,9 @@ function clearChatSession() {
     }).catch(() => {});
     // Clear UI
     chatBody.innerHTML = `<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Session cleared. Memory wiped. State your query.<span class="chat-time">SYSTEM</span></div></div>`;
-    // Generate new session
-    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).substr(2, 12));
+    // Generate new session — update local var so future sendChat calls use it
+    sessionId = 'sess_' + Math.random().toString(36).slice(2, 14);
+    sessionStorage.setItem('scipnet_session', sessionId);
 }
 
 function runTest() {
@@ -3801,65 +3853,85 @@ function runTest() {
     }, 1500);
 }
 
+// === CUSTOM CURSOR ===
+// Bug fix: previously CSS forced cursor:none on html/body from page load,
+// making the page appear "invisible" (no cursor at all) until the first
+// mousemove fired. Now: OS cursor stays visible by default; the custom
+// cursor (and cursor:none on body) only activate AFTER the first mousemove.
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0, cursorEnabled = true;
+let mx = 0, my = 0, rx = 0, ry = 0;
+// Default ON for desktop, OFF for true touch/mobile devices.
+// NOTE: many modern laptops report maxTouchPoints > 0 even with a real
+// pointer attached — only disable if it's actually a phone/tablet UA.
+const isPhoneTablet = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
+let cursorEnabled = !isPhoneTablet;
+let cursorActivated = false; // becomes true on first mousemove
+let cursorRAF = null;
 
-// Check if cursor should be enabled (not on touch devices)
-if (document.body.classList.contains('device-mobile') || document.body.classList.contains('touch-device')) {
-    cursorEnabled = false;
-    document.documentElement.style.cursor = 'auto';
+if (!cursorEnabled) {
+    // Touch device — no custom cursor at all, OS cursor stays default.
     if (dot) dot.style.display = 'none';
     if (ring) ring.style.display = 'none';
+    // Sync the settings toggle to OFF state.
+    const curTgl = document.getElementById('cursorToggle');
+    if (curTgl) curTgl.classList.remove('on');
 }
 
-let cursorActivated = false;
+function activateCustomCursor() {
+    if (!cursorEnabled || cursorActivated) return;
+    cursorActivated = true;
+    document.documentElement.classList.add('cursor-active');
+    document.body.classList.add('cursor-active');
+    if (dot) dot.classList.add('cursor-active');
+    if (ring) ring.classList.add('cursor-active');
+    if (!cursorRAF) animCursor();
+}
+
 document.addEventListener('mousemove', e => {
     if (!cursorEnabled) return;
     mx = e.clientX; my = e.clientY;
     if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-    if (!cursorActivated) {
-        cursorActivated = true;
-        if (dot) dot.classList.add('cursor-active');
-        if (ring) ring.classList.add('cursor-active');
-    }
+    if (!cursorActivated) activateCustomCursor();
 });
 
-let cursorRAF = null;
 function animCursor() {
-    if (!cursorEnabled) { if (cursorRAF) cancelAnimationFrame(cursorRAF); cursorRAF = null; return; }
+    if (!cursorEnabled || !cursorActivated) { if (cursorRAF) cancelAnimationFrame(cursorRAF); cursorRAF = null; return; }
     rx += (mx - rx) * 0.15;
     ry += (my - ry) * 0.15;
     if (ring) ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
     cursorRAF = requestAnimationFrame(animCursor);
 }
-if (cursorEnabled) animCursor();
 
 // Event delegation for hover effects (works on dynamically created elements too)
+const HOVER_SELECTOR = 'a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn, .scp-card, .per-item, .breach-choice, .camera-feed, .sidebar-link, .ach-card, .admin-btn, .admin-tab';
 document.addEventListener('mouseover', e => {
-    if (!cursorEnabled || !ring) return;
-    if (e.target.closest('a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn, .scp-card, .per-item, .breach-choice, .camera-feed, .sidebar-link, .ach-card, .admin-btn, .admin-tab')) {
-        ring.classList.add('hover');
-    }
+    if (!cursorEnabled || !cursorActivated || !ring) return;
+    if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.add('hover');
 });
 document.addEventListener('mouseout', e => {
-    if (!cursorEnabled || !ring) return;
-    if (e.target.closest('a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn, .scp-card, .per-item, .breach-choice, .camera-feed, .sidebar-link, .ach-card, .admin-btn, .admin-tab')) {
-        ring.classList.remove('hover');
-    }
+    if (!cursorEnabled || !cursorActivated || !ring) return;
+    if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.remove('hover');
 });
-document.addEventListener('mousedown', () => { if (cursorEnabled && ring) ring.classList.add('click'); });
-document.addEventListener('mouseup', () => { if (cursorEnabled && ring) ring.classList.remove('click'); });
+document.addEventListener('mousedown', () => { if (cursorEnabled && cursorActivated && ring) ring.classList.add('click'); });
+document.addEventListener('mouseup', () => { if (cursorEnabled && cursorActivated && ring) ring.classList.remove('click'); });
 
-// Update settings toggle to properly enable/disable cursor
+// Settings toggle: enable/disable custom cursor at runtime.
 function toggleCustomCursor(enabled) {
-    cursorEnabled = enabled;
-    cursorActivated = enabled;
-    document.documentElement.style.cursor = enabled ? 'none' : 'auto';
-    if (dot) { dot.style.display = enabled ? '' : 'none'; if (enabled) dot.classList.add('cursor-active'); else dot.classList.remove('cursor-active'); }
-    if (ring) { ring.style.display = enabled ? '' : 'none'; if (enabled) ring.classList.add('cursor-active'); else ring.classList.remove('cursor-active'); }
-    if (enabled && !cursorRAF) animCursor();
-    if (!enabled && cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
+    cursorEnabled = !!enabled;
+    if (cursorEnabled) {
+        // Will activate on next mousemove (so we don't grab cursor position out of nowhere)
+        if (dot) dot.style.display = '';
+        if (ring) ring.style.display = '';
+    } else {
+        // Disable: remove cursor-active so OS cursor comes back, stop rAF.
+        cursorActivated = false;
+        document.documentElement.classList.remove('cursor-active');
+        document.body.classList.remove('cursor-active');
+        if (dot) { dot.style.display = 'none'; dot.classList.remove('cursor-active'); }
+        if (ring) { ring.style.display = 'none'; ring.classList.remove('cursor-active', 'hover', 'click'); }
+        if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
+    }
 }
 
 // Canvas Setup (Optimized for Performance)
@@ -4029,14 +4101,14 @@ function renderProtocolsTable(protocols) {
     }
     tbody.innerHTML = protocols.map((p, i) => `
         <tr class="proto-row" onclick="toggleProtoDesc(${i})">
-            <td class="tbl-id">${p.code}</td>
-            <td>${p.name}</td>
-            <td>${p.target}</td>
-            <td><span class="sts ${protocolStatusClass(p.status)}"><span class="sts-dot"></span>${p.status || 'STANDBY'}</span></td>
-            <td>${p.assignedTo || 'N/A'}</td>
+            <td class="tbl-id">${escHtml(p.code)}</td>
+            <td>${escHtml(p.name)}</td>
+            <td>${escHtml(p.target)}</td>
+            <td><span class="sts ${protocolStatusClass(p.status)}"><span class="sts-dot"></span>${escHtml(p.status || 'STANDBY')}</span></td>
+            <td>${escHtml(p.assignedTo || 'N/A')}</td>
         </tr>
         <tr class="proto-desc-row" id="proto-desc-${i}" style="display:none">
-            <td colspan="5"><div class="proto-desc-inner">${p.description || 'No additional details on file.'}</div></td>
+            <td colspan="5"><div class="proto-desc-inner">${escHtml(p.description || 'No additional details on file.')}</div></td>
         </tr>
     `).join('');
 }
@@ -4100,7 +4172,7 @@ const CURATED_SCPS = [
 ];
 
 function escHtml(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 let dbScpCache = [];
@@ -6214,7 +6286,7 @@ function openEditor(type, data) {
     modal.classList.add('open');
 }
 
-function escAttr(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function escAttr(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/'/g,'&#39;'); }
 function opts(values, current) {
     const c = (current || '').toString();
     return values.map(v => `<option ${v === c ? 'selected' : ''}>${v}</option>`).join('');

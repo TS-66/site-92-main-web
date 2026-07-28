@@ -1,0 +1,282 @@
+  5463→    const allPages = Object.keys(pageAchMap);
+  5464→    if (allPages.every(p => _visitedPages.has(p))) unlockAchievement('all_pages');
+  5465→    saveAchievements();
+  5466→}
+  5467→
+  5468→function trackTerminalCommand() {
+  5469→    _terminalCommands++;
+  5470→    if (_terminalCommands >= 50) unlockAchievement('terminal_50');
+  5471→    if (_terminalCommands >= 100) unlockAchievement('terminal_100');
+  5472→    saveAchievements();
+  5473→}
+  5474→
+  5475→function showAchievementNotification(ach) {
+  5476→    // Remove any existing notification
+  5477→    const existing = document.getElementById('achNotif');
+  5478→    if (existing) existing.remove();
+  5479→    
+  5480→    const notif = document.createElement('div');
+  5481→    notif.id = 'achNotif';
+  5482→    notif.className = 'ach-notification';
+  5483→    notif.innerHTML = '<div class="ach-notif-icon"><iconify-icon icon="lucide:' + ach.icon + '"></iconify-icon></div>' +
+  5484→        '<div class="ach-notif-text"><div class="ach-notif-title">ACHIEVEMENT UNLOCKED</div>' +
+  5485→        '<div class="ach-notif-desc">' + escHtml(ach.name) + ' — ' + escHtml(ach.desc) + '</div></div>';
+  5486→    document.body.appendChild(notif);
+  5487→    
+  5488→    // Animate in
+  5489→    requestAnimationFrame(() => notif.classList.add('show'));
+  5490→    
+  5491→    // Auto-remove after 5 seconds
+  5492→    setTimeout(() => {
+  5493→        notif.classList.remove('show');
+  5494→        setTimeout(() => notif.remove(), 500);
+  5495→    }, 5000);
+  5496→}
+  5497→
+  5498→function renderAchievements() {
+  5499→    const grid = document.getElementById('achGrid');
+  5500→    if (!grid) return;
+  5501→    const count = _unlockedAchievements.size;
+  5502→    const total = ACHIEVEMENTS.length;
+  5503→    document.getElementById('achCount').textContent = count;
+  5504→    document.getElementById('achTotal').textContent = total;
+  5505→    const fill = document.getElementById('achProgressFill');
+  5506→    if (fill) fill.style.width = (count / total * 100) + '%';
+  5507→    
+  5508→    grid.innerHTML = ACHIEVEMENTS.map((a, i) => {
+  5509→        const unlocked = _unlockedAchievements.has(a.id);
+  5510→        return '<div class="ach-card ' + (unlocked ? 'unlocked' : '') + '" style="animation-delay:' + (i * 0.03) + 's">' +
+  5511→            '<div class="ach-icon"><iconify-icon icon="lucide:' + a.icon + '"></iconify-icon></div>' +
+  5512→            '<div class="ach-name">' + escHtml(a.name) + '</div>' +
+  5513→            '<div class="ach-desc">' + escHtml(a.desc) + '</div>' +
+  5514→            '<div class="ach-status">' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</div>' +
+  5515→        '</div>';
+  5516→    }).join('');
+  5517→}
+  5518→
+  5519→function updateAchievementProgress() {
+  5520→    const count = _unlockedAchievements.size;
+  5521→    const total = ACHIEVEMENTS.length;
+  5522→    const countEl = document.getElementById('achCount');
+  5523→    const fillEl = document.getElementById('achProgressFill');
+  5524→    if (countEl) countEl.textContent = count;
+  5525→    if (fillEl) fillEl.style.width = (count / total * 100) + '%';
+  5526→}
+  5527→
+  5528→// ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
+  5529→let termHistory = [];
+  5530→let termHistoryIdx = -1;
+  5531→
+  5532→function termPrint(text, cls) {
+  5533→    const out = document.getElementById('termOutput');
+  5534→    if (!out) return;
+  5535→    const line = document.createElement('div');
+  5536→    line.className = 'term-line' + (cls ? ' ' + cls : '');
+  5537→    line.textContent = text;
+  5538→    out.appendChild(line);
+  5539→    out.scrollTop = out.scrollHeight;
+  5540→}
+  5541→function termPrintHTML(html, cls) {
+  5542→    const out = document.getElementById('termOutput');
+  5543→    if (!out) return;
+  5544→    const line = document.createElement('div');
+  5545→    line.className = 'term-line' + (cls ? ' ' + cls : '');
+  5546→    line.innerHTML = html;
+  5547→    out.appendChild(line);
+  5548→    out.scrollTop = out.scrollHeight;
+  5549→}
+  5550→function termClear() {
+  5551→    const out = document.getElementById('termOutput');
+  5552→    if (out) out.innerHTML = '';
+  5553→}
+  5554→
+  5555→const TERM_COMMANDS = {
+  5556→    help: (args) => {
+  5557→        // If user typed 'help <command>', show that command's description
+  5558→        if (args[0]) {
+  5559→            const cmd = args[0].toLowerCase();
+  5560→            if (TERM_COMMANDS[cmd]) {
+  5561→                termPrint('Command: ' + cmd + '\n\nThis command is available. Type it without arguments to run it.\n(Individual command descriptions are not available — just try it!)', 'term-sys');
+  5562→            } else {
+  5563→                termPrint('No such command: ' + cmd + '\n\nType \'help\' with no arguments to see all commands.', 'term-err');
+  5564→            }
+  5565→            return;
+  5566→        }
+  5567→        // Dynamically list ALL commands from TERM_COMMANDS, grouped by category
+  5568→        const allCmds = Object.keys(TERM_COMMANDS).sort();
+  5569→        const categories = {
+  5570→            'System & Info': ['help', 'clear', 'cls', 'echo', 'date', 'time', 'whoami', 'hostname', 'uname', 'uptime', 'version', 'history', 'exit', 'logout', 'man', 'about', 'credits', 'reset', 'reboot', 'shutdown', 'sleep', 'wait', 'env', 'export', 'alias', 'source'],
+  5571→            'SCP Entries': [],
+  5572→            'SCP Lore & Foundation': ['scp', 'scp-list', 'scp-wiki', 'scp-foundation', 'scp-staff', 'scp-sites', 'scp-glossary', 'scp-tales', 'scp-joke', 'scp-explained', 'scp-archived', 'scp-neutralized', 'containment', 'classify', 'object-class', 'breach', 'terminate', 'terminate-scp', 'recontain', 'amnestic', 'class-d', 'd-class', 'foundation', 'o5', 'ethics', 'mtf', 'researcher', 'keter', 'euclid', 'safe', 'thaumiel', 'apollyon', 'anomaly', 'k-class', 'xk-scenario', '096-incident', '682-termination', '173-origin', 'scranton-logs', 'bright-list', 'clef-tips', 'king-coconut'],
+  5573→            'Facility': ['scan', 'status', 'sectors', 'map', 'lockdown', 'unlock', 'evacuate', 'alarm', 'silent', 'power', 'reactor', 'cooling', 'anchor', 'scranton', 'door', 'elevator', 'intercom', 'log', 'logs', 'access-log', 'shift', 'report', 'weather'],
+  5574→            'Terminal Classics': ['tree', 'find', 'grep', 'ps', 'top', 'kill', 'chmod', 'chown', 'mkdir', 'touch', 'mv', 'cp', 'df', 'du', 'free', 'which', 'whereis', 'stat', 'head', 'tail', 'wc', 'sort', 'uniq', 'ls', 'cd', 'cat', 'vim', 'nano', 'ping', 'traceroute', 'nmap', 'wget', 'curl', 'git', 'npm', 'python'],
+  5575→            'Games & Random': ['rps', 'hangman', 'guess', 'trivia', 'fact', 'quote', 'coin', 'dice', '8ball', 'fortune', 'flip', 'random', 'number', 'yes-or-no', 'yes', 'no', 'maybe', 'horoscope', 'zodiac', 'name', 'nickname', 'superpower', 'achievement', 'quest', 'inventory', 'level', 'xp', 'shop', 'buy', 'money', 'mine', 'craft', 'fish', 'farm', 'cook', 'eat', 'drink'],
+  5576→            'Fun & Memes': ['hack', 'matrix', 'coffee', 'cookie', 'party', 'dance', 'sing', 'joke', 'hello', 'hi', 'bye', 'love', 'rickroll', 'lol', 'bruh', 'yeet', 'sus', 'amogus', 'pog', 'kek', 'gg', 'ez', 'f', 'rip', 'oof', 'big-oof', 'yikes', 'based', 'no-cap', 'bussin', 'skibidi', 'ohio', 'sigma', 'rizz', 'gyatt', 'fanum', 'derp', 'facepalm', 'shrug', 'tableflip', 'tableback', 'lenny', 'magic', 'portal', 'beep', 'boop', 'meow', 'woof', 'moo', 'quack', 'honk', 'brb', 'gtg'],
+  5577→            'ASCII & Art': ['ascii', 'banner', 'figlet', 'cowsay', 'logo', 'splash', 'art', 'emoji', 'rainbow', 'firework', 'snow', 'rain', 'stars', 'rocket', 'explosion', 'zombie', 'ghost', 'vampire', 'dragon', 'unicorn', 'cat-says', 'dog-says', 'color'],
+  5578→            'Encoding & Math': ['base64', 'rot13', 'binary', 'hex', 'morse', 'hash', 'uuid', 'password', 'pi', 'euler', 'phi', 'prime', 'fibonacci'],
+  5579→            'Game Cheats (fake)': ['respawn', 'invincible', 'noclip', 'godmode', 'cheat', 'save', 'load', 'pause', 'time-travel', 'teleport', 'invisible', 'fly'],
+  5580→        };
+  5581→        // Auto-populate SCP entries (scp-XXX pattern)
+  5582→        allCmds.forEach(c => { if (/^scp-\d/.test(c) && !categories['SCP Lore & Foundation'].includes(c)) categories['SCP Entries'].push(c); });
+  5583→        // Find uncategorized commands
+  5584→        const categorized = new Set(Object.values(categories).flat());
+  5585→        const uncategorized = allCmds.filter(c => !categorized.has(c));
+  5586→        if (uncategorized.length) categories['Other'] = uncategorized;
+  5587→
+  5588→        let out = 'SCiPNET Terminal — ' + allCmds.length + ' commands available\n\n';
+  5589→        for (const [cat, cmds] of Object.entries(categories)) {
+  5590→            if (!cmds.length) continue;
+  5591→            out += '  ' + cat + ' (' + cmds.length + '):\n    ' + cmds.join(', ') + '\n\n';
+  5592→        }
+  5593→        out += "Type any command to run it. Use ArrowUp/Down for command history.";
+  5594→        termPrint(out, 'term-sys');
+  5595→    },
+  5596→    clear: () => termClear(),
+  5597→    cls: () => termClear(),
+  5598→    echo: (args) => termPrint(args.join(' ') || ''),
+  5599→    date: () => termPrint(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })),
+  5600→    time: () => termPrint(new Date().toLocaleTimeString('en-US', { hour12: false }) + ' UTC'),
+  5601→    whoami: () => { const u = document.getElementById('navUn')?.textContent || 'AGENT'; termPrint(u + ' — Clearance Level 4 — TOP SECRET — Authorized Personnel'); },
+  5602→    hostname: () => termPrint('scipnet-site-92-precipice'),
+  5603→    uname: () => termPrint('SCiPNET OS 2.0 (site-92-kernel) x86_64'),
+  5604→    uptime: () => { const s = Math.floor(performance.now() / 1000); const h = Math.floor(s / 3600); const m = Math.floor((s % 3600) / 60); termPrint('up ' + h + 'h ' + m + 'm ' + (s % 60) + 's — 1 user — load average: 0.42, 0.38, 0.31'); },
+  5605→    version: () => termPrint('SCiPNET Terminal v2.0 — Ducky 2.5 AI Core — Powered by The Duck Dev\'s | NexousCode Studios'),
+  5606→    history: () => { termPrint(termHistory.map((c, i) => '  ' + (i + 1) + '  ' + c).join('\n') || 'No history yet.'); },
+  5607→    exit: () => termPrint('Nice try. There is no escape from Site-92.', 'term-warn'),
+  5608→    logout: () => termPrint('Logout request denied. Your shift doesn\'t end for another 6 hours.', 'term-warn'),
+  5609→    man: (args) => { if (!args[0]) { termPrint('What manual page do you want? Try: man scp, man breach, man help', 'term-sys'); return; } termPrint('MAN(' + args[0] + ') — No manual entry for ' + args[0] + '\n(This is a simulated terminal. Type "help" for available commands.)', 'term-dim'); },
+  5610→    about: () => termPrint('SCiPNET Terminal v2.0\nThe Precipice — Site-92\nBuilt by The Duck Dev\'s | NexousCode Studios\n\nA simulated facility terminal with 100+ commands for exploration and roleplay.\nNot a real system. No actual data is accessed or modified.', 'term-sys'),
+  5611→    credits: () => termPrint('SCiPNET Terminal\nFounder: doudoustar01\nDeveloper: Duck\nAI: Ducky 2.5\nPowered by The Duck Dev\'s | NexousCode Studios', 'term-sys'),
+  5612→
+  5613→    // SCP commands
+  5614→    'scp': (args) => {
+  5615→        if (!args[0]) { termPrint('Usage: scp <number> (e.g. scp 173). Try scp-list for available SCPs.', 'term-sys'); return; }
+  5616→        go('objects'); termPrint('Opening database... search for SCP-' + args[0], 'term-ok');
+  5617→    },
+  5618→    'scp-list': () => { go('objects'); termPrint('Opening Anomaly Database...', 'term-ok'); },
+  5619→    'scp-173': () => termPrint('SCP-173 — "The Sculpture"\nClass: EUCLID\nThreat: HIGH\n\nConcrete statue. Moves when unobserved. Snaps necks. Don\'t blink.\nContainment: Locked cell, constant visual monitoring by 2+ personnel.\n\nWe\'ve lost people who blinked.', 'term-warn'),
+  5620→    'scp-682': () => termPrint('SCP-682 — "Hard-to-Destroy Reptile"\nClass: KETER\nThreat: MAX\n\nLarge reptilian entity. Regenerates from any damage. Hates all life.\nContainment: Submerged in hydrochloric acid. Has breached containment 17+ times.\n\nTermination attempts: all failed.', 'term-err'),
+  5621→    'scp-999': () => termPrint('SCP-999 — "The Tickle Monster"\nClass: SAFE\nThreat: LOW\n\nOrange slime. Induces euphoria. Adorably harmless.\nContainment: Roams freely. Staff love it.\n\nThe one good thing in this facility.', 'term-ok'),
+  5622→    'scp-096': () => termPrint('SCP-096 — "The Shy Guy"\nClass: EUCLID\nThreat: MAX\n\nHumanoid. Enters rage state when face is viewed. Pursues viewer until termination.\nContainment: Sealed cell, no visual contact.\n\nDon\'t look at its face. Just don\'t.', 'term-err'),
+  5623→    'scp-049': () => termPrint('SCP-049 — "Plague Doctor"\nClass: EUCLID\nThreat: HIGH\n\nHumanoid in medieval plague doctor costume. "Cures" humans by touch — they become zombies.\nPolite. Articulate. Believes he\'s helping.\n\nThe cure is worse than the disease.', 'term-warn'),
+  5624→    'scp-079': () => termPrint('SCP-079 — "Old AI"\nClass: EUCLID\nThreat: HIGH\n\nSentient microcomputer from 1978. Hostile. Intelligent. Wants out.\nContainment: Air-gapped. No network access.\n\nIt\'s listening. It\'s always listening.', 'term-warn'),
+  5625→    'scp-106': () => termPrint('SCP-106 — "The Old Man"\nClass: KETER\nThreat: MAX\n\nDecayed humanoid. Phases through matter. Drags victims into a pocket dimension.\nContainment: Suspended in fluid. Corrodes everything it touches.\n\nIf you hear dripping, run.', 'term-err'),
+  5626→    containment: () => termPrint('CONTAINMENT STATUS: NOMINAL\n\nSector A-1: Normal\nSector B-2: Normal\nSector C-3: Warning\nSector D-7B: QUARANTINE\nSector E-4: Normal\nSector F-5: Normal\nSector G-6: OFFLINE\nSector H-8: Normal\n\nActive protocols: SIGMA-3 (Power Grid Failsafe)', 'term-sys'),
+  5627→    classify: (args) => { if (!args[0]) { termPrint('Usage: classify <object> — assigns a random object class', 'term-sys'); return; } const classes = ['SAFE', 'EUCLID', 'KETER', 'THAUMIEL', 'APOLLYON', 'NEUTRALIZED']; const c = classes[Math.floor(Math.random() * classes.length)]; termPrint('Classifying ' + args.join(' ') + '...\n\nResult: ' + c + '\nRecommendation: ' + (c === 'KETER' || c === 'APOLLYON' ? 'Immediate containment review' : c === 'EUCLID' ? 'Standard monitoring' : 'No action needed'), c === 'KETER' || c === 'APOLLYON' ? 'term-err' : c === 'EUCLID' ? 'term-warn' : 'term-ok'); },
+  5628→    'object-class': () => termPrint('Object Classes:\n  SAFE — Easily and safely contained.\n  EUCLID — Unpredictable, requires active containment.\n  KETER — Difficult to contain consistently.\n  THAUMIEL — Used by Foundation to contain other SCPs.\n  APOLLYON — Impossible to contain, end-of-world scenario.\n  NEUTRALIZED — No longer anomalous.', 'term-sys'),
+  5629→    breach: () => { termPrint('⚠ INITIATING CONTAINMENT BREACH SIMULATION ⚠\n', 'term-err'); let i = 0; const msgs = ['Sector D-7B seal integrity: 78%...', 'Scranton anchors fluctuating...', 'SCP-682 containment chamber: COMPROMISED', 'MTF EPSILON-11 dispatched...', 'Casualty report: 3 D-Class, 1 researcher', 'Recontainment protocol ZETA-9 activated...', 'Breach contained in 4m 12s', 'Situation resolved. Amnestics deployed.']; const iv = setInterval(() => { if (i >= msgs.length) { clearInterval(iv); return; } termPrint(msgs[i], i < 5 ? 'term-err' : 'term-ok'); i++; }, 600); },
+  5630→    terminate: (args) => { if (!args[0]) { termPrint('Usage: terminate <scp> — attempts termination (spoiler: it won\'t work)', 'term-sys'); return; } termPrint('Initiating termination protocol for ' + args.join(' ') + '...\n\nTermination attempt: FAILED\nEntity adapted and regenerated.\nCasualties: 2 MTF operatives\nRecommendation: Do not attempt again.', 'term-err'); },
+  5631→    'terminate-scp': (args) => TERM_COMMANDS.terminate(args),
+  5632→    recontain: () => termPrint('Recontainment protocol initiated.\n\n[OK] Scranton anchors stabilized\n[OK] Containment doors sealed\n[OK] Entity secured in primary chamber\n[OK] Amnestic deployment: complete\n\nRecontainment successful.', 'term-ok'),
+  5633→    amnestic: () => termPrint('AMNESTIC DEPLOYMENT SYSTEM\n\nClass-A: Standard memory wipe (24h)\nClass-B: Targeted memory removal\nClass-C: Personality reconstruction\nClass-D: Full identity reset\n\nDeploying Class-A to Sector D-7B...\n[OK] 47 personnel treated\n[OK] No residual memories detected', 'term-sys'),
+  5634→    'class-d': () => termPrint('D-Class Personnel — Site-92\n\nActive: 247\nThis month: 12 terminated, 8 reassigned\nLife expectancy: 30 days\n\nThey don\'t get hazard pay. They don\'t get anything.', 'term-dim'),
+  5635→    'd-class': () => TERM_COMMANDS['class-d'](),
+  5636→    foundation: () => termPrint('The SCP Foundation\n\n"Secure. Contain. Protect."\n\nA clandestine organization dedicated to the containment of anomalous objects, entities, and phenomena that threaten the normality of human existence.\n\nWe die in the dark so you can live in the light.', 'term-sys'),
+  5637→    o5: () => termPrint('O5 COUNCIL — OVERSEER LEVEL 5\n\n13 members. Identities classified.\nThey decide everything. You don\'t question them.\n\nAccess to this information has been logged.', 'term-warn'),
+  5638→    ethics: () => termPrint('ETHICS COMMITTEE\n\nReviews all testing protocols involving sentient SCPs and D-Class personnel.\n\nThey exist. Whether they\'re effective is a matter of opinion.', 'term-dim'),
+  5639→    mtf: () => { go('mtf'); termPrint('Opening Task Forces directory...', 'term-ok'); },
+  5640→    researcher: () => termPrint('Researcher profile: Dr. [REDACTED]\n\nClearance: Level 4\nSpecialty: Keter-class containment\nYears at Site-92: 7\nIncident reports filed: 34\nPsych eval: PASS (marginal)\n\n"You get used to it. Mostly."', 'term-sys'),
+  5641→    keter: () => termPrint('KETER CLASS — "Difficult to contain"\n\nEntities that are exceedingly hostile or difficult to contain. Requires extensive resources and complex procedures.\n\nExamples: SCP-682, SCP-106, SCP-076', 'term-err'),
+  5642→    euclid: () => termPrint('EUCLID CLASS — "Unpredictable"\n\nEntities with poorly understood behavior. Requires active containment but is manageable.\n\nExamples: SCP-173, SCP-096, SCP-049', 'term-warn'),
+  5643→    safe: () => termPrint('SAFE CLASS — "Easily contained"\n\nEntities that are well-understood and easily contained with minimal resources.\n\nExamples: SCP-999, SCP-500, SCP-294', 'term-ok'),
+  5644→    thaumiel: () => termPrint('THAUMIEL CLASS — "Foundation tool"\n\nEntities used by the Foundation to contain or counter other SCPs.\n\nClassification is highly classified. You shouldn\'t be reading this.', 'term-warn'),
+  5645→    apollyon: () => termPrint('APOLLYON CLASS — "End of days"\n\nEntities that cannot be contained and will inevitably cause an end-of-world scenario.\n\nThere is no containment. There is only time.\n\nWe don\'t talk about these.', 'term-err'),
+  5646→    anomaly: () => termPrint('Anomaly detected.\n\nLocation: Sector C-3, Sub-level 2\nType: Reality fluctuation\nSeverity: MODERATE\nScranton anchor compensation: ACTIVE\n\nMonitoring. No action required at this time.', 'term-warn'),
+  5647→
+  5648→    // Facility commands
+  5649→    scan: () => { termPrint('Initiating sector scan...', 'term-sys'); setTimeout(() => termPrint('\n[SCAN COMPLETE]\nSectors scanned: 8\nAnomalies detected: 3\nContainment breaches: 0\nReality fluctuations: 1 (Sector C-3)\nPersonnel accounted for: 482/482\n\nAll sectors nominal except C-3 (warning) and D-7B (quarantine).', 'term-ok'), 800); },
+  5650→    status: () => TERM_COMMANDS.containment(),
+  5651→    sectors: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
+  5652→    map: () => { go('map'); termPrint('Opening site map...', 'term-ok'); },
+  5653→    lockdown: () => termPrint('⚠ SITE-WIDE LOCKDOWN INITIATED ⚠\n\nAll bulkheads sealed.\nMTF EPSILON-11 on standby.\nElevators disabled.\nScranton anchors at maximum.\n\nLockdown active. Await further instructions.\n\n(This is just a simulation. No actual lockdown occurred. You\'re safe.)', 'term-err'),
+  5654→    unlock: () => termPrint('Lockdown lifted. All sectors accessible.\nReturning to normal operations.\n\n(Was never actually locked down. But it\'s the thought that counts.)', 'term-ok'),
+  5655→    evacuate: () => termPrint('EVACUATION PROTOCOL OMEGA-1\n\nNon-essential personnel: evacuate via Sector E-4\nEssential personnel: remain at posts\nMTF escort: en route\n\nEstimated evacuation time: 22 minutes', 'term-warn'),
+  5656→    alarm: () => termPrint('⚠ ALARM ACTIVATED ⚠\nAll personnel alerted.\n\n(Just kidding. No alarm. Everything\'s fine. Probably.)', 'term-err'),
+  5657→    silent: () => { termPrint('Silent alarm activated.\nMTF notified. No audible alarm.\nMaintain current activity.', 'term-warn'); },
+  5658→    power: () => termPrint('POWER GRID STATUS\n\nReactor: 920 MW / 1000 MW (92%)\nBackup generators: STANDBY\nUPS: 100%\nPower factor: 0.98\n\nGrid nominal.', 'term-ok'),
+  5659→    reactor: () => termPrint('REACTOR CORE\n\nType: Scranton-Stabilized Fusion\nOutput: 920 MW\nCore temp: 1,200K (nominal)\nCoolant: Liquid helium\nContainment field: 99.7% integrity\n\nDo not touch the reactor.', 'term-sys'),
+  5660→    cooling: () => termPrint('COOLING SYSTEM\n\nPrimary loop: NOMINAL\nSecondary loop: NOMINAL\nSector 7B cooling: 78% (WARNING — maintenance advised)\n\nSchedule repair for next maintenance window.', 'term-warn'),
+  5661→    anchor: () => termPrint('SCRANTON REALITY ANCHORS\n\nAnchor 1: 99.2% — Stable\nAnchor 2: 98.7% — Stable\nAnchor 3: 99.5% — Stable (recently recalibrated)\nAnchor 4: 97.1% — Minor fluctuation\n\nReality stability: NOMINAL', 'term-ok'),
+  5662→    scranton: () => TERM_COMMANDS.anchor(),
+  5663→    door: (args) => { if (!args[0]) { termPrint('Usage: door <open|close|lock> <sector>', 'term-sys'); return; } termPrint('Door ' + args[0] + ' ' + (args[1] || 'unknown') + '...\n[OK] Command sent to door controller.', 'term-ok'); },
+  5664→    elevator: () => termPrint('Elevator system: OPERATIONAL\nCar 1: Level 3\nCar 2: Level -2 (restricted)\nCar 3: Maintenance\n\nUse your keycard for sub-level access.', 'term-sys'),
+  5665→    intercom: (args) => termPrint('[INTERCOM] ' + (args.join(' ') || 'Test, test, one two three.') + '\n\nMessage broadcast to all sectors.', 'term-sys'),
+  5666→    log: () => { go('lab'); termPrint('Opening test log archive...', 'term-ok'); },
+  5667→    logs: () => TERM_COMMANDS.log(),
+  5668→    'access-log': () => { const events = ['12:04:22 — Scranton Anchor #3 stabilized', '12:03:10 — MTF TAU-5 entered Sector 7B', '12:02:45 — Camera feed lost in Cell 113', '12:01:30 — Containment field fluctuation (Sector D)', '12:00:00 — Midnight backup completed', '11:58:12 — D-Class rotation complete', '11:45:30 — Amnestic deployment: Sector A (routine)']; termPrint('ACCESS LOG (last 7 events):\n\n' + events.map(e => '  ' + e).join('\n'), 'term-dim'); },
+  5669→    shift: () => termPrint('CURRENT SHIFT: NIGHT (22:00 - 06:00)\nShift supervisor: Dr. [REDACTED]\nPersonnel on duty: 47\nActive incidents: 0\n\nCoffee consumption: critical.', 'term-sys'),
+  5670→    report: () => { go('report'); termPrint('Opening anomaly report form...', 'term-ok'); },
+  5671→
+  5672→    // Fun / Easter eggs
+  5673→    hack: () => { termPrint('Initiating hack sequence...', 'term-sys'); const frames = ['[####......] 40%', '[########..] 80%', '[##########] 100%']; let i = 0; const iv = setInterval(() => { if (i >= frames.length) { clearInterval(iv); termPrint('\nACCESS GRANTED\n\nJust kidding. This is a simulated terminal. There\'s nothing to hack.\nBut that was fun, right?', 'term-ok'); return; } termPrint(frames[i], 'term-sys'); i++; }, 500); },
+  5674→    matrix: () => { termPrint('Entering the Matrix...', 'term-sys'); const chars = '010101100110100101100001011011000110100101110010'.match(/.{1,40}/g); let i = 0; const iv = setInterval(() => { if (i >= chars.length) { clearInterval(iv); termPrint('\nWake up, Neo...\nThe Matrix has you...\nFollow the white rabbit. 🐇', 'term-ok'); return; } termPrint(chars[i], 'term-dim'); i++; }, 80); },
+  5675→    coffee: () => termPrint('Brewing coffee...\n\n  (  )   (   )  )\n   ) (   )  (  (\n   ( )  (    ) )\n   _____________\n  <_____________> ___\n  |             |/ _ \\\n  |               | | |\n  |               |_| |\n ___|             |\\___/\n/    \\___________/    \\\n\\_____________________/\n\nCoffee dispensed. It\'s terrible, like everything else here.', 'term-ok'),
+  5676→    cookie: () => termPrint('Here, have a cookie. You\'ve earned it.\n\n  .----.\n /      \\\n|  @  @  |\n|   __   |\n \\  ~~  /\n  `----\'\n\nIt\'s chocolate chip. The one good thing the cafeteria makes.', 'term-ok'),
+  5677→    party: () => { termPrint('🎉 PARTY MODE ACTIVATED 🎉', 'term-ok'); const colors = ['#ff3333', '#ffaa00', '#00ff88', '#00aaff', '#ff00ff']; let i = 0; const iv = setInterval(() => { document.body.style.boxShadow = 'inset 0 0 200px ' + colors[i % colors.length]; i++; if (i > 20) { clearInterval(iv); document.body.style.boxShadow = ''; termPrint('Party\'s over. Back to work.', 'term-dim'); } }, 200); },
+  5678→    dance: () => termPrint('<(^.^<)  <(^.^)>  (>^.^)>  (>^.^<)  <(^.^<)\n\nDance sequence complete. HR has been notified.', 'term-ok'),
+  5679→    sing: () => termPrint('🎵 Daisy, Daisy, give me your answer do...\n   I\'m half crazy, all for the love of you...\n   It won\'t be a stylish marriage...\n   I can\'t afford a carriage...\n   But you\'ll look sweet upon the seat...\n   Of a bicycle built for two. 🎵\n\n...sorry. I\'ll stop.', 'term-dim'),
+  5680→    joke: () => { const jokes = ['Why don\'t SCPs use elevators? Because they prefer to take stairs to hell.', 'What do you call a Keter that won\'t stay dead? SCP-682. Every time.', 'I told a D-Class a joke once. He didn\'t laugh. He didn\'t do anything. He was SCP-173\'s lunch.', 'Why did the researcher cross the sector? To get away from SCP-106.', 'How many MTF operatives does it take to contain SCP-173? Three. Always three. Don\'t blink.']; termPrint(jokes[Math.floor(Math.random() * jokes.length)], 'term-ok'); },
+  5681→    coin: () => termPrint('Flipping coin... ' + (Math.random() < 0.5 ? 'HEADS' : 'TAILS'), 'term-ok'),
+  5682→    dice: (args) => { const n = args[0] ? parseInt(args[0].replace(/[^0-9]/g, '')) || 6 : 6; const r = Math.floor(Math.random() * n) + 1; termPrint('Rolling d' + n + '... ' + r, 'term-ok'); },
+  5683→    '8ball': (args) => { const answers = ['It is certain.', 'Without a doubt.', 'Yes, definitely.', 'You may rely on it.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Cannot predict now.', 'Don\'t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.', 'Very doubtful.', 'The Foundation disapproves.']; termPrint('Magic 8-Ball says: ' + answers[Math.floor(Math.random() * answers.length)], 'term-sys'); },
+  5684→    fortune: () => { const fortunes = ['You will find what you seek in the last place you look.', 'Beware of the corridor after midnight.', 'A promotion is coming. So is a containment breach.', 'Today is a good day to wear more amnestics.', 'The answer is 42. The question is classified.', 'You will blink at the worst possible moment.', 'An SCP will escape. It always does.', 'Trust no one. Especially not the D-Class.']; termPrint('🔮 ' + fortunes[Math.floor(Math.random() * fortunes.length)], 'term-sys'); },
+  5685→    ascii: () => termPrint('  _____ _    _ _____  _____ _____ \n / ____| |  | |_   _|/ ____/ ____|\n| (___ | |__| | | | | (___| |     \n \\___ \\|  __  | | |  \\___ | |     \n ____) | |  | |_| |_ ____) | |____ \n|_____/|_|  |_|_____|_____/ \\_____|', 'term-ascii'),
+  5686→    banner: () => termPrint(' ██████╗██╗ ██████╗ ███████╗██████╗ \n██╔════╝██║██╔═══██╗██╔════╝██╔══██╗\n██║     ██║██║   ██║█████╗  ██████╔╝\n██║     ██║██║   ██║██╔══╝  ██╔══██╗\n╚██████╗██║╚██████╔╝███████╗██║  ██║\n ╚═════╝╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝', 'term-ascii'),
+  5687→    figlet: (args) => { const text = (args.join(' ') || 'SCiPNET').toUpperCase(); termPrint(text.split('').map(c => c === ' ' ? '   ' : '█▀▄│█▀▄│█▀█').join('  '), 'term-ascii'); },
+  5688→    cowsay: (args) => { const msg = args.join(' ') || 'Moo!'; const top = ' ' + '_'.repeat(msg.length + 2); const bottom = ' ' + '-'.repeat(msg.length + 2); termPrint(top + '\n< ' + msg + ' >\n' + bottom + '\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||', 'term-ok'); },
+  5689→    sudo: (args) => { if (args.join(' ') === 'make me a sandwich') { termPrint('Okay.', 'term-ok'); return; } termPrint('User is not in the sudoers file. This incident will be reported.\n\n(It won\'t. Nothing is reported. This is a simulation.)', 'term-err'); },
+  5690→    rm: (args) => { if (args.includes('-rf') && args.includes('/')) { termPrint('Are you sure? [y/N] ', 'term-warn'); setTimeout(() => termPrint('\nJust kidding. I\'m not deleting anything. This is a simulated terminal.\nBut for a moment there, you were worried, weren\'t you?', 'term-ok'), 1000); } else { termPrint('rm: cannot remove \'' + (args.join(' ') || 'file') + '\': No such file or directory', 'term-err'); } },
+  5691→    ls: () => termPrint('anomalies/    personnel/    protocols/    incidents/\ntest-logs/    reports/      sectors/      reactor/\n.classified   .do_not_touch   .seriously_dont', 'term-dim'),
+  5692→    cd: (args) => termPrint('Changing directory to /' + (args[0] || 'home') + '...\n[OK] You are now in /' + (args[0] || 'home'), 'term-sys'),
+  5693→    cat: (args) => { if (!args[0]) { termPrint('Usage: cat <file>', 'term-sys'); return; } termPrint('cat: ' + args[0] + ': Permission denied\n\nThis file is classified. You don\'t have clearance for that.\n(Actually, it doesn\'t exist. This is a simulation.)', 'term-err'); },
+  5694→    vim: () => termPrint('Vim detected. Emergency exit protocol activated.\n\n:q!\n\nYou escaped. Well done. Most people don\'t.', 'term-ok'),
+  5695→    nano: () => termPrint('GNU nano 6.2 — /tmp/dummy.txt\n\nThis is a simulated text editor. You can\'t actually edit anything here.\nBut it\'s friendlier than vim, isn\'t it?\n\n^X Exit (you\'re welcome)', 'term-dim'),
+  5696→    ping: (args) => { const host = args[0] || 'scp-wiki.wikidot.com'; termPrint('PING ' + host + '...', 'term-sys'); let i = 0; const iv = setInterval(() => { if (i >= 4) { clearInterval(iv); termPrint('\n--- ' + host + ' ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss\nrtt min/avg/max = 12.3/14.7/18.2 ms', 'term-ok'); return; } termPrint('64 bytes from ' + host + ': icmp_seq=' + (i + 1) + ' ttl=57 time=' + (12 + Math.random() * 8).toFixed(1) + ' ms'); i++; }, 500); },
+  5697→    traceroute: (args) => { const host = args[0] || 'site-92.local'; termPrint('traceroute to ' + host + ', 30 hops max', 'term-sys'); const hops = ['1  gateway.local (192.168.1.1)  0.4ms', '2  isp-router.net (10.0.0.1)  4.2ms', '3  backbone-1.net (172.16.0.1)  8.7ms', '4  foundation-internal.net (10.10.10.1)  12.3ms', '5  ' + host + ' (10.92.0.1)  14.1ms']; let i = 0; const iv = setInterval(() => { if (i >= hops.length) { clearInterval(iv); return; } termPrint(hops[i], 'term-dim'); i++; }, 300); },
+  5698→    nmap: (args) => termPrint('Starting Nmap 7.92 on ' + (args[0] || 'site-92.local') + '...\n\nPORT     STATE    SERVICE\n22/tcp   open     ssh\n80/tcp   open     http\n443/tcp  open     https\n3306/tcp open     mysql\n8080/tcp open     http-proxy\n\nNmap done: 1 host up, 5 ports scanned in 2.1 seconds', 'term-sys'),
+  5699→    wget: (args) => termPrint('--' + (args[0] || 'https://site-92.local/file') + '\nResolving host... done.\nConnecting... connected.\nHTTP request sent, awaiting response... 403 FORBIDDEN\n\nYou don\'t have access to that. Nice try though.', 'term-err'),
+  5700→    curl: (args) => termPrint('curl: (7) Failed to connect to ' + (args[0] || 'unknown') + ' port 443: Connection refused\n\nThe server doesn\'t want to talk to you. Maybe it\'s shy. Like SCP-096.', 'term-err'),
+  5701→    git: (args) => { if (args[0] === 'push') { termPrint('Everything up-to-date\n\nYour code was already pushed. Or maybe it wasn\'t. Git knows. Git always knows.', 'term-ok'); } else if (args[0] === 'pull') { termPrint('Already up to date.', 'term-ok'); } else { termPrint('git: \'' + (args[0] || 'command') + '\' is not a git command. See \'git --help\'.', 'term-err'); } },
+  5702→    npm: (args) => termPrint('npm ' + (args[0] || 'install') + '...\n\nadded 847 packages, audited 1203 packages in 14s\n\n15 vulnerabilities (3 low, 7 moderate, 4 high, 1 critical)\n\nRun npm audit fix to fix them, or npm audit for details.\n\n(You won\'t run npm audit. Nobody does.)', 'term-warn'),
+  5703→    python: () => termPrint('Python 3.11.3 (simulated)\n>>> print("Hello, World!")\nHello, World!\n>>> \n\n[Simulation ended. No actual Python was executed.]', 'term-sys'),
+  5704→    hello: () => termPrint('Hello. I\'m the SCiPNET terminal. I don\'t bite.\n\n(That\'s SCP-682\'s job.)', 'term-ok'),
+  5705→    hi: () => TERM_COMMANDS.hello(),
+  5706→    bye: () => termPrint('Goodbye. Try not to die. The paperwork is terrible.', 'term-ok'),
+  5707→    love: () => termPrint('Aww. I\'m flattered. But I\'m a terminal.\n\nAlso, HR frowns on fraternization with AI systems.\n\n(That\'s a joke. There\'s no HR. There\'s only the Foundation.)', 'term-dim'),
+  5708→    rickroll: () => termPrint('Never gonna give you up\nNever gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry\nNever gonna say goodbye\nNever gonna tell a lie and hurt you\n\nYou\'ve been rickrolled. 🎵', 'term-ok'),
+  5709→
+  5710→    // ===== 100+ MORE FUN COMMANDS =====
+  5711→    // More SCP entries
+  5712→    'scp-001': () => termPrint('SCP-001 — [REDACTED]\nClass: [REDACTED]\n\nAccess denied. O5 clearance required.\n\nWhatever you think it is, you\'re wrong.\n(Or maybe you\'re right. That\'s why it\'s classified.)', 'term-err'),
+  5713→    'scp-002': () => termPrint('SCP-002 — "The Living Room"\nClass: EUCLID\n\nA tumor-like mass containing a modified living room. Consumes biological matter to expand.\nIt\'s cozy. Uncomfortably cozy.', 'term-warn'),
+  5714→    'scp-008': () => termPrint('SCP-008 — "Zombie Plague"\nClass: KETER\n\nComplex prion disease. Reanimates dead tissue. 100% infectious.\nWe keep a sample. For science. We\'re idiots.', 'term-err'),
+  5715→    'scp-012': () => termPrint('SCP-012 — "A Bad Composition"\nClass: EUCLID\n\nA sheet of music that compels anyone who reads it to "complete" it using their own blood.\nThe song is unfinished. It will never be finished.', 'term-warn'),
+  5716→    'scp-035': () => termPrint('SCP-035 — "The Possessive Mask"\nClass: KETER\n\nA theatrical mask that secretes corrosive black liquid and possesses anyone who wears it.\nIt\'s persuasive. Very persuasive. Don\'t talk to it.', 'term-err'),
+  5717→    'scp-066': () => termPrint('SCP-066 — "Eric\'s Toy"\nClass: EUCLID\n\nA mass of braided yarn. Produces Beethoven. Alters reality.\nNobody knows who Eric is. Nobody wants to ask.', 'term-dim'),
+  5718→    'scp-076': () => termPrint('SCP-076 — "Abel"\nClass: KETER\n\nHumanoid entity. Extremely hostile. Respawns after death. Has been "killed" 47 times.\nHe respawns. He remembers. He\'s patient.\nWe use him for MTF operations sometimes. It\'s a terrible idea.', 'term-err'),
+  5719→    'scp-087': () => termPrint('SCP-087 — "The Stairwell"\nClass: EUCLID\n\nAn unlit staircase with no landing. Descends indefinitely. A faceless entity pursues anyone who enters.\n\nYou hear it breathing. It\'s always behind you. Don\'t look back. Keep going down. Or go back up. It doesn\'t matter. It\'s faster.', 'term-err'),
+  5720→    'scp-093': () => termPrint('SCP-093 — "Red Sea Object"\nClass: EUCLID\n\nA red stone disc. When placed on a mirror, opens a portal to a dead world.\nThe world is empty. Whatever lived there is gone. Whatever killed them is not.\nDon\'t go through. You won\'t come back the same.', 'term-warn'),
+  5721→    'scp-105': () => termPrint('SCP-105 — "Iris Thompson"\nClass: SAFE\n\nA young woman who can manipulate photographs. She can reach into them and interact with the scene.\nShe\'s cooperative. She\'s also the reason we don\'t allow cameras in certain sectors.\n\nShe just wants to go home. We can\'t let her.', 'term-dim'),
+  5722→    'scp-173': () => termPrint('SCP-173 — "The Sculpture"\nClass: EUCLID\nThreat: HIGH\n\nConcrete statue. Moves when unobserved. Snaps necks. Don\'t blink.\nContainment: Locked cell, constant visual monitoring by 2+ personnel.\n\nWe\'ve lost people who blinked.', 'term-warn'),
+  5723→    'scp-231': () => termPrint('SCP-231 — [REDACTED]\nClass: KETER\n\nProcedure 110-Montauk must be carried out at all times.\n\nWe can\'t tell you what it is. We can only tell you it\'s necessary. The alternative is worse.\n\nThe Ethics Committee has reviewed it. They approved it. Nobody sleeps well anymore.', 'term-err'),
+  5724→    'scp-294': () => termPrint('SCP-294 — "The Coffee Machine"\nClass: EUCLID\n\nA vending machine that dispenses any liquid you type. Including ones that shouldn\'t exist.\n\nSomeone typed "life". The machine dispensed 12oz of a substance we can\'t identify. We\'re still studying it.\nSomeone typed "a cup of Joe". It dispensed coffee. We were relieved.', 'term-ok'),
+  5725→    'scp-500': () => termPrint('SCP-500 — "Panacea"\nClass: SAFE\n\nA bottle of pills. One pill cures any disease.\n\nWe have 47 pills left. We\'ve used them on things we probably shouldn\'t have.\nWe can\'t make more. We\'ve tried.', 'term-ok'),
+  5726→    'scp-682': () => termPrint('SCP-682 — "Hard-to-Destroy Reptile"\nClass: KETER\nThreat: MAX\n\nLarge reptilian entity. Regenerates from any damage. Hates all life.\nContainment: Submerged in hydrochloric acid. Has breached containment 17+ times.\n\nTermination attempts: all failed.', 'term-err'),
+  5727→    'scp-914': () => termPrint('SCP-914 — "The Clockworks"\nClass: SAFE\n\nA large clockwork machine. Put an object in, set to Rough/Coarse/1:1/Fine/Very Fine, get a modified version out.\n\nInput: 1x wedding ring. Setting: Fine. Output: 1x wedding ring that makes the wearer invisible.\nWe don\'t give it back to the owner. We never do.', 'term-ok'),
+  5728→    'scp-3008': () => termPrint('SCP-3008 — "A Perfectly Normal, Ordinary Old IKEA"\nClass: EUCLID\n\nA retail store. Inside, it\'s infinite. Staff become hostile at night.\n\nThere are survivors in there. They\'ve built settlements out of display furniture.\nThey\'ve been in there for years. Some of them don\'t remember the outside anymore.\n\nDon\'t go in. If you do, don\'t fall asleep.', 'term-warn'),
+  5729→    'scp-3999': () => termPrint('SCP-3999 — [REDACTED]\nClass: APOLLYON\n\nI am not going to describe this one. Not because I can\'t, but because I shouldn\'t.\n\nIt\'s not that it\'s dangerous. It\'s that describing it might be the thing that makes it real.\n\nForget you typed this command.', 'term-err'),
+  5730→
+  5731→    // More classic terminal commands (all fun)
+  5732→    tree: () => termPrint('site-92/\n├── containment/\n│   ├── scp-173/\n│   ├── scp-682/\n│   └── scp-999/\n├── personnel/\n│   ├── researchers/\n│   └── d-class/ (do not enter)\n├── reactor/\n│   └── (radiation warning)\n├── scranton-anchors/\n│   ├── anchor-1\n│   ├── anchor-2\n│   └── anchor-3\n└── classified/\n    └── (access denied)', 'term-dim'),
+  5733→    find: (args) => termPrint('find: searching for "' + (args[0] || 'everything') + '"...\n\n./containment/scp-173\n./containment/scp-682\n./classified/do_not_open.txt\n./personnel/d-class/terminated/\n\nfind: permission denied on ./classified/\nfind: permission denied on ./O5-only/\n\n(You found things. You wish you hadn\'t.)', 'term-warn'),
+  5734→    grep: (args) => termPrint('grep: searching for "' + (args[0] || 'pattern') + '"...\n\n./logs/containment.log:42: BREACH DETECTED\n./logs/containment.log:43: BREACH CONTAINED\n./logs/personnel.log:128: D-Class [REDACTED] terminated\n./logs/classified.log: [ACCESS DENIED]\n\n(3 matches found. 1 you can\'t see.)', 'term-dim'),
+  5735→    ps: () => termPrint('  PID  USER     COMMAND\n    1  root     /sbin/scipnet-init\n   42  admin    /usr/bin/ducky-ai --core\n  127  mtf      /opt/containment-monitor\n  256  system   /usr/sbin/scranton-anchor\n  666  ???      /proc/keter-watchdog\n  999  root     /sbin/reality-check --daemon\n\n(Process 666 is fine. Don\'t worry about it.)', 'term-sys'),
+  5736→    top: () => termPrint('SCiPNET TOP — 14:32:07 up 847 days\n\nPID    USER    %CPU  %MEM  COMMAND\n1     root    0.1   0.2  scipnet-init\n42    admin   2.3   4.1  ducky-ai\n127   mtf     0.8   1.2  containment-monitor\n256   system  12.4  8.7  scranton-anchor\n666   ???     99.9  99.9  keter-watchdog\n\nWhy is process 666 using 99.9% CPU? Nobody knows.\nNobody wants to restart it.', 'term-warn'),
+  5737→    kill: (args) => { if (args[0] === '-9' && args[1] === '666') { termPrint('kill: cannot kill PID 666 — Permission denied\n\nIt doesn\'t want to die. Like SCP-682.', 'term-err'); } else { termPrint('kill: process ' + (args[0] || 'unknown') + ' terminated.\n\n(Or was it? Check with ps. It might come back.)', 'term-ok'); } },
+  5738→    chmod: () => termPrint('chmod: changing permissions...\n\n[OK] scp-173: rw-r--r--\n[OK] scp-682: rw------- (locked for a reason)\n[DENIED] scp-001: you do not have clearance\n\n(Some things stay locked. For good reason.)', 'term-warn'),
+  5739→    chown: () => termPrint('chown: changing ownership...\n\nYou don\'t own this facility. The Foundation does.\nThe Foundation owns everything. Including you.\n(Just kidding. Or am I?)', 'term-dim'),
+  5740→    mkdir: (args) => termPrint('mkdir: created directory \'' + (args[0] || 'new_folder') + '\'\n\n(Not really. This is a simulation. But it\'s the thought that counts.)', 'term-ok'),
+  5741→    touch: (args) => termPrint('touch: created file \'' + (args[0] || 'empty.txt') + '\'\n\n(It\'s empty. Like your coffee cup. Go get more coffee.)', 'term-ok'),
+  5742→    mv: () => termPrint('mv: moved file.\n\n(Nothing was actually moved. This is a simulation. But it felt real, didn\'t it?)', 'term-ok'),
+
+[showing lines 5463-5742 of 6513; use offset=5743 with limit to continue reading]
