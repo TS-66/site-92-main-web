@@ -1772,10 +1772,27 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-cameras">
-<div class="page-head"><h1>Security Cameras</h1><p>Live feeds from containment sectors (simulated)</p></div>
+<div class="page-head"><h1>Security Cameras</h1><p>Live feeds from containment sectors — 4 view modes</p></div>
+<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+<button class="admin-btn cam-mode-btn active" data-mode="normal" onclick="setCamMode('normal')">NORMAL</button>
+<button class="admin-btn cam-mode-btn" data-mode="night" onclick="setCamMode('night')">NIGHT VISION</button>
+<button class="admin-btn cam-mode-btn" data-mode="thermal" onclick="setCamMode('thermal')">THERMAL</button>
+<button class="admin-btn cam-mode-btn" data-mode="xray" onclick="setCamMode('xray')">X-RAY</button>
+</div>
 <div class="camera-grid" id="cameraGrid">
 <div class="archive-loading">Loading camera feeds...</div>
 </div>
+</div>
+
+<!-- Fullscreen camera modal -->
+<div class="scp-detail-modal" id="camFullscreen">
+  <div class="scp-detail-box" style="max-width:900px;padding:0;overflow:hidden;background:#020205;border-radius:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bd2)">
+      <span id="camFsTitle" style="font-family:'Orbitron',sans-serif;font-size:13px;color:var(--ac);letter-spacing:1px">CAMERA</span>
+      <button class="admin-btn" style="background:var(--b4);padding:4px 12px" onclick="closeCamFullscreen()">CLOSE</button>
+    </div>
+    <div id="camFsCanvasWrap" style="position:relative;height:500px;overflow:hidden;background:#020205"></div>
+  </div>
 </div>
 
 <div class="pg-sec" id="page-site-ai">
@@ -4573,160 +4590,294 @@ const CAMERAS = [
     { id: 'CAM-D7B-01', label: 'Sector D-7B — Keter Containment', status: 'alert', type: 'containment' },
     { id: 'CAM-A1-03', label: 'Sector A-1 — Reception', status: 'online', type: 'corridor' },
     { id: 'CAM-C3-02', label: 'Sector C-3 — Euclid Wing', status: 'online', type: 'corridor' },
-    { id: 'CAM-F5-01', label: 'Sector F-5 — Testing Labs', status: 'online', type: 'corridor' },
-    { id: 'CAM-G6-04', label: 'Sector G-6 — Reactor Core', status: 'offline', type: 'containment' },
+    { id: 'CAM-F5-01', label: 'Sector F-5 — Testing Labs', status: 'online', type: 'lab' },
+    { id: 'CAM-G6-04', label: 'Sector G-6 — Reactor Core', status: 'offline', type: 'reactor' },
     { id: 'CAM-E4-02', label: 'Sector E-4 — MTF Barracks', status: 'online', type: 'corridor' },
     { id: 'CAM-B2-05', label: 'Sector B-2 — D-Class Cells', status: 'online', type: 'cells' },
     { id: 'CAM-H8-01', label: 'Sector H-8 — Admin Terminal', status: 'online', type: 'admin' },
     { id: 'CAM-COR-12', label: 'Corridor D-7 — Main Hall', status: 'alert', type: 'corridor' },
 ];
-// ===== Canvas 3D Camera Renderer =====
+
+let camMode = 'normal'; // normal, night, thermal, xray
 const camAnimations = [];
+
+function setCamMode(mode) {
+    camMode = mode;
+    document.querySelectorAll('.cam-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+}
+
 function loadCameras() {
     const el = document.getElementById('cameraGrid');
     if (!el) return;
-    // Stop any existing animations
     camAnimations.forEach(id => cancelAnimationFrame(id));
     camAnimations.length = 0;
 
     el.innerHTML = CAMERAS.map((c, i) => {
         if (c.status === 'offline') {
-            return `<div class="camera-feed"><div class="cam-canvas-wrap" style="display:flex;align-items:center;justify-content:center;background:#040408"><div style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t4);letter-spacing:4px;animation:camStaticTxt 2s steps(4) infinite">NO SIGNAL</div></div><div class="camera-info"><div class="camera-id">${c.id}</div><div class="camera-label">${c.label}</div><div class="camera-status offline">○ OFFLINE</div></div></div>`;
+            return '<div class="camera-feed"><div class="cam-canvas-wrap" style="display:flex;align-items:center;justify-content:center;background:#040408"><div style="font-family:\'Share Tech Mono\',monospace;font-size:14px;color:var(--t4);letter-spacing:4px;animation:camStaticTxt 2s steps(4) infinite">NO SIGNAL</div></div><div class="camera-info"><div class="camera-id">' + c.id + '</div><div class="camera-label">' + c.label + '</div><div class="camera-status offline">OFFLINE</div></div></div>';
         }
         const now = new Date();
-        const ts = now.toLocaleDateString('en-US') + ' ' + now.toLocaleTimeString('en-US', { hour12: false });
-        return `<div class="camera-feed">
-            <div class="cam-canvas-wrap">
-                <canvas id="camCanvas${i}" width="340" height="220"></canvas>
-                <div class="cam-vignette-fx"></div>
-                <div class="cam-overlay-fx"></div>
-                <div class="cam-rec-fx"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>
-                <div class="cam-ts-fx">${c.id} | ${ts.split(' ')[1] || ''}</div>
-                <div class="cam-label-fx">${c.label.split('—')[0]?.trim() || ''}</div>
-            </div>
-            <div class="camera-info">
-                <div class="camera-id">${c.id}</div>
-                <div class="camera-label">${c.label}</div>
-                <div class="camera-status ${c.status}">${c.status === 'online' ? '● ONLINE' : '⚠ ALERT — MOTION DETECTED'}</div>
-            </div>
-        </div>`;
+        return '<div class="camera-feed" onclick="openCamFullscreen(' + i + ')">' +
+            '<div class="cam-canvas-wrap">' +
+                '<canvas id="camCanvas' + i + '" width="360" height="220"></canvas>' +
+                '<div class="cam-vignette-fx"></div>' +
+                '<div class="cam-overlay-fx"></div>' +
+                '<div class="cam-rec-fx"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>' +
+                '<div class="cam-ts-fx">' + c.id + '</div>' +
+                '<div class="cam-label-fx">' + c.label.split('\u2014')[0].trim() + '</div>' +
+            '</div>' +
+            '<div class="camera-info">' +
+                '<div class="camera-id">' + c.id + '</div>' +
+                '<div class="camera-label">' + c.label + '</div>' +
+                '<div class="camera-status ' + c.status + '">' + (c.status === 'online' ? 'ONLINE' : 'ALERT') + '</div>' +
+            '</div>' +
+        '</div>';
     }).join('');
 
-    // Start canvas animations for each camera
     CAMERAS.forEach((c, i) => {
         if (c.status === 'offline') return;
         const canvas = document.getElementById('camCanvas' + i);
-        if (!canvas) return;
-        startCameraAnimation(canvas, c);
+        if (canvas) startCameraAnimation(canvas, c);
     });
 }
 
-function startCameraAnimation(canvas, camera) {
+// ===== Fullscreen camera =====
+let camFsAnimId = null;
+function openCamFullscreen(idx) {
+    const c = CAMERAS[idx];
+    if (!c || c.status === 'offline') return;
+    const modal = document.getElementById('camFullscreen');
+    const wrap = document.getElementById('camFsCanvasWrap');
+    document.getElementById('camFsTitle').textContent = c.id + ' — ' + c.label;
+    wrap.innerHTML = '<canvas id="camFsCanvas" width="880" height="500"></canvas>' +
+        '<div class="cam-vignette-fx"></div><div class="cam-overlay-fx"></div>' +
+        '<div class="cam-rec-fx"><div class="cam-rec-dot"></div><span class="cam-rec-text">REC</span></div>' +
+        '<div class="cam-ts-fx">' + c.id + '</div>';
+    modal.classList.add('open');
+    if (camFsAnimId) cancelAnimationFrame(camFsAnimId);
+    const canvas = document.getElementById('camFsCanvas');
+    startCameraAnimation(canvas, c, true);
+}
+function closeCamFullscreen() {
+    document.getElementById('camFullscreen').classList.remove('open');
+    if (camFsAnimId) cancelAnimationFrame(camFsAnimId);
+}
+
+function startCameraAnimation(canvas, camera, isFullscreen) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
-    const vpX = W / 2; // vanishing point X
-    const horizonY = H * 0.38; // horizon line (back wall meets floor)
+    const vpX = W / 2;
+    const horizonY = H * 0.35;
     const floorBottom = H;
     let frame = 0;
+    
+    // Particles for dust/ambient
+    const particles = [];
+    for (let i = 0; i < 30; i++) {
+        particles.push({
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.2,
+            size: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.3 + 0.1
+        });
+    }
 
-    // Entity/personnel state
+    // Walkers
     const walkers = camera.type === 'corridor' ? [
-        { x: -0.2, z: 0.3, speed: 0.004, color: 'rgba(100,200,180,0.7)' },
-        { x: 0.6, z: 0.6, speed: 0.003, color: 'rgba(120,180,200,0.6)' },
+        { x: -0.2, z: 0.3, speed: 0.004, color: [100,200,180] },
+        { x: 0.6, z: 0.6, speed: 0.003, color: [120,180,200] },
     ] : camera.type === 'cells' ? [
-        { x: 0.1, z: 0.5, speed: 0.002, color: 'rgba(100,200,180,0.5)' },
+        { x: 0.1, z: 0.5, speed: 0.002, color: [100,200,180] },
+    ] : camera.type === 'lab' ? [
+        { x: 0.3, z: 0.4, speed: 0.002, color: [150,200,100] },
     ] : [];
+    
     const entityAlert = camera.status === 'alert';
 
-    function project(worldX, z) {
-        // worldX: -1 to 1 (left to right), z: 0 (front/close) to 1 (back/far)
+    function project(wx, z) {
         const scale = 1 / (1 + z * 2.5);
-        const screenX = vpX + worldX * (W * 0.45) * scale;
-        const screenY = horizonY + (floorBottom - horizonY) * (1 - z) * scale * (1 / (1 - 0.38));
-        return { x: screenX, y: screenY, scale };
+        return {
+            x: vpX + wx * (W * 0.45) * scale,
+            y: horizonY + (floorBottom - horizonY) * (1 - z) * scale * 1.6,
+            scale
+        };
     }
 
-    function drawFloor() {
-        // Floor gradient (dark at back, slightly lighter at front)
-        const grad = ctx.createLinearGradient(0, horizonY, 0, floorBottom);
-        grad.addColorStop(0, '#080812');
-        grad.addColorStop(1, '#0e0e1a');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, horizonY, W, floorBottom - horizonY);
-
-        // Floor grid — vertical lines converging to vanishing point
-        ctx.strokeStyle = 'rgba(0,255,200,0.04)';
-        ctx.lineWidth = 1;
-        for (let i = -5; i <= 5; i++) {
-            const x = vpX + i * (W * 0.12);
-            ctx.beginPath();
-            ctx.moveTo(x, floorBottom);
-            ctx.lineTo(vpX + i * 8, horizonY);
-            ctx.stroke();
+    function applyModeFilter() {
+        if (camMode === 'night') {
+            // Green night vision tint
+            ctx.fillStyle = 'rgba(0,40,0,0.3)';
+            ctx.fillRect(0, 0, W, H);
+            // Scanline
+            ctx.fillStyle = 'rgba(0,255,0,0.05)';
+            const sy = (frame * 3) % H;
+            ctx.fillRect(0, sy, W, 2);
+        } else if (camMode === 'thermal') {
+            // Thermal: convert to heat map
+            const imgData = ctx.getImageData(0, 0, W, H);
+            const d = imgData.data;
+            for (let i = 0; i < d.length; i += 4) {
+                const brightness = (d[i] + d[i+1] + d[i+2]) / 3;
+                if (brightness < 30) { d[i] = 0; d[i+1] = 0; d[i+2] = 80; }
+                else if (brightness < 80) { d[i] = 0; d[i+1] = 50; d[i+2] = 200; }
+                else if (brightness < 130) { d[i] = 0; d[i+1] = 200; d[i+2] = 100; }
+                else if (brightness < 180) { d[i] = 200; d[i+1] = 200; d[i+2] = 0; }
+                else { d[i] = 255; d[i+1] = 50; d[i+2] = 0; }
+            }
+            ctx.putImageData(imgData, 0, 0);
+        } else if (camMode === 'xray') {
+            // X-ray: blue tint + edge detection look
+            ctx.fillStyle = 'rgba(0,20,60,0.4)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.globalCompositeOperation = 'lighter';
         }
-        // Floor grid — horizontal lines (perspective intervals)
-        for (let z = 0.1; z < 1; z += 0.08) {
-            const y = horizonY + (floorBottom - horizonY) * (1 - z) * (1 - z);
-            ctx.globalAlpha = (1 - z) * 0.15;
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(W, y);
-            ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
     }
 
-    function drawBackWall() {
-        const grad = ctx.createLinearGradient(0, 0, 0, horizonY);
-        grad.addColorStop(0, '#0c0c18');
-        grad.addColorStop(1, '#080812');
-        ctx.fillStyle = grad;
+    function drawScene() {
+        ctx.clearRect(0, 0, W, H);
+        
+        // Background
+        if (camMode === 'night') ctx.fillStyle = '#020a02';
+        else if (camMode === 'thermal') ctx.fillStyle = '#0a0a0a';
+        else if (camMode === 'xray') ctx.fillStyle = '#020208';
+        else ctx.fillStyle = '#06060a';
+        ctx.fillRect(0, 0, W, H);
+
+        // Back wall with texture
+        const wallGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+        if (camMode === 'night') { wallGrad.addColorStop(0, '#080f08'); wallGrad.addColorStop(1, '#040604'); }
+        else if (camMode === 'xray') { wallGrad.addColorStop(0, '#080820'); wallGrad.addColorStop(1, '#040410'); }
+        else { wallGrad.addColorStop(0, '#0c0c18'); wallGrad.addColorStop(1, '#080812'); }
+        ctx.fillStyle = wallGrad;
         ctx.fillRect(0, 0, W, horizonY);
 
-        // Wall texture — subtle vertical lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.01)';
-        for (let x = 0; x < W; x += 20) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, horizonY);
-            ctx.stroke();
+        // Wall panels (vertical lines for panel seams)
+        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.03)' : camMode === 'xray' ? 'rgba(0,100,255,0.04)' : 'rgba(255,255,255,0.015)';
+        for (let x = 0; x < W; x += 30) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, horizonY); ctx.stroke();
         }
-    }
+        // Horizontal wall seams
+        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.02)' : 'rgba(255,255,255,0.01)';
+        for (let y = 20; y < horizonY; y += 25) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
 
-    function drawCeilingLights() {
+        // Ceiling lights with dynamic flicker + light cones
         const lights = [0.2, 0.5, 0.8];
         lights.forEach(lx => {
-            const flicker = 0.7 + Math.sin(frame * 0.03 + lx * 10) * 0.15 + Math.random() * 0.1;
-            // Light fixture
-            ctx.fillStyle = `rgba(180,220,255,${0.15 * flicker})`;
-            ctx.fillRect(lx * W - 18, 5, 36, 3);
+            const flicker = 0.65 + Math.sin(frame * 0.03 + lx * 10) * 0.15 + (Math.random() < 0.05 ? -0.3 : 0);
+            const fc = Math.max(0.2, flicker);
+            // Light fixture bar
+            let lc;
+            if (camMode === 'night') lc = [0, 255, 0];
+            else if (camMode === 'thermal') lc = [255, 200, 0];
+            else if (camMode === 'xray') lc = [0, 150, 255];
+            else lc = [180, 220, 255];
+            ctx.fillStyle = 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.2 * fc) + ')';
+            ctx.fillRect(lx * W - 20, 4, 40, 4);
+            
             // Light cone on floor
-            const coneGrad = ctx.createRadialGradient(lx * W, horizonY, 5, lx * W, floorBottom * 0.8, W * 0.2);
-            coneGrad.addColorStop(0, `rgba(100,150,200,${0.08 * flicker})`);
+            const coneGrad = ctx.createRadialGradient(lx * W, horizonY, 5, lx * W, floorBottom * 0.7, W * 0.25);
+            coneGrad.addColorStop(0, 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.12 * fc) + ')');
             coneGrad.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = coneGrad;
             ctx.beginPath();
-            ctx.moveTo(lx * W - 4, 8);
-            ctx.lineTo(lx * W + 4, 8);
-            ctx.lineTo(lx * W + 60, floorBottom);
-            ctx.lineTo(lx * W - 60, floorBottom);
-            ctx.closePath();
-            ctx.fill();
+            ctx.moveTo(lx * W - 5, 8); ctx.lineTo(lx * W + 5, 8);
+            ctx.lineTo(lx * W + 70, floorBottom); ctx.lineTo(lx * W - 70, floorBottom);
+            ctx.closePath(); ctx.fill();
+            
+            // Light glow halo
+            const haloGrad = ctx.createRadialGradient(lx * W, 6, 2, lx * W, 6, 25);
+            haloGrad.addColorStop(0, 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.15 * fc) + ')');
+            haloGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = haloGrad;
+            ctx.fillRect(lx * W - 25, 0, 50, 30);
         });
+
+        // Doors on back wall
+        if (camera.type === 'cells') {
+            drawDoor(-0.4, 0.65, 45, 80);
+            drawDoor(0, 0.65, 45, 80);
+            drawDoor(0.4, 0.65, 45, 80);
+        } else if (camera.type !== 'admin' && camera.type !== 'reactor') {
+            drawDoor(0, 0.85, 38, 65);
+        }
+
+        // Floor with perspective grid
+        const floorGrad = ctx.createLinearGradient(0, horizonY, 0, floorBottom);
+        if (camMode === 'night') { floorGrad.addColorStop(0, '#040804'); floorGrad.addColorStop(1, '#081008'); }
+        else if (camMode === 'xray') { floorGrad.addColorStop(0, '#040410'); floorGrad.addColorStop(1, '#081030'); }
+        else { floorGrad.addColorStop(0, '#080812'); floorGrad.addColorStop(1, '#0e0e1a'); }
+        ctx.fillStyle = floorGrad;
+        ctx.fillRect(0, horizonY, W, floorBottom - horizonY);
+
+        // Floor grid — vertical perspective lines
+        const gridColor = camMode === 'night' ? 'rgba(0,255,0,0.06)' : camMode === 'xray' ? 'rgba(0,100,255,0.06)' : 'rgba(0,255,200,0.04)';
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 1;
+        for (let i = -6; i <= 6; i++) {
+            const x = vpX + i * (W * 0.1);
+            ctx.beginPath();
+            ctx.moveTo(x, floorBottom);
+            ctx.lineTo(vpX + i * 6, horizonY);
+            ctx.stroke();
+        }
+        // Floor grid — horizontal perspective lines
+        for (let z = 0.05; z < 1; z += 0.07) {
+            const y = horizonY + (floorBottom - horizonY) * (1 - z) * (1 - z);
+            ctx.globalAlpha = (1 - z) * 0.12;
+            ctx.beginPath();
+            ctx.moveTo(0, y); ctx.lineTo(W, y);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+
+        // Sector-specific content
+        if (camera.type === 'containment') {
+            drawAcidPool();
+            drawEntity();
+        }
+        if (camera.type === 'reactor' && camera.status !== 'offline') {
+            drawReactorCore();
+        }
+        if (camera.type === 'lab') {
+            drawLabEquipment();
+        }
+
+        // Walkers (depth-sorted)
+        walkers.sort((a, b) => b.z - a.z).forEach(drawWalker);
+
+        // Ambient particles (dust motes)
+        drawParticles();
+
+        // Effects
+        drawNoise();
+        drawScanline();
+        applyModeFilter();
+        
+        frame++;
+        const animId = requestAnimationFrame(drawScene);
+        camAnimations.push(animId);
+        if (camAnimations.length > 200) camAnimations.splice(0, 100);
     }
 
     function drawDoor(x, z, w, h) {
         const p = project(x, z);
         const dw = w * p.scale, dh = h * p.scale;
         const dx = p.x - dw / 2, dy = p.y - dh;
-        ctx.fillStyle = '#0a0a14';
+        const dc = camMode === 'night' ? '#0a1a0a' : camMode === 'xray' ? '#0a0a20' : '#0a0a14';
+        ctx.fillStyle = dc;
         ctx.fillRect(dx, dy, dw, dh);
-        ctx.strokeStyle = 'rgba(0,255,200,0.08)';
+        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.1)' : camMode === 'xray' ? 'rgba(0,100,255,0.1)' : 'rgba(0,255,200,0.08)';
         ctx.lineWidth = 1;
         ctx.strokeRect(dx, dy, dw, dh);
         // Door handle
-        ctx.fillStyle = 'rgba(0,255,200,0.3)';
-        ctx.fillRect(dx + dw - 4 * p.scale, dy + dh * 0.5, 2 * p.scale, 3 * p.scale);
+        ctx.fillStyle = camMode === 'night' ? 'rgba(0,255,0,0.4)' : 'rgba(0,255,200,0.3)';
+        ctx.fillRect(dx + dw - 4 * p.scale, dy + dh * 0.5, 2 * p.scale, 4 * p.scale);
+        // Door light (small indicator above)
+        const dlFlicker = 0.5 + Math.sin(frame * 0.05 + x * 10) * 0.3;
+        ctx.fillStyle = camMode === 'night' ? 'rgba(0,255,0,' + (dlFlicker * 0.4) + ')' : 'rgba(0,255,200,' + (dlFlicker * 0.3) + ')';
+        ctx.fillRect(dx + dw * 0.4, dy - 3 * p.scale, dw * 0.2, 2 * p.scale);
     }
 
     function drawWalker(w) {
@@ -4734,30 +4885,37 @@ function startCameraAnimation(canvas, camera) {
         if (w.x > 1.3) w.x = -0.3;
         const p = project(w.x, w.z);
         const s = p.scale;
-        const bodyH = 35 * s;
+        const bodyH = 38 * s;
         const headR = 5 * s;
         const px = p.x, py = p.y;
+        const cc = camMode === 'night' ? 'rgba(0,255,0,0.6)' : camMode === 'thermal' ? 'rgba(255,150,0,0.7)' : camMode === 'xray' ? 'rgba(0,150,255,0.5)' : 'rgba(' + w.color[0] + ',' + w.color[1] + ',' + w.color[2] + ',0.7)';
+        
         // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.beginPath();
-        ctx.ellipse(px, py, 8 * s, 2 * s, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.beginPath(); ctx.ellipse(px, py, 10 * s, 2.5 * s, 0, 0, Math.PI * 2); ctx.fill();
+        
         // Body
-        ctx.fillStyle = w.color;
-        ctx.fillRect(px - 3 * s, py - bodyH, 6 * s, bodyH);
+        ctx.fillStyle = cc;
+        ctx.fillRect(px - 3.5 * s, py - bodyH, 7 * s, bodyH);
+        
         // Head
+        ctx.beginPath(); ctx.arc(px, py - bodyH - headR, headR, 0, Math.PI * 2); ctx.fill();
+        
+        // Arms (swinging)
+        const armPhase = Math.sin(frame * 0.12 + w.x * 8);
+        ctx.strokeStyle = cc; ctx.lineWidth = 2 * s;
         ctx.beginPath();
-        ctx.arc(px, py - bodyH - headR, headR, 0, Math.PI * 2);
-        ctx.fill();
-        // Walking animation — legs
-        const legPhase = Math.sin(frame * 0.15 + w.x * 10);
-        ctx.strokeStyle = w.color;
-        ctx.lineWidth = 2 * s;
+        ctx.moveTo(px - 3 * s, py - bodyH * 0.7);
+        ctx.lineTo(px - 3 * s + armPhase * 5 * s, py - bodyH * 0.3);
+        ctx.moveTo(px + 3 * s, py - bodyH * 0.7);
+        ctx.lineTo(px + 3 * s - armPhase * 5 * s, py - bodyH * 0.3);
+        ctx.stroke();
+        
+        // Legs (walking animation)
+        const legPhase = Math.sin(frame * 0.18 + w.x * 8);
         ctx.beginPath();
-        ctx.moveTo(px, py - bodyH * 0.3);
-        ctx.lineTo(px + legPhase * 4 * s, py);
-        ctx.moveTo(px, py - bodyH * 0.3);
-        ctx.lineTo(px - legPhase * 4 * s, py);
+        ctx.moveTo(px, py - bodyH * 0.3); ctx.lineTo(px + legPhase * 5 * s, py);
+        ctx.moveTo(px, py - bodyH * 0.3); ctx.lineTo(px - legPhase * 5 * s, py);
         ctx.stroke();
     }
 
@@ -4765,122 +4923,185 @@ function startCameraAnimation(canvas, camera) {
         const z = 0.55;
         const p = project(0, z);
         const s = p.scale;
-        const bodyH = 50 * s;
+        const bodyH = 55 * s;
         const px = p.x, py = p.y;
+        const ec = camMode === 'thermal' ? 'rgba(255,50,0,0.8)' : camMode === 'xray' ? 'rgba(100,100,255,0.6)' : '#050508';
+        
         // Shadow in acid
         ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath(); ctx.ellipse(px, py, 18 * s, 4 * s, 0, 0, Math.PI * 2); ctx.fill();
+        
+        // Body — organic shape
+        ctx.fillStyle = ec;
         ctx.beginPath();
-        ctx.ellipse(px, py, 15 * s, 3 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(px, py - bodyH * 0.5, 14 * s, bodyH * 0.5, 0, 0, Math.PI * 2);
         ctx.fill();
-        // Body silhouette — dark mass
-        ctx.fillStyle = '#050508';
+        
+        // Head with horns/ears
         ctx.beginPath();
-        ctx.ellipse(px, py - bodyH * 0.5, 12 * s, bodyH * 0.5, 0, 0, Math.PI * 2);
+        ctx.arc(px, py - bodyH - 5 * s, 8 * s, 0, Math.PI * 2);
         ctx.fill();
-        // Head
-        ctx.beginPath();
-        ctx.arc(px, py - bodyH - 4 * s, 7 * s, 0, Math.PI * 2);
-        ctx.fill();
-        // Alert glow
+        
+        // Spikes along back
+        ctx.strokeStyle = ec; ctx.lineWidth = 2 * s;
+        for (let i = 0; i < 5; i++) {
+            const sy = py - bodyH * (0.2 + i * 0.15);
+            ctx.beginPath();
+            ctx.moveTo(px + 10 * s, sy);
+            ctx.lineTo(px + 16 * s, sy - 4 * s);
+            ctx.stroke();
+        }
+        
+        // Alert glow + eyes
         if (entityAlert) {
             const pulse = 0.4 + Math.sin(frame * 0.1) * 0.3;
-            const glowGrad = ctx.createRadialGradient(px, py - bodyH * 0.6, 5, px, py - bodyH * 0.6, 40 * s);
-            glowGrad.addColorStop(0, `rgba(255,40,40,${pulse * 0.3})`);
-            glowGrad.addColorStop(1, 'rgba(255,40,40,0)');
+            const glowColor = camMode === 'thermal' ? '255,100,0' : '255,40,40';
+            const glowGrad = ctx.createRadialGradient(px, py - bodyH * 0.6, 5, px, py - bodyH * 0.6, 50 * s);
+            glowGrad.addColorStop(0, 'rgba(' + glowColor + ',' + (pulse * 0.35) + ')');
+            glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = glowGrad;
+            ctx.beginPath(); ctx.arc(px, py - bodyH * 0.6, 50 * s, 0, Math.PI * 2); ctx.fill();
+            
+            // Glowing eyes
+            ctx.fillStyle = 'rgba(' + glowColor + ',' + pulse + ')';
             ctx.beginPath();
-            ctx.arc(px, py - bodyH * 0.6, 40 * s, 0, Math.PI * 2);
+            ctx.arc(px - 4 * s, py - bodyH - 5 * s, 2 * s, 0, Math.PI * 2);
+            ctx.arc(px + 4 * s, py - bodyH - 5 * s, 2 * s, 0, Math.PI * 2);
             ctx.fill();
-            // Eyes
-            ctx.fillStyle = `rgba(255,60,60,${pulse})`;
-            ctx.beginPath();
-            ctx.arc(px - 3 * s, py - bodyH - 4 * s, 1.5 * s, 0, Math.PI * 2);
-            ctx.arc(px + 3 * s, py - bodyH - 4 * s, 1.5 * s, 0, Math.PI * 2);
-            ctx.fill();
+            
+            // Alert text
+            ctx.fillStyle = 'rgba(255,50,50,' + pulse + ')';
+            ctx.font = Math.max(8, 10 * s) + 'px monospace';
+            ctx.fillText('TARGET LOCKED', px - 35 * s, py - bodyH - 15 * s);
         }
     }
 
     function drawAcidPool() {
-        const acidY = horizonY + (floorBottom - horizonY) * 0.5;
-        // Acid surface
+        const acidY = horizonY + (floorBottom - horizonY) * 0.45;
+        const acidColor = camMode === 'night' ? 'rgba(0,100,0,' : camMode === 'thermal' ? 'rgba(100,200,0,' : camMode === 'xray' ? 'rgba(0,200,100,' : 'rgba(0,255,80,';
+        
+        // Acid surface gradient
         const acidGrad = ctx.createLinearGradient(0, acidY, 0, floorBottom);
-        acidGrad.addColorStop(0, 'rgba(0,255,80,0.06)');
-        acidGrad.addColorStop(0.5, 'rgba(0,200,60,0.12)');
-        acidGrad.addColorStop(1, 'rgba(0,180,50,0.08)');
+        acidGrad.addColorStop(0, acidColor + '0.08)');
+        acidGrad.addColorStop(0.5, acidColor + '0.15)');
+        acidGrad.addColorStop(1, acidColor + '0.1)');
         ctx.fillStyle = acidGrad;
         ctx.fillRect(0, acidY, W, floorBottom - acidY);
+        
         // Bubbles
-        for (let i = 0; i < 8; i++) {
-            const bx = ((frame * 0.5 + i * 80) % (W + 40)) - 20;
-            const by = acidY + 20 + Math.sin(frame * 0.05 + i) * 15;
-            const br = 2 + Math.sin(frame * 0.1 + i * 2) * 1.5;
-            ctx.fillStyle = `rgba(100,255,100,${0.15 + Math.sin(frame * 0.08 + i) * 0.1})`;
-            ctx.beginPath();
-            ctx.arc(bx, by, Math.max(0.5, br), 0, Math.PI * 2);
-            ctx.fill();
+        for (let i = 0; i < 12; i++) {
+            const bx = ((frame * 0.5 + i * 70) % (W + 40)) - 20;
+            const by = acidY + 15 + Math.sin(frame * 0.05 + i) * 18;
+            const br = 1.5 + Math.sin(frame * 0.1 + i * 2) * 1.5;
+            ctx.fillStyle = acidColor + (0.15 + Math.sin(frame * 0.08 + i) * 0.1) + ')';
+            ctx.beginPath(); ctx.arc(bx, by, Math.max(0.5, br), 0, Math.PI * 2); ctx.fill();
         }
-        // Acid surface line
-        ctx.strokeStyle = 'rgba(0,255,100,0.1)';
+        
+        // Wavy surface line
+        ctx.strokeStyle = acidColor + '0.15)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for (let x = 0; x < W; x += 4) {
-            const y = acidY + Math.sin(x * 0.05 + frame * 0.05) * 2;
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+        for (let x = 0; x < W; x += 3) {
+            const y = acidY + Math.sin(x * 0.04 + frame * 0.05) * 2 + Math.sin(x * 0.1 + frame * 0.03) * 1;
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
+        
+        // Acid glow at edges
+        const edgeGrad = ctx.createLinearGradient(0, acidY - 5, 0, acidY + 5);
+        edgeGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        edgeGrad.addColorStop(0.5, acidColor + '0.2)');
+        edgeGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = edgeGrad;
+        ctx.fillRect(0, acidY - 5, W, 10);
+    }
+
+    function drawReactorCore() {
+        const cx = W / 2, cy = H * 0.5;
+        const pulse = 0.5 + Math.sin(frame * 0.05) * 0.2;
+        // Core glow
+        const coreGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, 80);
+        const cc = camMode === 'thermal' ? '255,200,0' : camMode === 'xray' ? '0,200,255' : '0,200,255';
+        coreGrad.addColorStop(0, 'rgba(' + cc + ',' + pulse + ')');
+        coreGrad.addColorStop(0.5, 'rgba(' + cc + ',' + (pulse * 0.3) + ')');
+        coreGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = coreGrad;
+        ctx.beginPath(); ctx.arc(cx, cy, 80, 0, Math.PI * 2); ctx.fill();
+        // Core ring
+        ctx.strokeStyle = 'rgba(' + cc + ',0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2); ctx.stroke();
+        // Rotating energy lines
+        ctx.strokeStyle = 'rgba(' + cc + ',0.2)';
+        for (let i = 0; i < 4; i++) {
+            const angle = frame * 0.02 + (i * Math.PI / 2);
+            ctx.beginPath();
+            ctx.arc(cx, cy, 40 + i * 8, angle, angle + 0.5);
+            ctx.stroke();
+        }
+    }
+
+    function drawLabEquipment() {
+        // Draw a lab table with equipment
+        const p = project(0, 0.6);
+        const s = p.scale;
+        const tw = 60 * s, th = 25 * s;
+        const tx = p.x - tw / 2, ty = p.y - th;
+        // Table
+        ctx.fillStyle = camMode === 'night' ? '#0a1a0a' : '#0c0c18';
+        ctx.fillRect(tx, ty, tw, th);
+        ctx.strokeStyle = 'rgba(0,255,200,0.1)';
+        ctx.strokeRect(tx, ty, tw, th);
+        // Equipment on table (flask with glowing liquid)
+        const fx = tx + tw * 0.5, fy = ty - 12 * s;
+        const flaskPulse = 0.5 + Math.sin(frame * 0.06) * 0.3;
+        const fc = camMode === 'thermal' ? '255,100,0' : camMode === 'xray' ? '0,200,255' : '0,255,200';
+        ctx.fillStyle = 'rgba(' + fc + ',' + flaskPulse + ')';
+        ctx.beginPath();
+        ctx.moveTo(fx - 3 * s, fy);
+        ctx.lineTo(fx - 6 * s, fy + 10 * s);
+        ctx.lineTo(fx + 6 * s, fy + 10 * s);
+        ctx.lineTo(fx + 3 * s, fy);
+        ctx.closePath();
+        ctx.fill();
+        // Glow
+        const fGrad = ctx.createRadialGradient(fx, fy + 5 * s, 2, fx, fy + 5 * s, 15 * s);
+        fGrad.addColorStop(0, 'rgba(' + fc + ',' + (flaskPulse * 0.3) + ')');
+        fGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = fGrad;
+        ctx.fillRect(fx - 15 * s, fy - 5 * s, 30 * s, 25 * s);
+    }
+
+    function drawParticles() {
+        const pc = camMode === 'night' ? '0,255,0' : camMode === 'thermal' ? '255,200,0' : '200,200,220';
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+            ctx.fillStyle = 'rgba(' + pc + ',' + p.alpha + ')';
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
     }
 
     function drawNoise() {
-        // Random noise pixels (sparse for performance)
-        for (let i = 0; i < 30; i++) {
-            const x = Math.random() * W;
-            const y = Math.random() * H;
-            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.04})`;
-            ctx.fillRect(x, y, 1, 1);
+        for (let i = 0; i < 40; i++) {
+            ctx.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.04) + ')';
+            ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
         }
     }
 
     function drawScanline() {
         const sy = (frame * 2) % H;
-        const scanGrad = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
-        scanGrad.addColorStop(0, 'rgba(0,255,200,0)');
-        scanGrad.addColorStop(0.5, 'rgba(0,255,200,0.08)');
-        scanGrad.addColorStop(1, 'rgba(0,255,200,0)');
-        ctx.fillStyle = scanGrad;
+        const sc = camMode === 'night' ? '0,255,0' : '0,255,200';
+        const sg = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
+        sg.addColorStop(0, 'rgba(' + sc + ',0)');
+        sg.addColorStop(0.5, 'rgba(' + sc + ',0.08)');
+        sg.addColorStop(1, 'rgba(' + sc + ',0)');
+        ctx.fillStyle = sg;
         ctx.fillRect(0, sy - 3, W, 6);
     }
 
-    function render() {
-        ctx.clearRect(0, 0, W, H);
-        drawBackWall();
-        drawCeilingLights();
-        // Draw doors for cells type
-        if (camera.type === 'cells') {
-            drawDoor(-0.4, 0.7, 40, 70);
-            drawDoor(0, 0.7, 40, 70);
-            drawDoor(0.4, 0.7, 40, 70);
-        } else if (camera.type !== 'admin') {
-            drawDoor(0, 0.85, 35, 60);
-        }
-        drawFloor();
-        // Draw scene-specific elements
-        if (camera.type === 'containment') {
-            drawAcidPool();
-            drawEntity();
-        }
-        // Walkers (sorted by depth — far ones first)
-        walkers.sort((a, b) => b.z - a.z).forEach(drawWalker);
-        // Effects
-        drawNoise();
-        drawScanline();
-        frame++;
-        const animId = requestAnimationFrame(render);
-        camAnimations.push(animId);
-        // Keep array from growing infinitely
-        if (camAnimations.length > 200) camAnimations.splice(0, 100);
-    }
-    render();
+    drawScene();
 }
 
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
