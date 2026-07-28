@@ -1182,6 +1182,162 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .license-version:hover{border-color:var(--ac);color:var(--t1)}
 @media(max-width:768px){.license-container{padding:16px}}
 
+/* ===== Achievements page ===== */
+.ach-progress-bar{background:var(--b3);padding:16px;border-radius:4px;border:1px solid var(--bd2)}
+.ach-progress-label{font-size:10px;letter-spacing:2px;color:var(--t3);margin-bottom:8px;font-weight:700}
+.ach-progress-track{height:6px;background:var(--b1);border-radius:3px;overflow:hidden}
+.ach-progress-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--gn));border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 10px var(--ac)}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%}
+.ach-card{background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:18px;text-align:center;transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden;animation:achCardIn .4s ease forwards}
+@keyframes achCardIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.ach-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ach-card.unlocked{border-color:var(--gn)}
+.ach-card.unlocked::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(0,255,136,.04),transparent 60%);pointer-events:none}
+.ach-icon{width:48px;height:48px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:22px;background:var(--b3);border:2px solid var(--bd2);transition:all .3s}
+.ach-card.unlocked .ach-icon{border-color:var(--gn);background:rgba(0,255,136,.05);box-shadow:0 0 15px rgba(0,255,136,.15);animation:achIconGlow 2s ease-in-out infinite}
+@keyframes achIconGlow{0%,100%{box-shadow:0 0 12px rgba(0,255,136,.12)}50%{box-shadow:0 0 22px rgba(0,255,136,.25)}}
+
+/* ===== More animations everywhere ===== */
+/* Stat numbers count-up glow */
+.admin-stat{transition:transform .25s}
+.admin-stat:hover{transform:translateY(-2px)}
+.admin-stat:hover .admin-stat-num{text-shadow:0 0 16px var(--ac);transform:scale(1.08)}
+.admin-stat-num{transition:transform .25s,text-shadow .25s}
+
+/* Admin tab active indicator */
+.admin-tab{transition:all .2s;position:relative}
+.admin-tab.active{color:var(--ac);border-bottom-color:var(--ac)}
+.admin-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--ac);box-shadow:0 0 8px var(--ac);animation:tabSlideIn .3s ease}
+@keyframes tabSlideIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* Table row stagger animation */
+.tbl tbody tr{animation:fadeUp .2s ease forwards;opacity:0}
+.tbl tbody tr:nth-child(1){animation-delay:.02s}
+.tbl tbody tr:nth-child(2){animation-delay:.04s}
+.tbl tbody tr:nth-child(3){animation-delay:.06s}
+.tbl tbody tr:nth-child(4){animation-delay:.08s}
+.tbl tbody tr:nth-child(5){animation-delay:.1s}
+.tbl tbody tr:nth-child(6){animation-delay:.12s}
+.tbl tbody tr:nth-child(7){animation-delay:.14s}
+.tbl tbody tr:nth-child(8){animation-delay:.16s}
+.tbl tbody tr:nth-child(9){animation-delay:.18s}
+.tbl tbody tr:nth-child(10){animation-delay:.2s}
+
+/* Page head underline animation */
+.page-head::after{content:'';position:absolute;left:0;bottom:-8px;width:60px;height:2px;background:var(--ac);border-radius:1px;animation:headUnderline .5s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes headUnderline{from{width:0}to{width:60px}}
+
+/* Button press ripple */
+.admin-btn{position:relative;overflow:hidden}
+.admin-btn::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.15) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.admin-btn:active::after{opacity:1;transition:opacity 0s}
+
+/* Input focus border glow */
+.fi:focus,.fi-wrap:focus-within{box-shadow:0 0 0 2px rgba(0,255,200,.1),0 0 12px rgba(0,255,200,.08)}
+
+/* Select dropdown animation */
+select{transition:border-color .2s}
+select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
+
+/* Scrollbar pulse */
+::-webkit-scrollbar-thumb{transition:background .2s}
+
+/* News item stagger */
+.news-item{animation:fadeUp .3s ease forwards;opacity:0}
+.news-item:nth-child(1){animation-delay:.05s}
+.news-item:nth-child(2){animation-delay:.1s}
+.news-item:nth-child(3){animation-delay:.15s}
+.news-item:nth-child(4){animation-delay:.2s}
+.news-item:nth-child(5){animation-delay:.25s}
+.news-item:nth-child(6){animation-delay:.3s}
+.news-item:nth-child(7){animation-delay:.35s}
+.news-item:nth-child(8){animation-delay:.4s}
+.news-item:nth-child(9){animation-delay:.45s}
+.news-item:nth-child(10){animation-delay:.5s}
+
+/* Archive entry stagger */
+.archive-entry{animation:fadeUp .3s ease forwards;opacity:0}
+.archive-entry:nth-child(1){animation-delay:.05s}
+.archive-entry:nth-child(2){animation-delay:.1s}
+.archive-entry:nth-child(3){animation-delay:.15s}
+.archive-entry:nth-child(4){animation-delay:.2s}
+.archive-entry:nth-child(5){animation-delay:.25s}
+.archive-entry:nth-child(6){animation-delay:.3s}
+.archive-entry:nth-child(7){animation-delay:.35s}
+.archive-entry:nth-child(8){animation-delay:.4s}
+
+/* Camera feed stagger */
+.camera-feed{animation:scaleIn .3s ease forwards;opacity:0}
+.camera-feed:nth-child(1){animation-delay:.05s}
+.camera-feed:nth-child(2){animation-delay:.1s}
+.camera-feed:nth-child(3){animation-delay:.15s}
+.camera-feed:nth-child(4){animation-delay:.2s}
+.camera-feed:nth-child(5){animation-delay:.25s}
+.camera-feed:nth-child(6){animation-delay:.3s}
+.camera-feed:nth-child(7){animation-delay:.35s}
+.camera-feed:nth-child(8){animation-delay:.4s}
+.camera-feed:nth-child(9){animation-delay:.45s}
+
+/* Breach choice stagger */
+.breach-choice{animation:slideInRight .3s ease forwards;opacity:0}
+.breach-choice:nth-child(1){animation-delay:.1s}
+.breach-choice:nth-child(2){animation-delay:.2s}
+.breach-choice:nth-child(3){animation-delay:.3s}
+
+/* Breach stat number pulse */
+.breach-stat-val{transition:color .3s,transform .2s}
+.breach-stat:hover .breach-stat-val{transform:scale(1.1)}
+
+/* Sidebar link slide-in */
+.sidebar-link{animation:slideInRight .2s ease forwards;opacity:0}
+.sidebar-link:nth-child(1){animation-delay:.02s}
+.sidebar-link:nth-child(2){animation-delay:.04s}
+.sidebar-link:nth-child(3){animation-delay:.06s}
+.sidebar-link:nth-child(4){animation-delay:.08s}
+.sidebar-link:nth-child(5){animation-delay:.1s}
+.sidebar-link:nth-child(6){animation-delay:.12s}
+.sidebar-link:nth-child(7){animation-delay:.14s}
+
+/* MTF card stagger */
+.mtf-card{animation:scaleIn .3s ease forwards;opacity:0}
+.mtf-card:nth-child(1){animation-delay:.05s}
+.mtf-card:nth-child(2){animation-delay:.1s}
+.mtf-card:nth-child(3){animation-delay:.15s}
+.mtf-card:nth-child(4){animation-delay:.2s}
+.mtf-card:nth-child(5){animation-delay:.25s}
+.mtf-card:nth-child(6){animation-delay:.3s}
+
+/* Sector card stagger */
+.sector{animation:scaleIn .3s ease forwards;opacity:0}
+.sector:nth-child(1){animation-delay:.05s}
+.sector:nth-child(2){animation-delay:.1s}
+.sector:nth-child(3){animation-delay:.15s}
+.sector:nth-child(4){animation-delay:.2s}
+.sector:nth-child(5){animation-delay:.25s}
+.sector:nth-child(6){animation-delay:.3s}
+.sector:nth-child(7){animation-delay:.35s}
+.sector:nth-child(8){animation-delay:.4s}
+
+/* Gauge card stagger */
+.gauge-card{animation:scaleIn .3s ease forwards;opacity:0}
+.gauge-card:nth-child(1){animation-delay:.05s}
+.gauge-card:nth-child(2){animation-delay:.1s}
+.gauge-card:nth-child(3){animation-delay:.15s}
+.gauge-card:nth-child(4){animation-delay:.2s}
+.ach-name{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:4px;letter-spacing:.5px}
+.ach-card.unlocked .ach-name{color:var(--gn)}
+.ach-desc{font-size:10px;color:var(--t3);line-height:1.5}
+.ach-status{margin-top:8px;font-size:9px;letter-spacing:1px;font-weight:700;color:var(--t4)}
+.ach-card.unlocked .ach-status{color:var(--gn)}
+.ach-notification{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--b2);border:1px solid var(--gn);border-radius:6px;padding:16px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,255,136,.2);transform:translateX(120%);transition:transform .5s cubic-bezier(.2,.8,.2,1);animation:achNotifGlow 2s ease-in-out infinite}
+@keyframes achNotifGlow{0%,100%{box-shadow:0 8px 32px rgba(0,255,136,.15)}50%{box-shadow:0 8px 40px rgba(0,255,136,.3)}}
+.ach-notification.show{transform:translateX(0)}
+.ach-notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(0,255,136,.1);border:2px solid var(--gn);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;animation:achIconGlow 2s ease-in-out infinite}
+.ach-notif-text{flex:1}
+.ach-notif-title{font-size:11px;font-weight:700;color:var(--gn);letter-spacing:.5px}
+.ach-notif-desc{font-size:10px;color:var(--t3);margin-top:2px}
+@media(max-width:768px){.ach-grid{grid-template-columns:1fr 1fr}.ach-notification{left:10px;right:10px;bottom:10px}}
+
 /* ===== Sidebar navigation ===== */
 .app-body{display:flex;min-height:calc(100vh - 140px)}
 .sidebar{width:200px;flex-shrink:0;background:var(--b1);border-right:1px solid var(--bd2);padding:16px 0;overflow-y:auto;position:sticky;top:102px;height:calc(100vh - 102px)}
@@ -1409,6 +1565,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <a class="nav-link" data-p="settings">Settings</a>
 <a class="nav-link" data-p="bot-commands">Terminal</a>
 <a class="nav-link" data-p="credits">Credits</a>
+<a class="nav-link" data-p="achievements">Achievements</a>
 <a class="nav-link" data-p="license">License</a>
 </div>
 <div class="nav-right">
@@ -1470,6 +1627,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">INFO <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
 <div class="sidebar-cat-items">
 <a class="sidebar-link" data-p="credits" onclick="go('credits')">Credits</a>
+<a class="sidebar-link" data-p="achievements" onclick="go('achievements')">Achievements</a>
 <a class="sidebar-link" data-p="license" onclick="go('license')">License</a>
 </div>
 </div>
@@ -1988,6 +2146,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 </div>
 
+<div class="pg-sec" id="page-achievements">
+<div class="page-head"><h1>Achievements</h1><p>Your progress is saved to your account</p></div>
+<div class="ach-progress-bar" style="margin-bottom:24px">
+<div class="ach-progress-label">UNLOCKED: <span id="achCount">0</span> / <span id="achTotal">0</span></div>
+<div class="ach-progress-track"><div class="ach-progress-fill" id="achProgressFill" style="width:0%"></div></div>
+</div>
+<div class="ach-grid" id="achGrid">
+<div class="archive-loading">Loading achievements...</div>
+</div>
+</div>
+
 <div class="pg-sec" id="page-admin">
 <div class="page-head"><h1>Admin Panel</h1><p>Manage SCPs, test logs, protocols, and keep the facility running</p></div>
 <div class="admin-stats" id="adminStats">
@@ -2282,6 +2451,8 @@ function go(page) {
     document.getElementById('mobNav').classList.remove('open');
     window.scrollTo(0, 0);
     updateSidebarActive(page);
+    trackPageVisit(page);
+    if (page === 'achievements') renderAchievements();
     if (page === 'protocols') loadPublicProtocols();
     if (page === 'objects') loadDatabase();
     if (page === 'lab') loadLabTestLogs();
@@ -3056,6 +3227,7 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
         // Store or clear remembered credentials.
         if (remember) {
             localStorage.setItem('scipnet_remember', JSON.stringify({ user: u, pass: p }));
+                unlockAchievement('remember_me');
         } else {
             clearRememberedCreds();
         }
@@ -3129,6 +3301,8 @@ function initApp() {
     loadDepartments();
     setupCanvas();
     loadSiteAlert();
+    loadAchievements();
+    unlockAchievement('first_login');
     // Auto-restore live chat if a ticket is still open
     setTimeout(() => restoreActiveTicket(), 300);
 }
@@ -3370,6 +3544,7 @@ if (!sessionStorage.getItem('scipnet_session')) {
 const sessionId = sessionStorage.getItem('scipnet_session');
 
 async function sendChat() {
+    unlockAchievement('ai_chat');
     const prompt = chatInput.value.trim();
     if(!prompt) return;
     if(window._aiStreaming) return;
@@ -3952,6 +4127,7 @@ function saveWatchlist(list) { localStorage.setItem('scpWatchlist', JSON.stringi
 
 let currentDetailScp = null;
 function openScpDetail(s) {
+    unlockAchievement('scp_detail');
     currentDetailScp = s;
     document.getElementById('sdId').textContent = s.id || '';
     document.getElementById('sdName').textContent = s.name || '';
@@ -3970,6 +4146,7 @@ function openScpDetail(s) {
 }
 function closeScpDetail() { document.getElementById('scpDetailModal').classList.remove('open'); currentDetailScp = null; }
 function toggleWatchlist() {
+    unlockAchievement('watchlist_add');
     if (!currentDetailScp) return;
     const list = getWatchlist();
     const idx = list.findIndex(s => s.id === currentDetailScp.id);
@@ -4372,6 +4549,7 @@ function updateCommsDisplay() {
 function commsScanUp() { commsFreqIndex = Math.min(100, commsFreqIndex + 10); updateCommsDisplay(); }
 function commsScanDown() { commsFreqIndex = Math.max(0, commsFreqIndex - 10); updateCommsDisplay(); }
 function commsTune() {
+    unlockAchievement('comms_tune');
     const idx = Math.floor(commsFreqIndex / (100 / COMMS_FREQS.length));
     const f = COMMS_FREQS[Math.min(idx, COMMS_FREQS.length - 1)];
     const out = document.getElementById('commsOutput');
@@ -4421,6 +4599,7 @@ const GEN_PROCEDURES = [
 ];
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function generateScp() {
+    unlockAchievement('gen_scp');
     const num = Math.floor(Math.random() * 9000) + 1000;
     const cls = pick(GEN_OBJECT_CLASSES);
     const name = pick(GEN_PREFIXES) + ' ' + pick(GEN_ADJECTIVES) + ' ' + pick(GEN_NOUNS);
@@ -4565,6 +4744,7 @@ function chooseBreach(scenarioIdx, choiceIdx) {
         return;
     }
     showBreachStep(choice.next);
+    if (BREACH_SCENARIOS[choice.next]?.result === 'good') unlockAchievement('breach_success');
 }
 
 // ===== NEWS FEED =====
@@ -4602,6 +4782,7 @@ let camMode = 'normal'; // normal, night, thermal, xray
 const camAnimations = [];
 
 function setCamMode(mode) {
+    unlockAchievement('cam_mode');
     camMode = mode;
     document.querySelectorAll('.cam-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
 }
@@ -4644,6 +4825,7 @@ function loadCameras() {
 // ===== Fullscreen camera =====
 let camFsAnimId = null;
 function openCamFullscreen(idx) {
+    unlockAchievement('cam_fullscreen');
     const c = CAMERAS[idx];
     if (!c || c.status === 'offline') return;
     const modal = document.getElementById('camFullscreen');
@@ -5104,6 +5286,171 @@ function startCameraAnimation(canvas, camera, isFullscreen) {
     drawScene();
 }
 
+// ===== ACHIEVEMENT SYSTEM (saved per account) =====
+const ACHIEVEMENTS = [
+    { id: 'first_login', name: 'Welcome to Site-92', desc: 'Log in to the terminal for the first time', icon: 'door-open' },
+    { id: 'remember_me', name: 'Regular Personnel', desc: 'Use Remember Me to skip login', icon: 'fingerprint' },
+    { id: 'visited_database', name: 'Archive Explorer', desc: 'Visit the Anomaly Database', icon: 'database' },
+    { id: 'visited_personnel', name: 'Staff Directory', desc: 'View the Personnel roster', icon: 'users' },
+    { id: 'visited_departments', name: 'Organizational Structure', desc: 'View all departments', icon: 'building' },
+    { id: 'visited_protocols', name: 'Protocol Registry', desc: 'View containment protocols', icon: 'shield' },
+    { id: 'visited_incidents', name: 'Incident Reviewer', desc: 'View the incident log', icon: 'alert-triangle' },
+    { id: 'visited_map', name: 'Site Cartographer', desc: 'View the Site Map', icon: 'map' },
+    { id: 'visited_mtf', name: 'Task Force Observer', desc: 'View Mobile Task Forces', icon: 'crosshair' },
+    { id: 'visited_lab', name: 'Lab Assistant', desc: 'Visit the Testing Lab', icon: 'flask-conical' },
+    { id: 'visited_diagnostics', name: 'Systems Check', desc: 'View facility diagnostics', icon: 'activity' },
+    { id: 'visited_scanner', name: 'Reality Scan', desc: 'View Scranton Anchor readings', icon: 'radio' },
+    { id: 'visited_cameras', name: 'Security Watch', desc: 'View security camera feeds', icon: 'cctv' },
+    { id: 'visited_comms', name: 'Comms Operator', desc: 'Use the radio frequency scanner', icon: 'radio-tower' },
+    { id: 'visited_generator', name: 'Anomaly Creator', desc: 'Generate a random SCP', icon: 'dices' },
+    { id: 'visited_breach', name: 'Crisis Manager', desc: 'Run the Breach Simulator', icon: 'siren' },
+    { id: 'visited_terminal', name: 'Terminal Hacker', desc: 'Open the SCiPNET Terminal', icon: 'terminal' },
+    { id: 'visited_news', name: 'News Reader', desc: 'Read the Foundation News Feed', icon: 'newspaper' },
+    { id: 'visited_archives', name: 'Archivist', desc: 'Browse the Foundation Archives', icon: 'archive' },
+    { id: 'visited_ai', name: 'AI Conversation', desc: 'Talk to Ducky 2.5', icon: 'bot' },
+    { id: 'visited_settings', name: 'Customizer', desc: 'Open the Settings page', icon: 'settings' },
+    { id: 'visited_license', name: 'Legal Eagle', desc: 'Read the DSML license', icon: 'scale' },
+    { id: 'visited_admin', name: 'Level 5 Access', desc: 'Access the Admin Panel', icon: 'shield-check' },
+    { id: 'terminal_help', name: 'Help Seeker', desc: 'Type "help" in the terminal', icon: 'help-circle' },
+    { id: 'terminal_50', name: 'Power User', desc: 'Execute 50 terminal commands', icon: 'keyboard' },
+    { id: 'terminal_100', name: 'Terminal Master', desc: 'Execute 100 terminal commands', icon: 'command' },
+    { id: 'scp_detail', name: 'Deep Researcher', desc: 'Click an SCP card for details', icon: 'search' },
+    { id: 'watchlist_add', name: 'Observer', desc: 'Add an SCP to your watchlist', icon: 'bookmark' },
+    { id: 'cam_mode', name: 'Vision Specialist', desc: 'Switch camera view modes', icon: 'eye' },
+    { id: 'cam_fullscreen', name: 'Surveillance Expert', desc: 'Open a camera in fullscreen', icon: 'maximize' },
+    { id: 'breach_success', name: 'Containment Director', desc: 'Successfully contain a breach', icon: 'shield-check' },
+    { id: 'report_submit', name: 'Whistleblower', desc: 'Submit an anomaly report', icon: 'flag' },
+    { id: 'gen_scp', name: 'Anomaly Designer', desc: 'Generate a random SCP entry', icon: 'sparkles' },
+    { id: 'comms_tune', name: 'Signal Hunter', desc: 'Tune to a radio frequency', icon: 'radio' },
+    { id: 'ai_chat', name: 'Conversationalist', desc: 'Send a message to Ducky 2.5', icon: 'message-circle' },
+    { id: 'all_pages', name: 'Site Explorer', desc: 'Visit all 20+ pages', icon: 'compass' },
+];
+
+let _unlockedAchievements = new Set();
+let _visitedPages = new Set();
+let _terminalCommands = 0;
+
+function getAchStorageKey() {
+    const user = document.getElementById('navUn')?.textContent || 'guest';
+    return 'scipnet_ach_' + user.toLowerCase();
+}
+
+function loadAchievements() {
+    try {
+        const data = JSON.parse(localStorage.getItem(getAchStorageKey()) || '{}');
+        _unlockedAchievements = new Set(data.unlocked || []);
+        _visitedPages = new Set(data.visited || []);
+        _terminalCommands = data.terminalCommands || 0;
+    } catch(e) {
+        _unlockedAchievements = new Set();
+        _visitedPages = new Set();
+        _terminalCommands = 0;
+    }
+}
+
+function saveAchievements() {
+    try {
+        localStorage.setItem(getAchStorageKey(), JSON.stringify({
+            unlocked: [..._unlockedAchievements],
+            visited: [..._visitedPages],
+            terminalCommands: _terminalCommands,
+        }));
+    } catch(e) {}
+}
+
+function unlockAchievement(id) {
+    if (_unlockedAchievements.has(id)) return;
+    const ach = ACHIEVEMENTS.find(a => a.id === id);
+    if (!ach) return;
+    _unlockedAchievements.add(id);
+    saveAchievements();
+    showAchievementNotification(ach);
+    updateAchievementProgress();
+}
+
+function trackPageVisit(page) {
+    _visitedPages.add(page);
+    // Map page IDs to achievement IDs
+    const pageAchMap = {
+        'objects': 'visited_database', 'personnel': 'visited_personnel',
+        'departments': 'visited_departments', 'protocols': 'visited_protocols',
+        'incidents': 'visited_incidents', 'map': 'visited_map',
+        'mtf': 'visited_mtf', 'lab': 'visited_lab',
+        'diagnostics': 'visited_diagnostics', 'scanner': 'visited_scanner',
+        'cameras': 'visited_cameras', 'comms': 'visited_comms',
+        'generator': 'visited_generator', 'breach-sim': 'visited_breach',
+        'bot-commands': 'visited_terminal', 'news': 'visited_news',
+        'archives': 'visited_archives', 'site-ai': 'visited_ai',
+        'settings': 'visited_settings', 'license': 'visited_license',
+        'admin': 'visited_admin',
+    };
+    if (pageAchMap[page]) unlockAchievement(pageAchMap[page]);
+    // Check "all pages" achievement
+    const allPages = Object.keys(pageAchMap);
+    if (allPages.every(p => _visitedPages.has(p))) unlockAchievement('all_pages');
+    saveAchievements();
+}
+
+function trackTerminalCommand() {
+    _terminalCommands++;
+    if (_terminalCommands >= 50) unlockAchievement('terminal_50');
+    if (_terminalCommands >= 100) unlockAchievement('terminal_100');
+    saveAchievements();
+}
+
+function showAchievementNotification(ach) {
+    // Remove any existing notification
+    const existing = document.getElementById('achNotif');
+    if (existing) existing.remove();
+    
+    const notif = document.createElement('div');
+    notif.id = 'achNotif';
+    notif.className = 'ach-notification';
+    notif.innerHTML = '<div class="ach-notif-icon"><iconify-icon icon="lucide:' + ach.icon + '"></iconify-icon></div>' +
+        '<div class="ach-notif-text"><div class="ach-notif-title">ACHIEVEMENT UNLOCKED</div>' +
+        '<div class="ach-notif-desc">' + escHtml(ach.name) + ' — ' + escHtml(ach.desc) + '</div></div>';
+    document.body.appendChild(notif);
+    
+    // Animate in
+    requestAnimationFrame(() => notif.classList.add('show'));
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        notif.classList.remove('show');
+        setTimeout(() => notif.remove(), 500);
+    }, 5000);
+}
+
+function renderAchievements() {
+    const grid = document.getElementById('achGrid');
+    if (!grid) return;
+    const count = _unlockedAchievements.size;
+    const total = ACHIEVEMENTS.length;
+    document.getElementById('achCount').textContent = count;
+    document.getElementById('achTotal').textContent = total;
+    const fill = document.getElementById('achProgressFill');
+    if (fill) fill.style.width = (count / total * 100) + '%';
+    
+    grid.innerHTML = ACHIEVEMENTS.map((a, i) => {
+        const unlocked = _unlockedAchievements.has(a.id);
+        return '<div class="ach-card ' + (unlocked ? 'unlocked' : '') + '" style="animation-delay:' + (i * 0.03) + 's">' +
+            '<div class="ach-icon"><iconify-icon icon="lucide:' + a.icon + '"></iconify-icon></div>' +
+            '<div class="ach-name">' + escHtml(a.name) + '</div>' +
+            '<div class="ach-desc">' + escHtml(a.desc) + '</div>' +
+            '<div class="ach-status">' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function updateAchievementProgress() {
+    const count = _unlockedAchievements.size;
+    const total = ACHIEVEMENTS.length;
+    const countEl = document.getElementById('achCount');
+    const fillEl = document.getElementById('achProgressFill');
+    if (countEl) countEl.textContent = count;
+    if (fillEl) fillEl.style.width = (count / total * 100) + '%';
+}
+
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
 let termHistory = [];
 let termHistoryIdx = -1;
@@ -5501,6 +5848,8 @@ function executeTerminalCommand(input) {
     const args = parts.slice(1);
     if (TERM_COMMANDS[cmd]) {
         try { TERM_COMMANDS[cmd](args); } catch(e) { termPrint('Error executing command: ' + e.message, 'term-err'); }
+        trackTerminalCommand();
+        if (cmd === 'help') unlockAchievement('terminal_help');
     } else {
         termPrint('Command not found: ' + cmd + '. Type \'help\' for available commands.', 'term-err');
     }
