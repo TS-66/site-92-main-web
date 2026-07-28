@@ -263,3 +263,31 @@ Stage Summary:
 - Verified resize: 1280x800 → 400x800: `cursorEnabled` flips to `false`, `cursorToggleOn` flips to `false`, `bodyCursor="auto"`. Resize back to 1280x800: `cursorEnabled=true`, `cursorToggleOn=true`, custom cursor re-enabled (activates on next mousemove).
 - Lint clean, no dev.log errors.
 - Files changed: public/index.html (cursor JS + toggle + resize listener + isMobileViewport helper + applyCursorDisabled helper).
+
+---
+Task ID: 12
+Agent: Z.ai Code (orchestrator, direct execution)
+Task: Investigate "cursor still invisible" with VLM screenshots + make custom cursor much more visible
+
+Work Log:
+- Used VLM (z-ai vision) on agent-browser screenshots to actually SEE what's rendered, not just inspect JS state. Discovered:
+  - During boot/loader (no mousemove): screenshot shows NO cursor because the screenshot tool doesn't capture the OS cursor — the user actually sees the OS cursor on their real screen. JS state confirmed: body.cursor="auto", dot/ring opacity=0. This is correct.
+  - After mousemove: VLM sees the custom cursor (cyan dot + ring) clearly, located correctly at the mouse position.
+  - After toggle OFF + mousemove: VLM sees the OS text-beam (I-beam) cursor in the password field — standard OS behavior, cursor is not "invisible".
+- Root cause of "still invisible" complaint: the custom cursor was barely visible — a 6px dot with a 1px border ring was too thin to stand out, especially on a dark/busy sci-fi background. User moved mouse, OS cursor hid, custom cursor "appeared" but was tiny and easy to miss.
+- Fix: enlarged and brightened the custom cursor:
+  - .cursor-dot: 6px -> 10px, glow shadow 0 0 10px -> 0 0 12px var(--ac), 0 0 24px var(--ac) (double-layer glow)
+  - .cursor-ring: 32px -> 38px, border 1px -> 2px solid, glow 0 0 10px -> 0 0 12px rgba(0,255,204,.6), inset 0 0 8px rgba(0,255,204,.2)
+  - .cursor-ring.hover: 56px -> 64px
+  - .cursor-ring.click: 16px -> 18px
+- Also hardened the CSS override rules: changed `cursor:revert !important` to `cursor:auto !important` (more compatible across browsers). Added `::before` and `::after` pseudo-elements to both the override rules and the cursor-active rule so pseudo-element cursors are also handled.
+
+Stage Summary:
+- Verified via VLM: cursor is now ~25-30px ring + 8-10px solid dot with prominent glow (was 32px thin ring + 6px dot). Much more visible.
+- Verified all states:
+  - Initial load (no mousemove): OS cursor visible (body.cursor="auto"), custom cursor invisible. ✓
+  - After mousemove: custom cursor visible (cyan dot+ring), OS cursor hidden. ✓
+  - Toggle OFF: OS cursor returns, custom cursor hidden. ✓
+  - Toggle ON + mousemove: custom cursor re-activates. ✓
+- Lint clean, no dev errors.
+- Files changed: public/index.html (cursor CSS only — bigger dot/ring, 2px border, brighter glow, ::before/::after coverage, cursor:auto instead of cursor:revert).
