@@ -26,11 +26,12 @@ body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1
 ::-webkit-scrollbar-track{background:var(--b2)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:0}
 
-.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform}
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;opacity:0;transition:opacity .15s}
 .cursor-dot{width:6px;height:6px;background:var(--ac);box-shadow:0 0 10px var(--ac)}
 .cursor-ring{width:32px;height:32px;border:1px solid var(--ac);transition:width .25s,height .25s,background .25s;box-shadow:0 0 10px rgba(0,255,204,.4)}
 .cursor-ring.hover{width:56px;height:56px;background:rgba(0,255,204,.1);border-color:transparent}
 .cursor-ring.click{width:16px;height:16px}
+.cursor-dot.cursor-active,.cursor-ring.cursor-active{opacity:1}
 
 .beta-badge{position:fixed;top:12px;right:16px;background:var(--or);color:#000;font-family:'Orbitron',sans-serif;font-weight:900;font-size:10px;padding:4px 10px;z-index:9999;letter-spacing:3px;clip-path:polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);box-shadow:0 0 20px rgba(255,140,66,.8);transform:rotate(-2deg);pointer-events:none;border:1px solid rgba(255,255,255,.4);animation:pulseGlow 2s infinite;text-transform:uppercase}
 
@@ -970,7 +971,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 /* ===== MOBILE (Phone) — 768px and below ===== */
 @media(max-width:768px){
   html,body{cursor:auto!important}
-  .cursor-dot,.cursor-ring,.cursor-trail{display:none!important}
+  .cursor-dot,.cursor-ring{display:none!important}
   .nav-links{display:none!important}
   .nav-user{display:none!important}
   .ham{display:flex!important}
@@ -3812,10 +3813,16 @@ if (document.body.classList.contains('device-mobile') || document.body.classList
     if (ring) ring.style.display = 'none';
 }
 
+let cursorActivated = false;
 document.addEventListener('mousemove', e => {
     if (!cursorEnabled) return;
     mx = e.clientX; my = e.clientY;
     if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
+    if (!cursorActivated) {
+        cursorActivated = true;
+        if (dot) dot.classList.add('cursor-active');
+        if (ring) ring.classList.add('cursor-active');
+    }
 });
 
 let cursorRAF = null;
@@ -3847,9 +3854,10 @@ document.addEventListener('mouseup', () => { if (cursorEnabled && ring) ring.cla
 // Update settings toggle to properly enable/disable cursor
 function toggleCustomCursor(enabled) {
     cursorEnabled = enabled;
+    cursorActivated = enabled;
     document.documentElement.style.cursor = enabled ? 'none' : 'auto';
-    if (dot) dot.style.display = enabled ? '' : 'none';
-    if (ring) ring.style.display = enabled ? '' : 'none';
+    if (dot) { dot.style.display = enabled ? '' : 'none'; if (enabled) dot.classList.add('cursor-active'); else dot.classList.remove('cursor-active'); }
+    if (ring) { ring.style.display = enabled ? '' : 'none'; if (enabled) ring.classList.add('cursor-active'); else ring.classList.remove('cursor-active'); }
     if (enabled && !cursorRAF) animCursor();
     if (!enabled && cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
 }
