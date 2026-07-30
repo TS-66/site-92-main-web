@@ -20,29 +20,34 @@
 --grad-rd:linear-gradient(135deg,#ff2e5e 0%,#ff8c42 100%);
 }
 html,body{overflow-x:hidden}
-/* Default mode: ensure OS cursor is ALWAYS visible everywhere so the page is
-   never "invisible" — use cursor:auto (more compatible than cursor:revert). */
-html:not(.cursor-active) body,
-html:not(.cursor-active) body *,
-html:not(.cursor-active) body *::before,
-html:not(.cursor-active) body *::after{cursor:auto !important}
-/* Custom cursor mode (after first mousemove): hide OS cursor everywhere */
-html.cursor-active,
-html.cursor-active *,
-html.cursor-active *::before,
-html.cursor-active *::after{cursor:none !important}
+/* Always show the OS cursor by default. The custom cursor is an OPT-IN feature
+   that must be explicitly enabled by the user via Settings. This guarantees
+   the page is NEVER "invisible" — the OS cursor is always there as a fallback. */
+/* When custom cursor is OFF: force OS cursor everywhere, override all per-element cursor:none */
+html:not(.custom-cursor-enabled) *{cursor:auto !important}
+html:not(.custom-cursor-enabled) a,html:not(.custom-cursor-enabled) button,html:not(.custom-cursor-enabled) .toggle,html:not(.custom-cursor-enabled) .nav-link,html:not(.custom-cursor-enabled) .qa,html:not(.custom-cursor-enabled) .stat,html:not(.custom-cursor-enabled) .scp-card,html:not(.custom-cursor-enabled) .per-item,html:not(.custom-cursor-enabled) .breach-choice,html:not(.custom-cursor-enabled) .camera-feed,html:not(.custom-cursor-enabled) .sidebar-link,html:not(.custom-cursor-enabled) .ach-card,html:not(.custom-cursor-enabled) .admin-btn,html:not(.custom-cursor-enabled) .admin-tab,html:not(.custom-cursor-enabled) .color-dot,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) .sec-link,html:not(.custom-cursor-enabled) .filter-btn,html:not(.custom-cursor-enabled) .dept-head,html:not(.custom-cursor-enabled) .modal-x,html:not(.custom-cursor-enabled) .notif-cl,html:not(.custom-cursor-enabled) .sr-i,html:not(.custom-cursor-enabled) .sector,html:not(.custom-cursor-enabled) .nav-brand,html:not(.custom-cursor-enabled) .nav-btn,html:not(.custom-cursor-enabled) .nav-user,html:not(.custom-cursor-enabled) .lc-close,html:not(.custom-cursor-enabled) .lc-send,html:not(.custom-cursor-enabled) .lc-minimize,html:not(.custom-cursor-enabled) .lc-minimized-btn,html:not(.custom-cursor-enabled) .lc-notif-toast,html:not(.custom-cursor-enabled) .warn,html:not(.custom-cursor-enabled) .incident,html:not(.custom-cursor-enabled) .tbl tbody tr,html:not(.custom-cursor-enabled) .redacted,html:not(.custom-cursor-enabled) .pw-toggle,html:not(.custom-cursor-enabled) .checkbox-wrap,html:not(.custom-cursor-enabled) .login-btn,html:not(.custom-cursor-enabled) .support-btn,html:not(.custom-cursor-enabled) .support-code-btn,html:not(.custom-cursor-enabled) .support-type-btn,html:not(.custom-cursor-enabled) .chat-tool-btn,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) #chatSendBtn,html:not(.custom-cursor-enabled) .site-alert-close,html:not(.custom-cursor-enabled) input[type=range]::-webkit-slider-thumb{cursor:pointer !important}
+html:not(.custom-cursor-enabled) input,html:not(.custom-cursor-enabled) textarea,html:not(.custom-cursor-enabled) select{cursor:text !important}
+html:not(.custom-cursor-enabled) input[type=checkbox],html:not(.custom-cursor-enabled) input[type=radio]{cursor:pointer !important}
+/* When custom cursor is ON: hide OS cursor everywhere */
+html.custom-cursor-enabled,
+html.custom-cursor-enabled body,
+html.custom-cursor-enabled body *{cursor:none !important}
 body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(0,255,204,.05) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(255,46,94,.03) 0%,transparent 60%)}
 ::selection{background:var(--ac);color:var(--b0)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--b2)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:0}
 
-.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;opacity:0;transition:opacity .15s}
+/* Custom cursor elements — hidden by default, only shown when user opts in */
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;opacity:0;transition:opacity .15s;display:none}
+html.custom-cursor-enabled .cursor-dot,
+html.custom-cursor-enabled .cursor-ring{display:block}
+html.custom-cursor-enabled .cursor-dot.cursor-active,
+html.custom-cursor-enabled .cursor-ring.cursor-active{opacity:1}
 .cursor-dot{width:10px;height:10px;background:var(--ac);box-shadow:0 0 12px var(--ac),0 0 24px var(--ac)}
 .cursor-ring{width:38px;height:38px;border:2px solid var(--ac);transition:width .25s,height .25s,background .25s,border-color .25s;box-shadow:0 0 12px rgba(0,255,204,.6),inset 0 0 8px rgba(0,255,204,.2)}
 .cursor-ring.hover{width:64px;height:64px;background:rgba(0,255,204,.12);border-color:transparent}
 .cursor-ring.click{width:18px;height:18px}
-.cursor-dot.cursor-active,.cursor-ring.cursor-active{opacity:1}
 
 .beta-badge{position:fixed;top:12px;right:16px;background:var(--or);color:#000;font-family:'Orbitron',sans-serif;font-weight:900;font-size:10px;padding:4px 10px;z-index:9999;letter-spacing:3px;clip-path:polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);box-shadow:0 0 20px rgba(255,140,66,.8);transform:rotate(-2deg);pointer-events:none;border:1px solid rgba(255,255,255,.4);animation:pulseGlow 2s infinite;text-transform:uppercase}
 
@@ -1994,7 +1999,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <div class="settings-grid">
 <div class="setting-card"><div class="setting-info"><div class="setting-title">CRT Filter</div><div class="setting-desc">Toggle the scanline and CRT vignette overlay.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.querySelectorAll('.scanlines, .crt-vignette').forEach(e=>e.style.display = this.classList.contains('on')?'block':'none')"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Matrix Background</div><div class="setting-desc">Display the falling code animation in the background.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('matrixCanvas').style.display = this.classList.contains('on')?'block':'none'"></div></div>
-<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Use the animated reticle cursor instead of the default OS cursor. Move your mouse to activate.</div></div><div class="toggle on" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
+<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Replace the OS cursor with an animated reticle. OFF by default — enable it here.</div></div><div class="toggle" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Sound Effects</div><div class="setting-desc">Play UI sounds on interaction.</div></div><div class="toggle"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Noise Opacity</div><div class="setting-desc">Adjust the background CRT noise.</div></div><div class="slider-wrap"><span class="slider-val" id="noiseVal">4%</span><input type="range" min="0" max="20" value="4" oninput="document.querySelector('.noise').style.opacity = this.value / 100; document.getElementById('noiseVal').innerText = this.value + '%'"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Scanline Opacity</div><div class="setting-desc">Adjust the horizontal CRT scanlines.</div></div><div class="slider-wrap"><span class="slider-val" id="scanVal">40%</span><input type="range" min="0" max="100" value="40" oninput="document.querySelector('.scanlines').style.opacity = this.value / 100; document.getElementById('scanVal').innerText = this.value + '%'"></div></div>
@@ -2727,14 +2732,14 @@ async function realBootSequence() {
     const { bootMsgs, pingMs, quality } = await realConnectionTest();
 
     // Print boot messages with real timing (faster on faster connections)
-    const msgDelay = pingMs > 300 ? 120 : pingMs > 100 ? 80 : 50;
+    const msgDelay = pingMs > 300 ? 60 : pingMs > 100 ? 40 : 25;
     for (let i = 0; i < bootMsgs.length; i++) {
         bootBody.insertAdjacentHTML('beforeend', `<div>${bootMsgs[i]}</div>`);
         await new Promise(r => setTimeout(r, msgDelay));
     }
 
     // Show the real loader with actual connection data
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 100));
     document.getElementById('bootScreen').classList.add('hide');
     startRealLoader(pingMs, quality);
 }
@@ -2766,8 +2771,8 @@ async function startRealLoader(pingMs, quality) {
 
     // Animate progress tied to real elapsed time + connection speed
     // Faster connections finish quicker
-    const speedMultiplier = pingMs > 300 ? 0.5 : pingMs > 100 ? 1 : 2;
-    const step = 2 * speedMultiplier;
+    const speedMultiplier = pingMs > 300 ? 1 : pingMs > 100 ? 2 : 4;
+    const step = 5 * speedMultiplier;
 
     return new Promise(resolve => {
         const interval = setInterval(() => {
@@ -2793,7 +2798,7 @@ async function startRealLoader(pingMs, quality) {
                 else if (progress < 90) statusEl.innerHTML = 'Synchronizing personnel...' + '<span class="cursor"></span>';
                 else statusEl.innerHTML = 'Almost there...' + '<span class="cursor"></span>';
             }
-        }, 60 / speedMultiplier);
+        }, 30 / speedMultiplier);
     });
 }
 
@@ -3300,7 +3305,7 @@ function startBioScan() {
     const pctEl = document.getElementById('bioPct');
     const txt = document.getElementById('bioText');
     let interval = setInterval(() => {
-        pct += 5;
+        pct += 10;
         fill.style.width = pct + '%';
         pctEl.textContent = pct + '%';
         if (pct >= 50) txt.textContent = "Verifying neural pattern...";
@@ -3311,9 +3316,9 @@ function startBioScan() {
                 document.getElementById('step3').classList.add('active');
                 document.getElementById('tfaCode').textContent = Math.floor(100000 + Math.random() * 900000);
                 startTfaTimer();
-            }, 200);
+            }, 100);
         }
-    }, 30);
+    }, 20);
 }
 function startTfaTimer() {
     let t = 30;
@@ -3861,115 +3866,88 @@ function runTest() {
 }
 
 // === CUSTOM CURSOR ===
-// Bug fix: previously CSS forced cursor:none on html/body from page load,
-// making the page appear "invisible" (no cursor at all) until the first
-// mousemove fired. Now: OS cursor stays visible by default; the custom
-// cursor (and cursor:none on body) only activate AFTER the first mousemove.
+// SIMPLE & SAFE: Custom cursor is OFF by default. OS cursor is always visible.
+// User must explicitly enable it in Settings. When enabled, the custom cursor
+// replaces the OS cursor. When disabled (or on mobile), OS cursor is used.
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
-
-// Detect phone/tablet: UA-based OR narrow viewport (matches CSS @media max-width:768px).
-// If we detect "mobile" but JS still enabled the custom cursor, the CSS
-// `@media(max-width:768px){.cursor-dot,.cursor-ring{display:none!important}}`
-// would hide the custom cursor while the body still gets cursor:none →
-// NO CURSOR AT ALL. So we must keep these in sync.
-function isMobileViewport() { return window.innerWidth <= 768; }
-const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
-let cursorEnabled = !isPhoneTabletUA && !isMobileViewport();
-let cursorActivated = false; // becomes true on first mousemove
+let cursorEnabled = false; // OFF by default — user must opt in via Settings
+let cursorActivated = false;
 let cursorRAF = null;
 
-function applyCursorDisabled() {
-    // Hide custom cursor elements + remove cursor-active so OS cursor returns.
+function isMobileViewport() { return window.innerWidth <= 768; }
+const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
+
+function enableCustomCursor() {
+    if (isPhoneTabletUA || isMobileViewport()) return; // never on mobile
+    cursorEnabled = true;
+    document.documentElement.classList.add('custom-cursor-enabled');
+}
+
+function disableCustomCursor() {
+    cursorEnabled = false;
     cursorActivated = false;
-    document.documentElement.classList.remove('cursor-active');
-    document.body.classList.remove('cursor-active');
-    if (dot) { dot.style.display = 'none'; dot.classList.remove('cursor-active'); }
-    if (ring) { ring.style.display = 'none'; ring.classList.remove('cursor-active', 'hover', 'click'); }
+    document.documentElement.classList.remove('custom-cursor-enabled');
+    if (dot) dot.classList.remove('cursor-active');
+    if (ring) ring.classList.remove('cursor-active', 'hover', 'click');
     if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
-    // Sync the settings toggle to OFF state.
-    const curTgl = document.getElementById('cursorToggle');
-    if (curTgl) curTgl.classList.remove('on');
 }
 
-if (!cursorEnabled) {
-    applyCursorDisabled();
-}
-
-// Re-evaluate on viewport resize (e.g., user resizes browser window narrow).
-window.addEventListener('resize', () => {
-    const shouldEnable = !isPhoneTabletUA && !isMobileViewport();
-    if (shouldEnable && !cursorEnabled) {
-        // Window grew — re-enable cursor (will activate on next mousemove).
-        cursorEnabled = true;
-        if (dot) dot.style.display = '';
-        if (ring) ring.style.display = '';
-        const curTgl = document.getElementById('cursorToggle');
-        if (curTgl) curTgl.classList.add('on');
-    } else if (!shouldEnable && cursorEnabled) {
-        // Window shrank to mobile — disable cursor.
-        cursorEnabled = false;
-        applyCursorDisabled();
-    }
-});
-
-function activateCustomCursor() {
-    if (!cursorEnabled || cursorActivated) return;
-    cursorActivated = true;
-    document.documentElement.classList.add('cursor-active');
-    document.body.classList.add('cursor-active');
-    if (dot) dot.classList.add('cursor-active');
-    if (ring) ring.classList.add('cursor-active');
-    if (!cursorRAF) animCursor();
-}
-
+// Track mouse position — always listening, but only updates visual cursor if enabled
 document.addEventListener('mousemove', e => {
     if (!cursorEnabled) return;
     mx = e.clientX; my = e.clientY;
     if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-    if (!cursorActivated) activateCustomCursor();
+    if (!cursorActivated) {
+        cursorActivated = true;
+        if (dot) dot.classList.add('cursor-active');
+        if (ring) ring.classList.add('cursor-active');
+        if (!cursorRAF) animCursor();
+    }
 });
 
 function animCursor() {
-    if (!cursorEnabled || !cursorActivated) { if (cursorRAF) cancelAnimationFrame(cursorRAF); cursorRAF = null; return; }
+    if (!cursorEnabled) { if (cursorRAF) cancelAnimationFrame(cursorRAF); cursorRAF = null; return; }
     rx += (mx - rx) * 0.15;
     ry += (my - ry) * 0.15;
     if (ring) ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
     cursorRAF = requestAnimationFrame(animCursor);
 }
 
-// Event delegation for hover effects (works on dynamically created elements too)
+// Hover effects via event delegation
 const HOVER_SELECTOR = 'a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn, .scp-card, .per-item, .breach-choice, .camera-feed, .sidebar-link, .ach-card, .admin-btn, .admin-tab';
 document.addEventListener('mouseover', e => {
-    if (!cursorEnabled || !cursorActivated || !ring) return;
+    if (!cursorEnabled || !ring) return;
     if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.add('hover');
 });
 document.addEventListener('mouseout', e => {
-    if (!cursorEnabled || !cursorActivated || !ring) return;
+    if (!cursorEnabled || !ring) return;
     if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.remove('hover');
 });
-document.addEventListener('mousedown', () => { if (cursorEnabled && cursorActivated && ring) ring.classList.add('click'); });
-document.addEventListener('mouseup', () => { if (cursorEnabled && cursorActivated && ring) ring.classList.remove('click'); });
+document.addEventListener('mousedown', () => { if (cursorEnabled && ring) ring.classList.add('click'); });
+document.addEventListener('mouseup', () => { if (cursorEnabled && ring) ring.classList.remove('click'); });
 
-// Settings toggle: enable/disable custom cursor at runtime.
+// Settings toggle — called from the Settings page onclick
 function toggleCustomCursor(enabled) {
-    // Never allow enabling on mobile viewport — CSS hides the custom cursor
-    // there, so enabling would just hide the OS cursor too (no cursor at all).
-    if (enabled && isMobileViewport()) {
+    if (enabled && (isPhoneTabletUA || isMobileViewport())) {
+        // Refuse to enable on mobile — sync toggle to off
         const curTgl = document.getElementById('cursorToggle');
         if (curTgl) curTgl.classList.remove('on');
         return;
     }
-    cursorEnabled = !!enabled;
-    if (cursorEnabled) {
-        // Will activate on next mousemove (so we don't grab cursor position out of nowhere)
-        if (dot) dot.style.display = '';
-        if (ring) ring.style.display = '';
-    } else {
-        applyCursorDisabled();
-    }
+    if (enabled) enableCustomCursor();
+    else disableCustomCursor();
 }
+
+// On resize, if window becomes mobile, disable; if becomes desktop, keep user's choice
+window.addEventListener('resize', () => {
+    if (cursorEnabled && (isPhoneTabletUA || isMobileViewport())) {
+        disableCustomCursor();
+        const curTgl = document.getElementById('cursorToggle');
+        if (curTgl) curTgl.classList.remove('on');
+    }
+});
 
 // Canvas Setup (Optimized for Performance)
 function setupCanvas() {
