@@ -95,12 +95,17 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
+
+    // Embla has finished its setup by the next animation frame. Deferring the
+    // initial read avoids a synchronous state update while React is committing.
+    const frame = window.requestAnimationFrame(() => onSelect(api))
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
     return () => {
-      api?.off("select", onSelect)
+      window.cancelAnimationFrame(frame)
+      api.off("reInit", onSelect)
+      api.off("select", onSelect)
     }
   }, [api, onSelect])
 

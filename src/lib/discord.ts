@@ -152,7 +152,7 @@ export async function getAllGuildMembers(): Promise<
       if (m.user.bot) continue;
       const avatar = m.user.avatar
         ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png?size=128`
-        : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(m.user.id) >> 22n) % 6n)}.png`;
+        : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(m.user.id) >> BigInt(22)) % BigInt(6))}.png`;
 
       results.push({
         name: m.user.username,

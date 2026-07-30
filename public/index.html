@@ -20,9 +20,9 @@
 --grad-rd:linear-gradient(135deg,#ff2e5e 0%,#ff8c42 100%);
 }
 html,body{overflow-x:hidden}
-/* Always show the OS cursor by default. The custom cursor is an OPT-IN feature
-   that must be explicitly enabled by the user via Settings. This guarantees
-   the page is NEVER "invisible" — the OS cursor is always there as a fallback. */
+/* The custom reticle is enabled by default on desktop. The native cursor stays
+   visible until the reticle has received a real mouse position, so the page can
+   never start with an invisible pointer. */
 /* When custom cursor is OFF: force OS cursor everywhere, override all per-element cursor:none */
 html:not(.custom-cursor-enabled) *{cursor:auto !important}
 html:not(.custom-cursor-enabled) a,html:not(.custom-cursor-enabled) button,html:not(.custom-cursor-enabled) .toggle,html:not(.custom-cursor-enabled) .nav-link,html:not(.custom-cursor-enabled) .qa,html:not(.custom-cursor-enabled) .stat,html:not(.custom-cursor-enabled) .scp-card,html:not(.custom-cursor-enabled) .per-item,html:not(.custom-cursor-enabled) .breach-choice,html:not(.custom-cursor-enabled) .camera-feed,html:not(.custom-cursor-enabled) .sidebar-link,html:not(.custom-cursor-enabled) .ach-card,html:not(.custom-cursor-enabled) .admin-btn,html:not(.custom-cursor-enabled) .admin-tab,html:not(.custom-cursor-enabled) .color-dot,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) .sec-link,html:not(.custom-cursor-enabled) .filter-btn,html:not(.custom-cursor-enabled) .dept-head,html:not(.custom-cursor-enabled) .modal-x,html:not(.custom-cursor-enabled) .notif-cl,html:not(.custom-cursor-enabled) .sr-i,html:not(.custom-cursor-enabled) .sector,html:not(.custom-cursor-enabled) .nav-brand,html:not(.custom-cursor-enabled) .nav-btn,html:not(.custom-cursor-enabled) .nav-user,html:not(.custom-cursor-enabled) .lc-close,html:not(.custom-cursor-enabled) .lc-send,html:not(.custom-cursor-enabled) .lc-minimize,html:not(.custom-cursor-enabled) .lc-minimized-btn,html:not(.custom-cursor-enabled) .lc-notif-toast,html:not(.custom-cursor-enabled) .warn,html:not(.custom-cursor-enabled) .incident,html:not(.custom-cursor-enabled) .tbl tbody tr,html:not(.custom-cursor-enabled) .redacted,html:not(.custom-cursor-enabled) .pw-toggle,html:not(.custom-cursor-enabled) .checkbox-wrap,html:not(.custom-cursor-enabled) .login-btn,html:not(.custom-cursor-enabled) .support-btn,html:not(.custom-cursor-enabled) .support-code-btn,html:not(.custom-cursor-enabled) .support-type-btn,html:not(.custom-cursor-enabled) .chat-tool-btn,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) #chatSendBtn,html:not(.custom-cursor-enabled) .site-alert-close,html:not(.custom-cursor-enabled) input[type=range]::-webkit-slider-thumb{cursor:pointer !important}
@@ -1999,7 +1999,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <div class="settings-grid">
 <div class="setting-card"><div class="setting-info"><div class="setting-title">CRT Filter</div><div class="setting-desc">Toggle the scanline and CRT vignette overlay.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.querySelectorAll('.scanlines, .crt-vignette').forEach(e=>e.style.display = this.classList.contains('on')?'block':'none')"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Matrix Background</div><div class="setting-desc">Display the falling code animation in the background.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('matrixCanvas').style.display = this.classList.contains('on')?'block':'none'"></div></div>
-<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Replace the OS cursor with an animated reticle. OFF by default — enable it here.</div></div><div class="toggle" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
+<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Replace the OS cursor with an animated reticle. Enabled by default on desktop.</div></div><div class="toggle on" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Sound Effects</div><div class="setting-desc">Play UI sounds on interaction.</div></div><div class="toggle"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Noise Opacity</div><div class="setting-desc">Adjust the background CRT noise.</div></div><div class="slider-wrap"><span class="slider-val" id="noiseVal">4%</span><input type="range" min="0" max="20" value="4" oninput="document.querySelector('.noise').style.opacity = this.value / 100; document.getElementById('noiseVal').innerText = this.value + '%'"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Scanline Opacity</div><div class="setting-desc">Adjust the horizontal CRT scanlines.</div></div><div class="slider-wrap"><span class="slider-val" id="scanVal">40%</span><input type="range" min="0" max="100" value="40" oninput="document.querySelector('.scanlines').style.opacity = this.value / 100; document.getElementById('scanVal').innerText = this.value + '%'"></div></div>
@@ -2502,7 +2502,12 @@ function go(page) {
     if (page === 'cameras') loadCameras();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', (e) => go(e.target.dataset.p));
+    link.addEventListener('click', (event) => {
+        event.preventDefault();
+        // A nav item contains icons/text, so event.target may be a child without
+        // a data-p value. currentTarget is always the link that was clicked.
+        go(event.currentTarget.dataset.p);
+    });
 });
 
 document.getElementById('ham').addEventListener('click', () => {
@@ -2699,7 +2704,12 @@ async function realConnectionTest() {
     let pingMs = 0;
     try {
         const t0 = performance.now();
-        await fetch('/api/public/site-status', { cache: 'no-store' });
+        // Do not leave the startup overlay above the interface indefinitely if
+        // the API or an intermediary network proxy never answers.
+        await fetch('/api/public/site-status', {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(5000),
+        });
         pingMs = Math.round(performance.now() - t0);
         bootMsgs.push('[NET] Server responded in ' + pingMs + 'ms');
     } catch (e) {
@@ -3866,23 +3876,43 @@ function runTest() {
 }
 
 // === CUSTOM CURSOR ===
-// SIMPLE & SAFE: Custom cursor is OFF by default. OS cursor is always visible.
-// User must explicitly enable it in Settings. When enabled, the custom cursor
-// replaces the OS cursor. When disabled (or on mobile), OS cursor is used.
+// The custom cursor is enabled by default on desktop and can be disabled in
+// Settings. It only replaces the native pointer after receiving a real mouse
+// coordinate. Mobile and tablet devices always use their native pointer.
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
-let cursorEnabled = false; // OFF by default — user must opt in via Settings
+let hasMousePosition = false;
+let cursorEnabled = false;
 let cursorActivated = false;
 let cursorRAF = null;
 
 function isMobileViewport() { return window.innerWidth <= 768; }
 const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
 
+function activateCustomCursor() {
+    if (!cursorEnabled || !hasMousePosition || cursorActivated) return;
+    cursorActivated = true;
+    rx = mx;
+    ry = my;
+    if (dot) {
+        dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
+        dot.classList.add('cursor-active');
+    }
+    if (ring) {
+        ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
+        ring.classList.add('cursor-active');
+    }
+    document.documentElement.classList.add('custom-cursor-enabled');
+    if (!cursorRAF) animCursor();
+}
+
 function enableCustomCursor() {
     if (isPhoneTabletUA || isMobileViewport()) return; // never on mobile
     cursorEnabled = true;
-    document.documentElement.classList.add('custom-cursor-enabled');
+    // Do not hide the native pointer until the reticle has a known position.
+    // This prevents an invisible cursor immediately after toggling the setting.
+    activateCustomCursor();
 }
 
 function disableCustomCursor() {
@@ -3894,17 +3924,15 @@ function disableCustomCursor() {
     if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
 }
 
-// Track mouse position — always listening, but only updates visual cursor if enabled
-document.addEventListener('mousemove', e => {
-    if (!cursorEnabled) return;
+// Always remember the latest real mouse position. The visual reticle is only
+// updated when the feature is enabled; pointer events keep touch input out.
+document.addEventListener('pointermove', e => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
     mx = e.clientX; my = e.clientY;
+    hasMousePosition = true;
+    if (!cursorEnabled) return;
     if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-    if (!cursorActivated) {
-        cursorActivated = true;
-        if (dot) dot.classList.add('cursor-active');
-        if (ring) ring.classList.add('cursor-active');
-        if (!cursorRAF) animCursor();
-    }
+    activateCustomCursor();
 });
 
 function animCursor() {
@@ -3948,6 +3976,14 @@ window.addEventListener('resize', () => {
         if (curTgl) curTgl.classList.remove('on');
     }
 });
+
+// Enable the desktop reticle immediately. It waits for the first pointer move
+// before hiding the native pointer, avoiding a click-blocking/invisible state.
+if (!isPhoneTabletUA && !isMobileViewport()) {
+    enableCustomCursor();
+} else {
+    document.getElementById('cursorToggle')?.classList.remove('on');
+}
 
 // Canvas Setup (Optimized for Performance)
 function setupCanvas() {
