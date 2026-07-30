@@ -2502,7 +2502,12 @@ function go(page) {
     if (page === 'cameras') loadCameras();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', (e) => go(e.target.dataset.p));
+    link.addEventListener('click', (event) => {
+        event.preventDefault();
+        // A nav item contains icons/text, so event.target may be a child without
+        // a data-p value. currentTarget is always the link that was clicked.
+        go(event.currentTarget.dataset.p);
+    });
 });
 
 document.getElementById('ham').addEventListener('click', () => {
@@ -3872,6 +3877,7 @@ function runTest() {
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
+let hasMousePosition = false;
 let cursorEnabled = false; // OFF by default — user must opt in via Settings
 let cursorActivated = false;
 let cursorRAF = null;
@@ -3879,10 +3885,29 @@ let cursorRAF = null;
 function isMobileViewport() { return window.innerWidth <= 768; }
 const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
 
+function activateCustomCursor() {
+    if (!cursorEnabled || !hasMousePosition || cursorActivated) return;
+    cursorActivated = true;
+    rx = mx;
+    ry = my;
+    if (dot) {
+        dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
+        dot.classList.add('cursor-active');
+    }
+    if (ring) {
+        ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
+        ring.classList.add('cursor-active');
+    }
+    document.documentElement.classList.add('custom-cursor-enabled');
+    if (!cursorRAF) animCursor();
+}
+
 function enableCustomCursor() {
     if (isPhoneTabletUA || isMobileViewport()) return; // never on mobile
     cursorEnabled = true;
-    document.documentElement.classList.add('custom-cursor-enabled');
+    // Do not hide the native pointer until the reticle has a known position.
+    // This prevents an invisible cursor immediately after toggling the setting.
+    activateCustomCursor();
 }
 
 function disableCustomCursor() {
@@ -3894,17 +3919,15 @@ function disableCustomCursor() {
     if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
 }
 
-// Track mouse position — always listening, but only updates visual cursor if enabled
-document.addEventListener('mousemove', e => {
-    if (!cursorEnabled) return;
+// Always remember the latest real mouse position. The visual reticle is only
+// updated when the feature is enabled; pointer events keep touch input out.
+document.addEventListener('pointermove', e => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
     mx = e.clientX; my = e.clientY;
+    hasMousePosition = true;
+    if (!cursorEnabled) return;
     if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-    if (!cursorActivated) {
-        cursorActivated = true;
-        if (dot) dot.classList.add('cursor-active');
-        if (ring) ring.classList.add('cursor-active');
-        if (!cursorRAF) animCursor();
-    }
+    activateCustomCursor();
 });
 
 function animCursor() {
