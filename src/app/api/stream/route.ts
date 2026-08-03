@@ -4,7 +4,6 @@
 // =============================================
 
 import { NextRequest } from 'next/server';
-import type { ChatMessage } from 'z-ai-web-dev-sdk';
 import { getConversationHistory, addToConversation, getSessionCount } from '@/lib/ai-memory';
 
 // ---- In-memory stores ----
@@ -996,18 +995,13 @@ export async function POST(req: NextRequest) {
             sendSSE({ thinking: "Engaging primary neural core..." });
             const ZAIModule = await import('z-ai-web-dev-sdk');
             const zai = await ZAIModule.default.create();
-            const zaiMessages: ChatMessage[] = [
+            const zaiMessages = [
               { role: 'system', content: fallbackSysPrompt },
-              ...fallbackHistory.reduce<ChatMessage[]>((valid, message: { role: string; content: string }) => {
-                if (message.role === 'system' || message.role === 'user' || message.role === 'assistant') {
-                  valid.push({ role: message.role, content: message.content });
-                }
-                return valid;
-              }, []),
+              ...fallbackHistory.map((m: { role: string; content: string }) => ({ role: m.role, content: m.content })),
               { role: 'user', content: userPrompt },
             ];
             const completion = await zai.chat.completions.create({
-              messages: zaiMessages,
+              messages: zaiMessages as Array<{ role: string; content: string }>,
               thinking: { type: 'disabled' },
             });
             const zaiReply = completion.choices?.[0]?.message?.content?.trim();

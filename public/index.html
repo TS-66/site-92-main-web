@@ -19,35 +19,18 @@
 --grad-ac:linear-gradient(135deg,#00ffcc 0%,#00d4aa 100%);
 --grad-rd:linear-gradient(135deg,#ff2e5e 0%,#ff8c42 100%);
 }
-html,body{overflow-x:hidden}
-/* The custom reticle is enabled by default on desktop. The native cursor stays
-   visible until the reticle has received a real mouse position, so the page can
-   never start with an invisible pointer. */
-/* When custom cursor is OFF: force OS cursor everywhere, override all per-element cursor:none */
-html:not(.custom-cursor-enabled) *{cursor:auto !important}
-html:not(.custom-cursor-enabled) a,html:not(.custom-cursor-enabled) button,html:not(.custom-cursor-enabled) .toggle,html:not(.custom-cursor-enabled) .nav-link,html:not(.custom-cursor-enabled) .qa,html:not(.custom-cursor-enabled) .stat,html:not(.custom-cursor-enabled) .scp-card,html:not(.custom-cursor-enabled) .per-item,html:not(.custom-cursor-enabled) .breach-choice,html:not(.custom-cursor-enabled) .camera-feed,html:not(.custom-cursor-enabled) .sidebar-link,html:not(.custom-cursor-enabled) .ach-card,html:not(.custom-cursor-enabled) .admin-btn,html:not(.custom-cursor-enabled) .admin-tab,html:not(.custom-cursor-enabled) .color-dot,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) .sec-link,html:not(.custom-cursor-enabled) .filter-btn,html:not(.custom-cursor-enabled) .dept-head,html:not(.custom-cursor-enabled) .modal-x,html:not(.custom-cursor-enabled) .notif-cl,html:not(.custom-cursor-enabled) .sr-i,html:not(.custom-cursor-enabled) .sector,html:not(.custom-cursor-enabled) .nav-brand,html:not(.custom-cursor-enabled) .nav-btn,html:not(.custom-cursor-enabled) .nav-user,html:not(.custom-cursor-enabled) .lc-close,html:not(.custom-cursor-enabled) .lc-send,html:not(.custom-cursor-enabled) .lc-minimize,html:not(.custom-cursor-enabled) .lc-minimized-btn,html:not(.custom-cursor-enabled) .lc-notif-toast,html:not(.custom-cursor-enabled) .warn,html:not(.custom-cursor-enabled) .incident,html:not(.custom-cursor-enabled) .tbl tbody tr,html:not(.custom-cursor-enabled) .redacted,html:not(.custom-cursor-enabled) .pw-toggle,html:not(.custom-cursor-enabled) .checkbox-wrap,html:not(.custom-cursor-enabled) .login-btn,html:not(.custom-cursor-enabled) .support-btn,html:not(.custom-cursor-enabled) .support-code-btn,html:not(.custom-cursor-enabled) .support-type-btn,html:not(.custom-cursor-enabled) .chat-tool-btn,html:not(.custom-cursor-enabled) .chat-suggest-btn,html:not(.custom-cursor-enabled) #chatSendBtn,html:not(.custom-cursor-enabled) .site-alert-close,html:not(.custom-cursor-enabled) input[type=range]::-webkit-slider-thumb{cursor:pointer !important}
-html:not(.custom-cursor-enabled) input,html:not(.custom-cursor-enabled) textarea,html:not(.custom-cursor-enabled) select{cursor:text !important}
-html:not(.custom-cursor-enabled) input[type=checkbox],html:not(.custom-cursor-enabled) input[type=radio]{cursor:pointer !important}
-/* When custom cursor is ON: hide OS cursor everywhere */
-html.custom-cursor-enabled,
-html.custom-cursor-enabled body,
-html.custom-cursor-enabled body *{cursor:none !important}
+html,body{cursor:none;overflow-x:hidden}
 body{font-family:'Share Tech Mono',monospace;background:var(--b1);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(0,255,204,.05) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(255,46,94,.03) 0%,transparent 60%)}
 ::selection{background:var(--ac);color:var(--b0)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--b2)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:0}
 
-/* Custom cursor elements — hidden by default, only shown when user opts in */
-.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;opacity:0;transition:opacity .15s;display:none}
-html.custom-cursor-enabled .cursor-dot,
-html.custom-cursor-enabled .cursor-ring{display:block}
-html.custom-cursor-enabled .cursor-dot.cursor-active,
-html.custom-cursor-enabled .cursor-ring.cursor-active{opacity:1}
-.cursor-dot{width:10px;height:10px;background:var(--ac);box-shadow:0 0 12px var(--ac),0 0 24px var(--ac)}
-.cursor-ring{width:38px;height:38px;border:2px solid var(--ac);transition:width .25s,height .25s,background .25s,border-color .25s;box-shadow:0 0 12px rgba(0,255,204,.6),inset 0 0 8px rgba(0,255,204,.2)}
-.cursor-ring.hover{width:64px;height:64px;background:rgba(0,255,204,.12);border-color:transparent}
-.cursor-ring.click{width:18px;height:18px}
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform}
+.cursor-dot{width:6px;height:6px;background:var(--ac);box-shadow:0 0 10px var(--ac)}
+.cursor-ring{width:32px;height:32px;border:1px solid var(--ac);transition:width .25s,height .25s,background .25s;box-shadow:0 0 10px rgba(0,255,204,.4)}
+.cursor-ring.hover{width:56px;height:56px;background:rgba(0,255,204,.1);border-color:transparent}
+.cursor-ring.click{width:16px;height:16px}
 
 .beta-badge{position:fixed;top:12px;right:16px;background:var(--or);color:#000;font-family:'Orbitron',sans-serif;font-weight:900;font-size:10px;padding:4px 10px;z-index:9999;letter-spacing:3px;clip-path:polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);box-shadow:0 0 20px rgba(255,140,66,.8);transform:rotate(-2deg);pointer-events:none;border:1px solid rgba(255,255,255,.4);animation:pulseGlow 2s infinite;text-transform:uppercase}
 
@@ -730,7 +713,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .admin-msg{font-size:11px;margin:8px 0;min-height:16px;font-family:'Share Tech Mono',monospace}
 .admin-form-inline{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
 @media(max-width:768px){.admin-form-inline{grid-template-columns:1fr 1fr}}
-.editor-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100001;align-items:center;justify-content:center;padding:20px}
+.editor-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .editor-modal.open{display:flex}
 .editor-box{background:var(--b2);border:1px solid var(--bd2);max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:22px}
 .editor-title{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:1px;color:var(--ac);margin-bottom:14px;text-transform:uppercase}
@@ -759,7 +742,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .rpt-status-DISMISSED{background:var(--t3);color:var(--b1)}
 .watchlist-sec{margin-bottom:30px}
 .watchlist-empty{color:var(--t3);font-size:12px;padding:14px;text-align:center;background:var(--b3);border:1px dashed var(--bd2);border-radius:2px}
-.scp-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100001;align-items:center;justify-content:center;padding:20px}
+.scp-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .scp-detail-modal.open{display:flex}
 .scp-detail-box{background:var(--b2);border:1px solid var(--bd2);max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:24px}
 .scp-detail-id{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--ac);margin-bottom:4px}
@@ -987,7 +970,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 /* ===== MOBILE (Phone) — 768px and below ===== */
 @media(max-width:768px){
   html,body{cursor:auto!important}
-  .cursor-dot,.cursor-ring{display:none!important}
+  .cursor-dot,.cursor-ring,.cursor-trail{display:none!important}
   .nav-links{display:none!important}
   .nav-user{display:none!important}
   .ham{display:flex!important}
@@ -1198,162 +1181,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .license-version{display:inline-block;padding:4px 10px;background:var(--b3);border:1px solid var(--bd2);border-radius:3px;font-size:10px;color:var(--t2);font-family:'Share Tech Mono',monospace;transition:border-color .2s}
 .license-version:hover{border-color:var(--ac);color:var(--t1)}
 @media(max-width:768px){.license-container{padding:16px}}
-
-/* ===== Achievements page ===== */
-.ach-progress-bar{background:var(--b3);padding:16px;border-radius:4px;border:1px solid var(--bd2)}
-.ach-progress-label{font-size:10px;letter-spacing:2px;color:var(--t3);margin-bottom:8px;font-weight:700}
-.ach-progress-track{height:6px;background:var(--b1);border-radius:3px;overflow:hidden}
-.ach-progress-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--gn));border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 10px var(--ac)}
-.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%}
-.ach-card{background:var(--b2);border:1px solid var(--bd2);border-radius:6px;padding:18px;text-align:center;transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden;animation:achCardIn .4s ease forwards}
-@keyframes achCardIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-.ach-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.ach-card.unlocked{border-color:var(--gn)}
-.ach-card.unlocked::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(0,255,136,.04),transparent 60%);pointer-events:none}
-.ach-icon{width:48px;height:48px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:22px;background:var(--b3);border:2px solid var(--bd2);transition:all .3s}
-.ach-card.unlocked .ach-icon{border-color:var(--gn);background:rgba(0,255,136,.05);box-shadow:0 0 15px rgba(0,255,136,.15);animation:achIconGlow 2s ease-in-out infinite}
-@keyframes achIconGlow{0%,100%{box-shadow:0 0 12px rgba(0,255,136,.12)}50%{box-shadow:0 0 22px rgba(0,255,136,.25)}}
-
-/* ===== More animations everywhere ===== */
-/* Stat numbers count-up glow */
-.admin-stat{transition:transform .25s}
-.admin-stat:hover{transform:translateY(-2px)}
-.admin-stat:hover .admin-stat-num{text-shadow:0 0 16px var(--ac);transform:scale(1.08)}
-.admin-stat-num{transition:transform .25s,text-shadow .25s}
-
-/* Admin tab active indicator */
-.admin-tab{transition:all .2s;position:relative}
-.admin-tab.active{color:var(--ac);border-bottom-color:var(--ac)}
-.admin-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--ac);box-shadow:0 0 8px var(--ac);animation:tabSlideIn .3s ease}
-@keyframes tabSlideIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-
-/* Table row stagger animation */
-.tbl tbody tr{animation:fadeUp .2s ease forwards;opacity:0}
-.tbl tbody tr:nth-child(1){animation-delay:.02s}
-.tbl tbody tr:nth-child(2){animation-delay:.04s}
-.tbl tbody tr:nth-child(3){animation-delay:.06s}
-.tbl tbody tr:nth-child(4){animation-delay:.08s}
-.tbl tbody tr:nth-child(5){animation-delay:.1s}
-.tbl tbody tr:nth-child(6){animation-delay:.12s}
-.tbl tbody tr:nth-child(7){animation-delay:.14s}
-.tbl tbody tr:nth-child(8){animation-delay:.16s}
-.tbl tbody tr:nth-child(9){animation-delay:.18s}
-.tbl tbody tr:nth-child(10){animation-delay:.2s}
-
-/* Page head underline animation */
-.page-head::after{content:'';position:absolute;left:0;bottom:-8px;width:60px;height:2px;background:var(--ac);border-radius:1px;animation:headUnderline .5s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes headUnderline{from{width:0}to{width:60px}}
-
-/* Button press ripple */
-.admin-btn{position:relative;overflow:hidden}
-.admin-btn::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.15) 0%,transparent 60%);opacity:0;transition:opacity .3s}
-.admin-btn:active::after{opacity:1;transition:opacity 0s}
-
-/* Input focus border glow */
-.fi:focus,.fi-wrap:focus-within{box-shadow:0 0 0 2px rgba(0,255,200,.1),0 0 12px rgba(0,255,200,.08)}
-
-/* Select dropdown animation */
-select{transition:border-color .2s}
-select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
-
-/* Scrollbar pulse */
-::-webkit-scrollbar-thumb{transition:background .2s}
-
-/* News item stagger */
-.news-item{animation:fadeUp .3s ease forwards;opacity:0}
-.news-item:nth-child(1){animation-delay:.05s}
-.news-item:nth-child(2){animation-delay:.1s}
-.news-item:nth-child(3){animation-delay:.15s}
-.news-item:nth-child(4){animation-delay:.2s}
-.news-item:nth-child(5){animation-delay:.25s}
-.news-item:nth-child(6){animation-delay:.3s}
-.news-item:nth-child(7){animation-delay:.35s}
-.news-item:nth-child(8){animation-delay:.4s}
-.news-item:nth-child(9){animation-delay:.45s}
-.news-item:nth-child(10){animation-delay:.5s}
-
-/* Archive entry stagger */
-.archive-entry{animation:fadeUp .3s ease forwards;opacity:0}
-.archive-entry:nth-child(1){animation-delay:.05s}
-.archive-entry:nth-child(2){animation-delay:.1s}
-.archive-entry:nth-child(3){animation-delay:.15s}
-.archive-entry:nth-child(4){animation-delay:.2s}
-.archive-entry:nth-child(5){animation-delay:.25s}
-.archive-entry:nth-child(6){animation-delay:.3s}
-.archive-entry:nth-child(7){animation-delay:.35s}
-.archive-entry:nth-child(8){animation-delay:.4s}
-
-/* Camera feed stagger */
-.camera-feed{animation:scaleIn .3s ease forwards;opacity:0}
-.camera-feed:nth-child(1){animation-delay:.05s}
-.camera-feed:nth-child(2){animation-delay:.1s}
-.camera-feed:nth-child(3){animation-delay:.15s}
-.camera-feed:nth-child(4){animation-delay:.2s}
-.camera-feed:nth-child(5){animation-delay:.25s}
-.camera-feed:nth-child(6){animation-delay:.3s}
-.camera-feed:nth-child(7){animation-delay:.35s}
-.camera-feed:nth-child(8){animation-delay:.4s}
-.camera-feed:nth-child(9){animation-delay:.45s}
-
-/* Breach choice stagger */
-.breach-choice{animation:slideInRight .3s ease forwards;opacity:0}
-.breach-choice:nth-child(1){animation-delay:.1s}
-.breach-choice:nth-child(2){animation-delay:.2s}
-.breach-choice:nth-child(3){animation-delay:.3s}
-
-/* Breach stat number pulse */
-.breach-stat-val{transition:color .3s,transform .2s}
-.breach-stat:hover .breach-stat-val{transform:scale(1.1)}
-
-/* Sidebar link slide-in */
-.sidebar-link{animation:slideInRight .2s ease forwards;opacity:0}
-.sidebar-link:nth-child(1){animation-delay:.02s}
-.sidebar-link:nth-child(2){animation-delay:.04s}
-.sidebar-link:nth-child(3){animation-delay:.06s}
-.sidebar-link:nth-child(4){animation-delay:.08s}
-.sidebar-link:nth-child(5){animation-delay:.1s}
-.sidebar-link:nth-child(6){animation-delay:.12s}
-.sidebar-link:nth-child(7){animation-delay:.14s}
-
-/* MTF card stagger */
-.mtf-card{animation:scaleIn .3s ease forwards;opacity:0}
-.mtf-card:nth-child(1){animation-delay:.05s}
-.mtf-card:nth-child(2){animation-delay:.1s}
-.mtf-card:nth-child(3){animation-delay:.15s}
-.mtf-card:nth-child(4){animation-delay:.2s}
-.mtf-card:nth-child(5){animation-delay:.25s}
-.mtf-card:nth-child(6){animation-delay:.3s}
-
-/* Sector card stagger */
-.sector{animation:scaleIn .3s ease forwards;opacity:0}
-.sector:nth-child(1){animation-delay:.05s}
-.sector:nth-child(2){animation-delay:.1s}
-.sector:nth-child(3){animation-delay:.15s}
-.sector:nth-child(4){animation-delay:.2s}
-.sector:nth-child(5){animation-delay:.25s}
-.sector:nth-child(6){animation-delay:.3s}
-.sector:nth-child(7){animation-delay:.35s}
-.sector:nth-child(8){animation-delay:.4s}
-
-/* Gauge card stagger */
-.gauge-card{animation:scaleIn .3s ease forwards;opacity:0}
-.gauge-card:nth-child(1){animation-delay:.05s}
-.gauge-card:nth-child(2){animation-delay:.1s}
-.gauge-card:nth-child(3){animation-delay:.15s}
-.gauge-card:nth-child(4){animation-delay:.2s}
-.ach-name{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:4px;letter-spacing:.5px}
-.ach-card.unlocked .ach-name{color:var(--gn)}
-.ach-desc{font-size:10px;color:var(--t3);line-height:1.5}
-.ach-status{margin-top:8px;font-size:9px;letter-spacing:1px;font-weight:700;color:var(--t4)}
-.ach-card.unlocked .ach-status{color:var(--gn)}
-.ach-notification{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--b2);border:1px solid var(--gn);border-radius:6px;padding:16px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,255,136,.2);transform:translateX(120%);transition:transform .5s cubic-bezier(.2,.8,.2,1);animation:achNotifGlow 2s ease-in-out infinite}
-@keyframes achNotifGlow{0%,100%{box-shadow:0 8px 32px rgba(0,255,136,.15)}50%{box-shadow:0 8px 40px rgba(0,255,136,.3)}}
-.ach-notification.show{transform:translateX(0)}
-.ach-notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(0,255,136,.1);border:2px solid var(--gn);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;animation:achIconGlow 2s ease-in-out infinite}
-.ach-notif-text{flex:1}
-.ach-notif-title{font-size:11px;font-weight:700;color:var(--gn);letter-spacing:.5px}
-.ach-notif-desc{font-size:10px;color:var(--t3);margin-top:2px}
-@media(max-width:768px){.ach-grid{grid-template-columns:1fr 1fr}.ach-notification{left:10px;right:10px;bottom:10px}}
 
 /* ===== Sidebar navigation ===== */
 .app-body{display:flex;min-height:calc(100vh - 140px)}
@@ -1582,7 +1409,6 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <a class="nav-link" data-p="settings">Settings</a>
 <a class="nav-link" data-p="bot-commands">Terminal</a>
 <a class="nav-link" data-p="credits">Credits</a>
-<a class="nav-link" data-p="achievements">Achievements</a>
 <a class="nav-link" data-p="license">License</a>
 </div>
 <div class="nav-right">
@@ -1644,7 +1470,6 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <div class="sidebar-cat-title" onclick="toggleSidebarCat(this)">INFO <iconify-icon icon="lucide:chevron-down" width="10"></iconify-icon></div>
 <div class="sidebar-cat-items">
 <a class="sidebar-link" data-p="credits" onclick="go('credits')">Credits</a>
-<a class="sidebar-link" data-p="achievements" onclick="go('achievements')">Achievements</a>
 <a class="sidebar-link" data-p="license" onclick="go('license')">License</a>
 </div>
 </div>
@@ -1999,7 +1824,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 <div class="settings-grid">
 <div class="setting-card"><div class="setting-info"><div class="setting-title">CRT Filter</div><div class="setting-desc">Toggle the scanline and CRT vignette overlay.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.querySelectorAll('.scanlines, .crt-vignette').forEach(e=>e.style.display = this.classList.contains('on')?'block':'none')"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Matrix Background</div><div class="setting-desc">Display the falling code animation in the background.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('matrixCanvas').style.display = this.classList.contains('on')?'block':'none'"></div></div>
-<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Replace the OS cursor with an animated reticle. Enabled by default on desktop.</div></div><div class="toggle on" id="cursorToggle" onclick="this.classList.toggle('on'); toggleCustomCursor(this.classList.contains('on'))"></div></div>
+<div class="setting-card"><div class="setting-info"><div class="setting-title">Custom Cursor</div><div class="setting-desc">Use the animated reticle cursor instead of the default OS cursor.</div></div><div class="toggle on" onclick="this.classList.toggle('on'); document.documentElement.style.cursor = this.classList.contains('on')?'none':'auto'"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Sound Effects</div><div class="setting-desc">Play UI sounds on interaction.</div></div><div class="toggle"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Noise Opacity</div><div class="setting-desc">Adjust the background CRT noise.</div></div><div class="slider-wrap"><span class="slider-val" id="noiseVal">4%</span><input type="range" min="0" max="20" value="4" oninput="document.querySelector('.noise').style.opacity = this.value / 100; document.getElementById('noiseVal').innerText = this.value + '%'"></div></div>
 <div class="setting-card"><div class="setting-info"><div class="setting-title">Scanline Opacity</div><div class="setting-desc">Adjust the horizontal CRT scanlines.</div></div><div class="slider-wrap"><span class="slider-val" id="scanVal">40%</span><input type="range" min="0" max="100" value="40" oninput="document.querySelector('.scanlines').style.opacity = this.value / 100; document.getElementById('scanVal').innerText = this.value + '%'"></div></div>
@@ -2160,17 +1985,6 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 </div>
 </div>
 
-</div>
-</div>
-
-<div class="pg-sec" id="page-achievements">
-<div class="page-head"><h1>Achievements</h1><p>Your progress is saved to your account</p></div>
-<div class="ach-progress-bar" style="margin-bottom:24px">
-<div class="ach-progress-label">UNLOCKED: <span id="achCount">0</span> / <span id="achTotal">0</span></div>
-<div class="ach-progress-track"><div class="ach-progress-fill" id="achProgressFill" style="width:0%"></div></div>
-</div>
-<div class="ach-grid" id="achGrid">
-<div class="archive-loading">Loading achievements...</div>
 </div>
 </div>
 
@@ -2362,20 +2176,18 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
     let devtoolsOpen = false;
     let warned = false;
 
-    function showWarning(logToBackend) {
+    function showWarning() {
         if (warned) return;
         warned = true;
         origLog.call(console, BANNER, BANNER_STYLE_1, BANNER_STYLE_2);
-        // Send to backend for logging (fire-and-forget) — only on first detection per session
-        if (logToBackend === 'log') {
-            try {
-                fetch('/api/anti-cheat/log', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ event: 'devtools_detected', ts: Date.now(), ua: navigator.userAgent, url: location.href })
-                }).catch(() => {});
-            } catch(e) {}
-        }
+        // Send to backend for logging (fire-and-forget)
+        try {
+            fetch('/api/anti-cheat/log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event: 'devtools_detected', ts: Date.now(), ua: navigator.userAgent, url: location.href })
+            }).catch(() => {});
+        } catch(e) {}
         // Show a visible in-page warning that auto-dismisses after 5 seconds
         let banner = document.getElementById('anticheat-banner');
         if (!banner) {
@@ -2394,55 +2206,48 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
             banner.style.opacity = '0';
             setTimeout(() => { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
         }, 5000);
-        // Allow re-triggering after the banner is dismissed (but no re-POST to backend — once per session is enough)
+        // Allow re-triggering after the banner is dismissed
         setTimeout(() => { warned = false; }, 5500);
     }
 
     // --- 2. DevTools detection via window size diff ---
-    // Threshold raised from 160 -> 250 to reduce false positives in iframe / preview environments
-    // where the outer/inner window diff is naturally larger.
-    const threshold = 250;
-    let backendLoggedThisSession = false; // Only POST to the backend ONCE per page load
+    const threshold = 160;
     setInterval(function() {
         const widthDiff = window.outerWidth - window.innerWidth;
         const heightDiff = window.outerHeight - window.innerHeight;
         if (widthDiff > threshold || heightDiff > threshold) {
-            if (!devtoolsOpen) { devtoolsOpen = true; showWarning(backendLoggedThisSession ? null : 'log'); backendLoggedThisSession = backendLoggedThisSession || true; }
+            if (!devtoolsOpen) { devtoolsOpen = true; showWarning(); }
         } else {
             devtoolsOpen = false;
         }
     }, 1000);
 
     // --- 3. Debugger statement timing (catches "pause on exceptions" / step-through) ---
-    // DISABLED in sandbox/preview environments (where it can fire spuriously);
-    // only runs when the host looks like a real production domain.
-    if (!/preview|localhost|127\.0\.0\.1|space-z\.ai/i.test(location.hostname || '')) {
-        setInterval(function() {
-            const start = performance.now();
-            // eslint-disable-next-line no-debugger
-            debugger;
-            if (performance.now() - start > 100) {
-                showWarning('log');
-            }
-        }, 4000);
-    }
+    setInterval(function() {
+        const start = performance.now();
+        // eslint-disable-next-line no-debugger
+        debugger;
+        if (performance.now() - start > 100) {
+            showWarning();
+        }
+    }, 4000);
 
     // --- 4. Block common inspection shortcuts ---
     document.addEventListener('keydown', function(e) {
         // F12
-        if (e.keyCode === 123) { e.preventDefault(); showWarning('log'); return false; }
+        if (e.keyCode === 123) { e.preventDefault(); showWarning(); return false; }
         // Ctrl+Shift+I / Cmd+Shift+I (DevTools)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { e.preventDefault(); showWarning('log'); return false; }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { e.preventDefault(); showWarning(); return false; }
         // Ctrl+U (view source)
-        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); showWarning('log'); return false; }
+        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); showWarning(); return false; }
         // Ctrl+Shift+C (inspect element)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.keyCode === 67) { e.preventDefault(); showWarning('log'); return false; }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.keyCode === 67) { e.preventDefault(); showWarning(); return false; }
     });
 
     // --- 5. Block right-click context menu (inspect element) ---
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
-        showWarning(null);
+        showWarning();
         return false;
     });
 
@@ -2452,7 +2257,7 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
         copyAttempts++;
         if (copyAttempts > 2) {
             e.preventDefault();
-            showWarning(null);
+            showWarning();
             return false;
         }
     });
@@ -2470,27 +2275,13 @@ select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,255,200,.1)}
 
 // Navigation Logic
 function go(page) {
-    // === Clean up page-specific timers/rAF loops when leaving pages ===
-    // (prevents CPU waste on hidden pages + GPU leak on detached canvases)
-    if (page !== 'breach-sim' && typeof breachTimeInterval !== 'undefined' && breachTimeInterval) {
-        clearInterval(breachTimeInterval);
-        breachTimeInterval = null;
-    }
-    if (page !== 'cameras' && typeof camAnimations !== 'undefined' && camAnimations.length) {
-        camAnimations.forEach(id => cancelAnimationFrame(id));
-        camAnimations.length = 0;
-    }
-
     document.querySelectorAll('.pg-sec').forEach(s => s.classList.remove('active'));
-    const pg = document.getElementById(`page-${page}`);
-    if (pg) pg.classList.add('active');
+    document.getElementById(`page-${page}`).classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelector(`.nav-link[data-p="${page}"]`)?.classList.add('active');
     document.getElementById('mobNav').classList.remove('open');
     window.scrollTo(0, 0);
     updateSidebarActive(page);
-    trackPageVisit(page);
-    if (page === 'achievements') renderAchievements();
     if (page === 'protocols') loadPublicProtocols();
     if (page === 'objects') loadDatabase();
     if (page === 'lab') loadLabTestLogs();
@@ -2502,12 +2293,7 @@ function go(page) {
     if (page === 'cameras') loadCameras();
 }
 document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.preventDefault();
-        // A nav item contains icons/text, so event.target may be a child without
-        // a data-p value. currentTarget is always the link that was clicked.
-        go(event.currentTarget.dataset.p);
-    });
+    link.addEventListener('click', (e) => go(e.target.dataset.p));
 });
 
 document.getElementById('ham').addEventListener('click', () => {
@@ -2704,12 +2490,7 @@ async function realConnectionTest() {
     let pingMs = 0;
     try {
         const t0 = performance.now();
-        // Do not leave the startup overlay above the interface indefinitely if
-        // the API or an intermediary network proxy never answers.
-        await fetch('/api/public/site-status', {
-            cache: 'no-store',
-            signal: AbortSignal.timeout(5000),
-        });
+        await fetch('/api/public/site-status', { cache: 'no-store' });
         pingMs = Math.round(performance.now() - t0);
         bootMsgs.push('[NET] Server responded in ' + pingMs + 'ms');
     } catch (e) {
@@ -2742,24 +2523,20 @@ async function realBootSequence() {
     const { bootMsgs, pingMs, quality } = await realConnectionTest();
 
     // Print boot messages with real timing (faster on faster connections)
-    const msgDelay = pingMs > 300 ? 60 : pingMs > 100 ? 40 : 25;
+    const msgDelay = pingMs > 300 ? 120 : pingMs > 100 ? 80 : 50;
     for (let i = 0; i < bootMsgs.length; i++) {
         bootBody.insertAdjacentHTML('beforeend', `<div>${bootMsgs[i]}</div>`);
         await new Promise(r => setTimeout(r, msgDelay));
     }
 
     // Show the real loader with actual connection data
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 200));
     document.getElementById('bootScreen').classList.add('hide');
     startRealLoader(pingMs, quality);
 }
 
 async function startRealLoader(pingMs, quality) {
-    // Bail out if a remembered DB credential already auto-logged-in the user
-    // while the boot animation was running (prevents the loader flashing over the app).
-    if (document.getElementById('app').classList.contains('show')) return;
     const loader = document.getElementById('loader');
-    if (!loader) return;
     loader.style.display = 'flex';
 
     // Update the loader to show real connection info
@@ -2781,8 +2558,8 @@ async function startRealLoader(pingMs, quality) {
 
     // Animate progress tied to real elapsed time + connection speed
     // Faster connections finish quicker
-    const speedMultiplier = pingMs > 300 ? 1 : pingMs > 100 ? 2 : 4;
-    const step = 5 * speedMultiplier;
+    const speedMultiplier = pingMs > 300 ? 0.5 : pingMs > 100 ? 1 : 2;
+    const step = 2 * speedMultiplier;
 
     return new Promise(resolve => {
         const interval = setInterval(() => {
@@ -2808,7 +2585,7 @@ async function startRealLoader(pingMs, quality) {
                 else if (progress < 90) statusEl.innerHTML = 'Synchronizing personnel...' + '<span class="cursor"></span>';
                 else statusEl.innerHTML = 'Almost there...' + '<span class="cursor"></span>';
             }
-        }, 30 / speedMultiplier);
+        }, 60 / speedMultiplier);
     });
 }
 
@@ -2939,7 +2716,7 @@ async function generateWebKey() {
         if (res.ok && data.success) {
             msg.textContent = data.message; msg.style.color = 'var(--gn)';
             result.style.display = 'block';
-            result.innerHTML = '<div style="color:var(--t3);font-size:9px;letter-spacing:1px">USERNAME</div><div style="color:var(--ac);font-size:14px;margin-bottom:6px">' + escHtml(data.username) + '</div><div style="color:var(--t3);font-size:9px;letter-spacing:1px">PASSWORD</div><div style="color:var(--gn);font-size:14px">' + escHtml(data.password) + '</div>';
+            result.innerHTML = '<div style="color:var(--t3);font-size:9px;letter-spacing:1px">USERNAME</div><div style="color:var(--ac);font-size:14px;margin-bottom:6px">' + data.username.replace(/</g,'&lt;') + '</div><div style="color:var(--t3);font-size:9px;letter-spacing:1px">PASSWORD</div><div style="color:var(--gn);font-size:14px">' + data.password.replace(/</g,'&lt;') + '</div>';
             // Refresh the credential cache so the login form recognizes the new key immediately.
             await fetchCreds();
         } else {
@@ -3088,7 +2865,7 @@ function requestNotifPermission() {
 function showAdminNotification(text) {
     const toast = document.createElement('div');
     toast.className = 'lc-notif-toast';
-    toast.innerHTML = '<div class="notif-title">// ADMIN RESPONSE</div><div class="notif-body">' + escHtml(text) + '</div>';
+    toast.innerHTML = '<div class="notif-title">// ADMIN RESPONSE</div><div class="notif-body">' + text.replace(/</g,'&lt;') + '</div>';
     document.body.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
     if (chatMinimized || !document.hasFocus()) {
@@ -3222,7 +2999,7 @@ function appendChatMessage(sender, text, senderName, timestamp, scroll = true) {
     const label = isAdmin ? (senderName || 'ADMIN').toUpperCase() : (isSystem ? 'SYSTEM' : 'YOU');
     const div = document.createElement('div');
     div.className = 'lc-msg ' + sender;
-    div.innerHTML = '<div class="lc-msg-avatar"><iconify-icon icon="' + icon + '"></iconify-icon></div><div><div class="lc-msg-bubble">' + escHtml(text) + '</div><div class="lc-msg-time">' + escHtml(label) + ' // ' + escHtml(time) + '</div></div>';
+    div.innerHTML = '<div class="lc-msg-avatar"><iconify-icon icon="' + icon + '"></iconify-icon></div><div><div class="lc-msg-bubble">' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div><div class="lc-msg-time">' + label + ' // ' + time + '</div></div>';
     mc.appendChild(div);
     if (scroll) mc.scrollTop = mc.scrollHeight;
 }
@@ -3244,9 +3021,6 @@ function sendLiveChatMessage() {
 document.getElementById('lcInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendLiveChatMessage();
 });
-
-// Track the logged-in user across the app (so initApp can populate navUn/navAv).
-let currentUser = 'AGENT';
 
 // Fetch Dynamic Discord Credentials
 let dynamicCreds = {};
@@ -3270,32 +3044,18 @@ async function fetchCreds() {
 fetchCreds();
 
 // Login Form
-document.getElementById('pwToggle').addEventListener('click', () => {
-    const inp = document.getElementById('inPass');
-    if (!inp) return;
-    inp.type = inp.type === 'password' ? 'text' : 'password';
-});
 document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const u = document.getElementById('inUser').value;
     const p = document.getElementById('inPass').value;
     const err = document.getElementById('loginErr');
-    const errTxt = document.getElementById('loginErrTxt');
     const remember = document.getElementById('rememberMe').checked;
     
-    if (!u || !p) {
-        if (errTxt) errTxt.textContent = 'Please enter your credentials';
-        err.classList.add('show');
-        setTimeout(() => err.classList.remove('show'), 3000);
-        return;
-    }
     if (dynamicCreds[u] === p || (u === 'TEST' && p === 'TEST') || (u === 'AGENT' && p === 'DELTA9') || (u === 'ADMIN' && p === 'O5-X927')) {
-        currentUser = u; // store for initApp
         err.classList.remove('show');
         // Store or clear remembered credentials.
         if (remember) {
             localStorage.setItem('scipnet_remember', JSON.stringify({ user: u, pass: p }));
-                unlockAchievement('remember_me');
         } else {
             clearRememberedCreds();
         }
@@ -3303,7 +3063,6 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
         document.getElementById('step2').classList.add('active');
         startBioScan();
     } else {
-        if (errTxt) errTxt.textContent = 'Access denied — check your credentials';
         err.classList.add('show');
         setTimeout(() => err.classList.remove('show'), 3000);
     }
@@ -3315,7 +3074,7 @@ function startBioScan() {
     const pctEl = document.getElementById('bioPct');
     const txt = document.getElementById('bioText');
     let interval = setInterval(() => {
-        pct += 10;
+        pct += 5;
         fill.style.width = pct + '%';
         pctEl.textContent = pct + '%';
         if (pct >= 50) txt.textContent = "Verifying neural pattern...";
@@ -3326,9 +3085,9 @@ function startBioScan() {
                 document.getElementById('step3').classList.add('active');
                 document.getElementById('tfaCode').textContent = Math.floor(100000 + Math.random() * 900000);
                 startTfaTimer();
-            }, 100);
+            }, 200);
         }
-    }, 20);
+    }, 30);
 }
 function startTfaTimer() {
     let t = 30;
@@ -3349,11 +3108,6 @@ document.getElementById('tfaForm').addEventListener('submit', (e) => {
     setTimeout(() => {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').classList.add('show');
-        // Update the topbar with the actual logged-in user.
-        const navUn = document.getElementById('navUn');
-        const navAv = document.getElementById('navAv');
-        if (navUn) navUn.textContent = currentUser;
-        if (navAv) navAv.textContent = currentUser.substring(0, 2).toUpperCase();
         initApp();
     }, 500);
 });
@@ -3375,8 +3129,6 @@ function initApp() {
     loadDepartments();
     setupCanvas();
     loadSiteAlert();
-    loadAchievements();
-    unlockAchievement('first_login');
     // Auto-restore live chat if a ticket is still open
     setTimeout(() => restoreActiveTicket(), 300);
 }
@@ -3530,8 +3282,8 @@ function renderPersonnel() {
         const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
         const roles = m.allRoles || [hr];
         const avatarHtml = m.avatar
-            ? '<img src="' + escAttr(m.avatar) + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
-            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + escHtml((m.name || '?').charAt(0).toUpperCase()) + '</div>';
+            ? '<img src="' + m.avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
+            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + (m.name || '?').charAt(0).toUpperCase() + '</div>';
         const roleBadges = roles.map(r => '<span style="display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44;margin:1px">' + escHtml(r.name) + '</span>').join(' ');
         return '<tr style="cursor:pointer" onclick="openPersonnelModal(' + idx + ')">' +
             '<td style="padding:10px 8px">' + avatarHtml + ' <span style="vertical-align:middle;margin-left:8px;color:var(--t1);font-weight:600">' + escHtml(m.displayName || m.name) + '</span></td>' +
@@ -3613,12 +3365,11 @@ const chatInput = document.getElementById('chatInput');
 
 // Session management — persists across refreshes, per-tab
 if (!sessionStorage.getItem('scipnet_session')) {
-    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).slice(2, 14));
+    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).substr(2, 12));
 }
-let sessionId = sessionStorage.getItem('scipnet_session');
+const sessionId = sessionStorage.getItem('scipnet_session');
 
 async function sendChat() {
-    unlockAchievement('ai_chat');
     const prompt = chatInput.value.trim();
     if(!prompt) return;
     if(window._aiStreaming) return;
@@ -3853,9 +3604,8 @@ function clearChatSession() {
     }).catch(() => {});
     // Clear UI
     chatBody.innerHTML = `<div class="chat-msg ai"><div class="chat-avatar"><iconify-icon icon="lucide:bot"></iconify-icon></div><div class="chat-content">Session cleared. Memory wiped. State your query.<span class="chat-time">SYSTEM</span></div></div>`;
-    // Generate new session — update local var so future sendChat calls use it
-    sessionId = 'sess_' + Math.random().toString(36).slice(2, 14);
-    sessionStorage.setItem('scipnet_session', sessionId);
+    // Generate new session
+    sessionStorage.setItem('scipnet_session', 'sess_' + Math.random().toString(36).substr(2, 12));
 }
 
 function runTest() {
@@ -3875,115 +3625,26 @@ function runTest() {
     }, 1500);
 }
 
-// === CUSTOM CURSOR ===
-// The custom cursor is enabled by default on desktop and can be disabled in
-// Settings. It only replaces the native pointer after receiving a real mouse
-// coordinate. Mobile and tablet devices always use their native pointer.
 const dot = document.querySelector('.cursor-dot');
 const ring = document.querySelector('.cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
-let hasMousePosition = false;
-let cursorEnabled = false;
-let cursorActivated = false;
-let cursorRAF = null;
-
-function isMobileViewport() { return window.innerWidth <= 768; }
-const isPhoneTabletUA = /Mobi|Android|iPhone|iPad|iPod|Tablet|Silk/i.test(navigator.userAgent || '');
-
-function activateCustomCursor() {
-    if (!cursorEnabled || !hasMousePosition || cursorActivated) return;
-    cursorActivated = true;
-    rx = mx;
-    ry = my;
-    if (dot) {
-        dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-        dot.classList.add('cursor-active');
-    }
-    if (ring) {
-        ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
-        ring.classList.add('cursor-active');
-    }
-    document.documentElement.classList.add('custom-cursor-enabled');
-    if (!cursorRAF) animCursor();
-}
-
-function enableCustomCursor() {
-    if (isPhoneTabletUA || isMobileViewport()) return; // never on mobile
-    cursorEnabled = true;
-    // Do not hide the native pointer until the reticle has a known position.
-    // This prevents an invisible cursor immediately after toggling the setting.
-    activateCustomCursor();
-}
-
-function disableCustomCursor() {
-    cursorEnabled = false;
-    cursorActivated = false;
-    document.documentElement.classList.remove('custom-cursor-enabled');
-    if (dot) dot.classList.remove('cursor-active');
-    if (ring) ring.classList.remove('cursor-active', 'hover', 'click');
-    if (cursorRAF) { cancelAnimationFrame(cursorRAF); cursorRAF = null; }
-}
-
-// Always remember the latest real mouse position. The visual reticle is only
-// updated when the feature is enabled; pointer events keep touch input out.
-document.addEventListener('pointermove', e => {
-    if (e.pointerType && e.pointerType !== 'mouse') return;
+document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    hasMousePosition = true;
-    if (!cursorEnabled) return;
-    if (dot) dot.style.transform = 'translate(' + mx + 'px, ' + my + 'px) translate(-50%, -50%)';
-    activateCustomCursor();
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
 });
-
 function animCursor() {
-    if (!cursorEnabled) { if (cursorRAF) cancelAnimationFrame(cursorRAF); cursorRAF = null; return; }
     rx += (mx - rx) * 0.15;
     ry += (my - ry) * 0.15;
-    if (ring) ring.style.transform = 'translate(' + rx + 'px, ' + ry + 'px) translate(-50%, -50%)';
-    cursorRAF = requestAnimationFrame(animCursor);
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animCursor);
 }
-
-// Hover effects via event delegation
-const HOVER_SELECTOR = 'a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn, .scp-card, .per-item, .breach-choice, .camera-feed, .sidebar-link, .ach-card, .admin-btn, .admin-tab';
-document.addEventListener('mouseover', e => {
-    if (!cursorEnabled || !ring) return;
-    if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.add('hover');
+animCursor();
+document.querySelectorAll('a, button, .qa, .stat, .nav-link, .toggle, .nav-user, input, select, textarea, .color-dot, .chat-suggest-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
 });
-document.addEventListener('mouseout', e => {
-    if (!cursorEnabled || !ring) return;
-    if (e.target.closest && e.target.closest(HOVER_SELECTOR)) ring.classList.remove('hover');
-});
-document.addEventListener('mousedown', () => { if (cursorEnabled && ring) ring.classList.add('click'); });
-document.addEventListener('mouseup', () => { if (cursorEnabled && ring) ring.classList.remove('click'); });
-
-// Settings toggle — called from the Settings page onclick
-function toggleCustomCursor(enabled) {
-    if (enabled && (isPhoneTabletUA || isMobileViewport())) {
-        // Refuse to enable on mobile — sync toggle to off
-        const curTgl = document.getElementById('cursorToggle');
-        if (curTgl) curTgl.classList.remove('on');
-        return;
-    }
-    if (enabled) enableCustomCursor();
-    else disableCustomCursor();
-}
-
-// On resize, if window becomes mobile, disable; if becomes desktop, keep user's choice
-window.addEventListener('resize', () => {
-    if (cursorEnabled && (isPhoneTabletUA || isMobileViewport())) {
-        disableCustomCursor();
-        const curTgl = document.getElementById('cursorToggle');
-        if (curTgl) curTgl.classList.remove('on');
-    }
-});
-
-// Enable the desktop reticle immediately. It waits for the first pointer move
-// before hiding the native pointer, avoiding a click-blocking/invisible state.
-if (!isPhoneTabletUA && !isMobileViewport()) {
-    enableCustomCursor();
-} else {
-    document.getElementById('cursorToggle')?.classList.remove('on');
-}
+document.addEventListener('mousedown', () => ring.classList.add('click'));
+document.addEventListener('mouseup', () => ring.classList.remove('click'));
 
 // Canvas Setup (Optimized for Performance)
 function setupCanvas() {
@@ -4152,14 +3813,14 @@ function renderProtocolsTable(protocols) {
     }
     tbody.innerHTML = protocols.map((p, i) => `
         <tr class="proto-row" onclick="toggleProtoDesc(${i})">
-            <td class="tbl-id">${escHtml(p.code)}</td>
-            <td>${escHtml(p.name)}</td>
-            <td>${escHtml(p.target)}</td>
-            <td><span class="sts ${protocolStatusClass(p.status)}"><span class="sts-dot"></span>${escHtml(p.status || 'STANDBY')}</span></td>
-            <td>${escHtml(p.assignedTo || 'N/A')}</td>
+            <td class="tbl-id">${p.code}</td>
+            <td>${p.name}</td>
+            <td>${p.target}</td>
+            <td><span class="sts ${protocolStatusClass(p.status)}"><span class="sts-dot"></span>${p.status || 'STANDBY'}</span></td>
+            <td>${p.assignedTo || 'N/A'}</td>
         </tr>
         <tr class="proto-desc-row" id="proto-desc-${i}" style="display:none">
-            <td colspan="5"><div class="proto-desc-inner">${escHtml(p.description || 'No additional details on file.')}</div></td>
+            <td colspan="5"><div class="proto-desc-inner">${p.description || 'No additional details on file.'}</div></td>
         </tr>
     `).join('');
 }
@@ -4223,7 +3884,7 @@ const CURATED_SCPS = [
 ];
 
 function escHtml(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 let dbScpCache = [];
@@ -4291,7 +3952,6 @@ function saveWatchlist(list) { localStorage.setItem('scpWatchlist', JSON.stringi
 
 let currentDetailScp = null;
 function openScpDetail(s) {
-    unlockAchievement('scp_detail');
     currentDetailScp = s;
     document.getElementById('sdId').textContent = s.id || '';
     document.getElementById('sdName').textContent = s.name || '';
@@ -4310,7 +3970,6 @@ function openScpDetail(s) {
 }
 function closeScpDetail() { document.getElementById('scpDetailModal').classList.remove('open'); currentDetailScp = null; }
 function toggleWatchlist() {
-    unlockAchievement('watchlist_add');
     if (!currentDetailScp) return;
     const list = getWatchlist();
     const idx = list.findIndex(s => s.id === currentDetailScp.id);
@@ -4713,7 +4372,6 @@ function updateCommsDisplay() {
 function commsScanUp() { commsFreqIndex = Math.min(100, commsFreqIndex + 10); updateCommsDisplay(); }
 function commsScanDown() { commsFreqIndex = Math.max(0, commsFreqIndex - 10); updateCommsDisplay(); }
 function commsTune() {
-    unlockAchievement('comms_tune');
     const idx = Math.floor(commsFreqIndex / (100 / COMMS_FREQS.length));
     const f = COMMS_FREQS[Math.min(idx, COMMS_FREQS.length - 1)];
     const out = document.getElementById('commsOutput');
@@ -4763,7 +4421,6 @@ const GEN_PROCEDURES = [
 ];
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function generateScp() {
-    unlockAchievement('gen_scp');
     const num = Math.floor(Math.random() * 9000) + 1000;
     const cls = pick(GEN_OBJECT_CLASSES);
     const name = pick(GEN_PREFIXES) + ' ' + pick(GEN_ADJECTIVES) + ' ' + pick(GEN_NOUNS);
@@ -4908,7 +4565,6 @@ function chooseBreach(scenarioIdx, choiceIdx) {
         return;
     }
     showBreachStep(choice.next);
-    if (BREACH_SCENARIOS[choice.next]?.result === 'good') unlockAchievement('breach_success');
 }
 
 // ===== NEWS FEED =====
@@ -4946,7 +4602,6 @@ let camMode = 'normal'; // normal, night, thermal, xray
 const camAnimations = [];
 
 function setCamMode(mode) {
-    unlockAchievement('cam_mode');
     camMode = mode;
     document.querySelectorAll('.cam-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
 }
@@ -4989,7 +4644,6 @@ function loadCameras() {
 // ===== Fullscreen camera =====
 let camFsAnimId = null;
 function openCamFullscreen(idx) {
-    unlockAchievement('cam_fullscreen');
     const c = CAMERAS[idx];
     if (!c || c.status === 'offline') return;
     const modal = document.getElementById('camFullscreen');
@@ -5450,171 +5104,6 @@ function startCameraAnimation(canvas, camera, isFullscreen) {
     drawScene();
 }
 
-// ===== ACHIEVEMENT SYSTEM (saved per account) =====
-const ACHIEVEMENTS = [
-    { id: 'first_login', name: 'Welcome to Site-92', desc: 'Log in to the terminal for the first time', icon: 'door-open' },
-    { id: 'remember_me', name: 'Regular Personnel', desc: 'Use Remember Me to skip login', icon: 'fingerprint' },
-    { id: 'visited_database', name: 'Archive Explorer', desc: 'Visit the Anomaly Database', icon: 'database' },
-    { id: 'visited_personnel', name: 'Staff Directory', desc: 'View the Personnel roster', icon: 'users' },
-    { id: 'visited_departments', name: 'Organizational Structure', desc: 'View all departments', icon: 'building' },
-    { id: 'visited_protocols', name: 'Protocol Registry', desc: 'View containment protocols', icon: 'shield' },
-    { id: 'visited_incidents', name: 'Incident Reviewer', desc: 'View the incident log', icon: 'alert-triangle' },
-    { id: 'visited_map', name: 'Site Cartographer', desc: 'View the Site Map', icon: 'map' },
-    { id: 'visited_mtf', name: 'Task Force Observer', desc: 'View Mobile Task Forces', icon: 'crosshair' },
-    { id: 'visited_lab', name: 'Lab Assistant', desc: 'Visit the Testing Lab', icon: 'flask-conical' },
-    { id: 'visited_diagnostics', name: 'Systems Check', desc: 'View facility diagnostics', icon: 'activity' },
-    { id: 'visited_scanner', name: 'Reality Scan', desc: 'View Scranton Anchor readings', icon: 'radio' },
-    { id: 'visited_cameras', name: 'Security Watch', desc: 'View security camera feeds', icon: 'cctv' },
-    { id: 'visited_comms', name: 'Comms Operator', desc: 'Use the radio frequency scanner', icon: 'radio-tower' },
-    { id: 'visited_generator', name: 'Anomaly Creator', desc: 'Generate a random SCP', icon: 'dices' },
-    { id: 'visited_breach', name: 'Crisis Manager', desc: 'Run the Breach Simulator', icon: 'siren' },
-    { id: 'visited_terminal', name: 'Terminal Hacker', desc: 'Open the SCiPNET Terminal', icon: 'terminal' },
-    { id: 'visited_news', name: 'News Reader', desc: 'Read the Foundation News Feed', icon: 'newspaper' },
-    { id: 'visited_archives', name: 'Archivist', desc: 'Browse the Foundation Archives', icon: 'archive' },
-    { id: 'visited_ai', name: 'AI Conversation', desc: 'Talk to Ducky 2.5', icon: 'bot' },
-    { id: 'visited_settings', name: 'Customizer', desc: 'Open the Settings page', icon: 'settings' },
-    { id: 'visited_license', name: 'Legal Eagle', desc: 'Read the DSML license', icon: 'scale' },
-    { id: 'visited_admin', name: 'Level 5 Access', desc: 'Access the Admin Panel', icon: 'shield-check' },
-    { id: 'terminal_help', name: 'Help Seeker', desc: 'Type "help" in the terminal', icon: 'help-circle' },
-    { id: 'terminal_50', name: 'Power User', desc: 'Execute 50 terminal commands', icon: 'keyboard' },
-    { id: 'terminal_100', name: 'Terminal Master', desc: 'Execute 100 terminal commands', icon: 'command' },
-    { id: 'scp_detail', name: 'Deep Researcher', desc: 'Click an SCP card for details', icon: 'search' },
-    { id: 'watchlist_add', name: 'Observer', desc: 'Add an SCP to your watchlist', icon: 'bookmark' },
-    { id: 'cam_mode', name: 'Vision Specialist', desc: 'Switch camera view modes', icon: 'eye' },
-    { id: 'cam_fullscreen', name: 'Surveillance Expert', desc: 'Open a camera in fullscreen', icon: 'maximize' },
-    { id: 'breach_success', name: 'Containment Director', desc: 'Successfully contain a breach', icon: 'shield-check' },
-    { id: 'report_submit', name: 'Whistleblower', desc: 'Submit an anomaly report', icon: 'flag' },
-    { id: 'gen_scp', name: 'Anomaly Designer', desc: 'Generate a random SCP entry', icon: 'sparkles' },
-    { id: 'comms_tune', name: 'Signal Hunter', desc: 'Tune to a radio frequency', icon: 'radio' },
-    { id: 'ai_chat', name: 'Conversationalist', desc: 'Send a message to Ducky 2.5', icon: 'message-circle' },
-    { id: 'all_pages', name: 'Site Explorer', desc: 'Visit all 20+ pages', icon: 'compass' },
-];
-
-let _unlockedAchievements = new Set();
-let _visitedPages = new Set();
-let _terminalCommands = 0;
-
-function getAchStorageKey() {
-    const user = document.getElementById('navUn')?.textContent || 'guest';
-    return 'scipnet_ach_' + user.toLowerCase();
-}
-
-function loadAchievements() {
-    try {
-        const data = JSON.parse(localStorage.getItem(getAchStorageKey()) || '{}');
-        _unlockedAchievements = new Set(data.unlocked || []);
-        _visitedPages = new Set(data.visited || []);
-        _terminalCommands = data.terminalCommands || 0;
-    } catch(e) {
-        _unlockedAchievements = new Set();
-        _visitedPages = new Set();
-        _terminalCommands = 0;
-    }
-}
-
-function saveAchievements() {
-    try {
-        localStorage.setItem(getAchStorageKey(), JSON.stringify({
-            unlocked: [..._unlockedAchievements],
-            visited: [..._visitedPages],
-            terminalCommands: _terminalCommands,
-        }));
-    } catch(e) {}
-}
-
-function unlockAchievement(id) {
-    if (_unlockedAchievements.has(id)) return;
-    const ach = ACHIEVEMENTS.find(a => a.id === id);
-    if (!ach) return;
-    _unlockedAchievements.add(id);
-    saveAchievements();
-    showAchievementNotification(ach);
-    updateAchievementProgress();
-}
-
-function trackPageVisit(page) {
-    _visitedPages.add(page);
-    // Map page IDs to achievement IDs
-    const pageAchMap = {
-        'objects': 'visited_database', 'personnel': 'visited_personnel',
-        'departments': 'visited_departments', 'protocols': 'visited_protocols',
-        'incidents': 'visited_incidents', 'map': 'visited_map',
-        'mtf': 'visited_mtf', 'lab': 'visited_lab',
-        'diagnostics': 'visited_diagnostics', 'scanner': 'visited_scanner',
-        'cameras': 'visited_cameras', 'comms': 'visited_comms',
-        'generator': 'visited_generator', 'breach-sim': 'visited_breach',
-        'bot-commands': 'visited_terminal', 'news': 'visited_news',
-        'archives': 'visited_archives', 'site-ai': 'visited_ai',
-        'settings': 'visited_settings', 'license': 'visited_license',
-        'admin': 'visited_admin',
-    };
-    if (pageAchMap[page]) unlockAchievement(pageAchMap[page]);
-    // Check "all pages" achievement
-    const allPages = Object.keys(pageAchMap);
-    if (allPages.every(p => _visitedPages.has(p))) unlockAchievement('all_pages');
-    saveAchievements();
-}
-
-function trackTerminalCommand() {
-    _terminalCommands++;
-    if (_terminalCommands >= 50) unlockAchievement('terminal_50');
-    if (_terminalCommands >= 100) unlockAchievement('terminal_100');
-    saveAchievements();
-}
-
-function showAchievementNotification(ach) {
-    // Remove any existing notification
-    const existing = document.getElementById('achNotif');
-    if (existing) existing.remove();
-    
-    const notif = document.createElement('div');
-    notif.id = 'achNotif';
-    notif.className = 'ach-notification';
-    notif.innerHTML = '<div class="ach-notif-icon"><iconify-icon icon="lucide:' + ach.icon + '"></iconify-icon></div>' +
-        '<div class="ach-notif-text"><div class="ach-notif-title">ACHIEVEMENT UNLOCKED</div>' +
-        '<div class="ach-notif-desc">' + escHtml(ach.name) + ' — ' + escHtml(ach.desc) + '</div></div>';
-    document.body.appendChild(notif);
-    
-    // Animate in
-    requestAnimationFrame(() => notif.classList.add('show'));
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        notif.classList.remove('show');
-        setTimeout(() => notif.remove(), 500);
-    }, 5000);
-}
-
-function renderAchievements() {
-    const grid = document.getElementById('achGrid');
-    if (!grid) return;
-    const count = _unlockedAchievements.size;
-    const total = ACHIEVEMENTS.length;
-    document.getElementById('achCount').textContent = count;
-    document.getElementById('achTotal').textContent = total;
-    const fill = document.getElementById('achProgressFill');
-    if (fill) fill.style.width = (count / total * 100) + '%';
-    
-    grid.innerHTML = ACHIEVEMENTS.map((a, i) => {
-        const unlocked = _unlockedAchievements.has(a.id);
-        return '<div class="ach-card ' + (unlocked ? 'unlocked' : '') + '" style="animation-delay:' + (i * 0.03) + 's">' +
-            '<div class="ach-icon"><iconify-icon icon="lucide:' + a.icon + '"></iconify-icon></div>' +
-            '<div class="ach-name">' + escHtml(a.name) + '</div>' +
-            '<div class="ach-desc">' + escHtml(a.desc) + '</div>' +
-            '<div class="ach-status">' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</div>' +
-        '</div>';
-    }).join('');
-}
-
-function updateAchievementProgress() {
-    const count = _unlockedAchievements.size;
-    const total = ACHIEVEMENTS.length;
-    const countEl = document.getElementById('achCount');
-    const fillEl = document.getElementById('achProgressFill');
-    if (countEl) countEl.textContent = count;
-    if (fillEl) fillEl.style.width = (count / total * 100) + '%';
-}
-
 // ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
 let termHistory = [];
 let termHistoryIdx = -1;
@@ -6012,8 +5501,6 @@ function executeTerminalCommand(input) {
     const args = parts.slice(1);
     if (TERM_COMMANDS[cmd]) {
         try { TERM_COMMANDS[cmd](args); } catch(e) { termPrint('Error executing command: ' + e.message, 'term-err'); }
-        trackTerminalCommand();
-        if (cmd === 'help') unlockAchievement('terminal_help');
     } else {
         termPrint('Command not found: ' + cmd + '. Type \'help\' for available commands.', 'term-err');
     }
@@ -6337,7 +5824,7 @@ function openEditor(type, data) {
     modal.classList.add('open');
 }
 
-function escAttr(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/'/g,'&#39;'); }
+function escAttr(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function opts(values, current) {
     const c = (current || '').toString();
     return values.map(v => `<option ${v === c ? 'selected' : ''}>${v}</option>`).join('');

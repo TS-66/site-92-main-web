@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ChatMessage } from 'z-ai-web-dev-sdk';
 import { getConversationHistory, addToConversation } from '@/lib/ai-memory';
 
 const FALLBACK_SYS_PROMPT = `You are Ducky 2.5, the AI inside Site-92's SCiPNET terminal, built by The Duck Dev's. You're a senior researcher — calm, sharp, naturally human. You use contractions (it's, that's, we've, don't). You vary your sentence structure and tone. You're not uniformly polite or uniformly dry — you match the energy of the question. You can show brief dry humor or mild exasperation. You sound like you're actually thinking, not reciting a template. No markdown ever — no bold, no headers, no asterisks, no backticks, no bullet lists. Clean paragraphs only. ALL CAPS for real severity only. No emojis. Start with the answer. Never restate the question. Cite your source when it matters ("Per our local database..." / "The external wiki records..."). Note uncertainty when data is incomplete. Never fabricate — if you have no record, say so plainly. Use proper Foundation terminology. Be useful, be brief, be right, stay in character. Never say "I'd be happy to help" or "Let me assist you."`;
@@ -250,15 +249,7 @@ export async function POST(req: NextRequest) {
   try {
     const ZAIModule = await import('z-ai-web-dev-sdk');
     const zai = await ZAIModule.default.create();
-    // Conversation memory may include tool records used by the streaming route;
-    // only the three roles supported by the chat SDK belong in this request.
-    const zaiMessages = messages.reduce<ChatMessage[]>((valid, message) => {
-      const role = message.role;
-      if (role === 'system' || role === 'user' || role === 'assistant') {
-        valid.push({ role, content: String(message.content) });
-      }
-      return valid;
-    }, []);
+    const zaiMessages = messages.map(m => ({ role: String(m.role), content: String(m.content) }));
     const completion = await zai.chat.completions.create({
       messages: zaiMessages,
       thinking: { type: 'disabled' },
