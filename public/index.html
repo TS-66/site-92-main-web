@@ -4667,446 +4667,454 @@ function startCameraAnimation(canvas, camera, isFullscreen) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
     const vpX = W / 2;
-    const horizonY = H * 0.35;
+    const horizonY = H * 0.38;
     const floorBottom = H;
     let frame = 0;
+    let glitchIntensity = 0;
     
-    // Particles for dust/ambient
     const particles = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 50; i++) {
         particles.push({
-            x: Math.random() * W, y: Math.random() * H,
-            vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.2,
-            size: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.3 + 0.1
+            x: Math.random() * W, y: Math.random() * H, z: Math.random(),
+            vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.3,
+            size: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.4 + 0.1
         });
     }
 
-    // Walkers
     const walkers = camera.type === 'corridor' ? [
-        { x: -0.2, z: 0.3, speed: 0.004, color: [100,200,180] },
-        { x: 0.6, z: 0.6, speed: 0.003, color: [120,180,200] },
+        { x: -0.2, z: 0.2, speed: 0.003, color: [100,200,180], type: 'guard' },
+        { x: 0.6, z: 0.6, speed: 0.002, color: [180,180,200], type: 'researcher' },
     ] : camera.type === 'cells' ? [
-        { x: 0.1, z: 0.5, speed: 0.002, color: [100,200,180] },
+        { x: 0.1, z: 0.5, speed: 0.001, color: [200,100,100], type: 'd-class' },
+        { x: -0.3, z: 0.3, speed: 0.002, color: [100,200,180], type: 'guard' },
     ] : camera.type === 'lab' ? [
-        { x: 0.3, z: 0.4, speed: 0.002, color: [150,200,100] },
+        { x: 0.3, z: 0.4, speed: 0.0015, color: [255,255,255], type: 'researcher' },
     ] : [];
     
     const entityAlert = camera.status === 'alert';
+    let entityX = 0;
+    let entityZ = 0.55;
 
-    function project(wx, z) {
-        const scale = 1 / (1 + z * 2.5);
+    function project(wx, wz) {
+        const scale = 1 / (1 + wz * 2.8);
         return {
             x: vpX + wx * (W * 0.45) * scale,
-            y: horizonY + (floorBottom - horizonY) * (1 - z) * scale * 1.6,
+            y: horizonY + (floorBottom - horizonY) * (1 - wz) * scale * 1.6,
             scale
         };
     }
 
-    function applyModeFilter() {
-        if (camMode === 'night') {
-            // Green night vision tint
-            ctx.fillStyle = 'rgba(0,40,0,0.3)';
-            ctx.fillRect(0, 0, W, H);
-            // Scanline
-            ctx.fillStyle = 'rgba(0,255,0,0.05)';
-            const sy = (frame * 3) % H;
-            ctx.fillRect(0, sy, W, 2);
-        } else if (camMode === 'thermal') {
-            // Thermal: convert to heat map
-            const imgData = ctx.getImageData(0, 0, W, H);
-            const d = imgData.data;
-            for (let i = 0; i < d.length; i += 4) {
-                const brightness = (d[i] + d[i+1] + d[i+2]) / 3;
-                if (brightness < 30) { d[i] = 0; d[i+1] = 0; d[i+2] = 80; }
-                else if (brightness < 80) { d[i] = 0; d[i+1] = 50; d[i+2] = 200; }
-                else if (brightness < 130) { d[i] = 0; d[i+1] = 200; d[i+2] = 100; }
-                else if (brightness < 180) { d[i] = 200; d[i+1] = 200; d[i+2] = 0; }
-                else { d[i] = 255; d[i+1] = 50; d[i+2] = 0; }
-            }
-            ctx.putImageData(imgData, 0, 0);
-        } else if (camMode === 'xray') {
-            // X-ray: blue tint + edge detection look
-            ctx.fillStyle = 'rgba(0,20,60,0.4)';
-            ctx.fillRect(0, 0, W, H);
-            ctx.globalCompositeOperation = 'lighter';
-        }
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
-    function drawScene() {
-        ctx.clearRect(0, 0, W, H);
-        
-        // Background
-        if (camMode === 'night') ctx.fillStyle = '#020a02';
-        else if (camMode === 'thermal') ctx.fillStyle = '#0a0a0a';
-        else if (camMode === 'xray') ctx.fillStyle = '#020208';
-        else ctx.fillStyle = '#06060a';
+    function applyLensFX() {
+        const vg = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.8);
+        vg.addColorStop(0, 'rgba(0,0,0,0)');
+        vg.addColorStop(1, 'rgba(0,0,0,0.7)');
+        ctx.fillStyle = vg;
         ctx.fillRect(0, 0, W, H);
 
-        // Back wall with texture
+        if (glitchIntensity > 0) {
+            const sliceH = 5 + Math.random() * 15;
+            const sliceY = Math.random() * H;
+            const shift = (Math.random() - 0.5) * 30 * glitchIntensity;
+            try {
+                const imgData = ctx.getImageData(0, Math.floor(sliceY), W, Math.floor(sliceH));
+                ctx.putImageData(imgData, Math.floor(shift), Math.floor(sliceY));
+            } catch(e) {}
+            
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = `rgba(255,0,0,${0.05 * glitchIntensity})`;
+            ctx.fillRect(-2, 0, W, H);
+            ctx.fillStyle = `rgba(0,255,255,${0.05 * glitchIntensity})`;
+            ctx.fillRect(2, 0, W, H);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            glitchIntensity -= 0.05;
+            if (glitchIntensity < 0) glitchIntensity = 0;
+        } else if (Math.random() < 0.005 || (entityAlert && Math.random() < 0.02)) {
+            glitchIntensity = 0.5 + Math.random() * 0.5;
+        }
+
+        const scanY = (frame * 2) % (H + 50);
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        ctx.fillRect(0, scanY - 20, W, 20);
+    }
+
+    function applyModeFilter() {
+        if (camMode === 'night') {
+            ctx.fillStyle = 'rgba(0,30,0,0.4)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.fillStyle = 'rgba(0,255,0,0.05)';
+            for(let i=0; i<50; i++) ctx.fillRect(Math.random()*W, Math.random()*H, 2, 2);
+        } else if (camMode === 'thermal') {
+            try {
+                const imgData = ctx.getImageData(0, 0, W, H);
+                const d = imgData.data;
+                for (let i = 0; i < d.length; i += 4) {
+                    const brightness = (d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114);
+                    if (brightness < 40) { d[i] = 10; d[i+1] = 0; d[i+2] = 40; }
+                    else if (brightness < 90) { d[i] = 0; d[i+1] = 80; d[i+2] = 180; }
+                    else if (brightness < 140) { d[i] = 50; d[i+1] = 220; d[i+2] = 100; }
+                    else if (brightness < 190) { d[i] = 255; d[i+1] = 200; d[i+2] = 0; }
+                    else { d[i] = 255; d[i+1] = 60; d[i+2] = 0; }
+                }
+                ctx.putImageData(imgData, 0, 0);
+            } catch(e) {}
+        } else if (camMode === 'xray') {
+            ctx.fillStyle = 'rgba(0,20,60,0.5)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.globalCompositeOperation = 'screen';
+            ctx.globalCompositeOperation = 'source-over';
+        }
+    }
+
+    function drawRoom() {
         const wallGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
         if (camMode === 'night') { wallGrad.addColorStop(0, '#080f08'); wallGrad.addColorStop(1, '#040604'); }
         else if (camMode === 'xray') { wallGrad.addColorStop(0, '#080820'); wallGrad.addColorStop(1, '#040410'); }
-        else { wallGrad.addColorStop(0, '#0c0c18'); wallGrad.addColorStop(1, '#080812'); }
+        else { wallGrad.addColorStop(0, '#12121a'); wallGrad.addColorStop(1, '#08080c'); }
         ctx.fillStyle = wallGrad;
         ctx.fillRect(0, 0, W, horizonY);
 
-        // Wall panels (vertical lines for panel seams)
-        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.03)' : camMode === 'xray' ? 'rgba(0,100,255,0.04)' : 'rgba(255,255,255,0.015)';
-        for (let x = 0; x < W; x += 30) {
+        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.04)' : 'rgba(255,255,255,0.02)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) {
             ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, horizonY); ctx.stroke();
         }
-        // Horizontal wall seams
-        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.02)' : 'rgba(255,255,255,0.01)';
-        for (let y = 20; y < horizonY; y += 25) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
+        
+        ctx.fillStyle = camMode === 'night' ? '#060a06' : camMode === 'xray' ? '#060615' : '#0a0a10';
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(0, H); ctx.lineTo(vpX - W*0.2, floorBottom); ctx.lineTo(vpX - W*0.2, horizonY*0.5); ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(W, 0); ctx.lineTo(W, H); ctx.lineTo(vpX + W*0.2, floorBottom); ctx.lineTo(vpX + W*0.2, horizonY*0.5); ctx.closePath(); ctx.fill();
 
-        // Ceiling lights with dynamic flicker + light cones
-        const lights = [0.2, 0.5, 0.8];
-        lights.forEach(lx => {
-            const flicker = 0.65 + Math.sin(frame * 0.03 + lx * 10) * 0.15 + (Math.random() < 0.05 ? -0.3 : 0);
-            const fc = Math.max(0.2, flicker);
-            // Light fixture bar
-            let lc;
-            if (camMode === 'night') lc = [0, 255, 0];
-            else if (camMode === 'thermal') lc = [255, 200, 0];
-            else if (camMode === 'xray') lc = [0, 150, 255];
-            else lc = [180, 220, 255];
-            ctx.fillStyle = 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.2 * fc) + ')';
-            ctx.fillRect(lx * W - 20, 4, 40, 4);
-            
-            // Light cone on floor
-            const coneGrad = ctx.createRadialGradient(lx * W, horizonY, 5, lx * W, floorBottom * 0.7, W * 0.25);
-            coneGrad.addColorStop(0, 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.12 * fc) + ')');
-            coneGrad.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = coneGrad;
-            ctx.beginPath();
-            ctx.moveTo(lx * W - 5, 8); ctx.lineTo(lx * W + 5, 8);
-            ctx.lineTo(lx * W + 70, floorBottom); ctx.lineTo(lx * W - 70, floorBottom);
-            ctx.closePath(); ctx.fill();
-            
-            // Light glow halo
-            const haloGrad = ctx.createRadialGradient(lx * W, 6, 2, lx * W, 6, 25);
-            haloGrad.addColorStop(0, 'rgba(' + lc[0] + ',' + lc[1] + ',' + lc[2] + ',' + (0.15 * fc) + ')');
-            haloGrad.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = haloGrad;
-            ctx.fillRect(lx * W - 25, 0, 50, 30);
-        });
-
-        // Doors on back wall
-        if (camera.type === 'cells') {
-            drawDoor(-0.4, 0.65, 45, 80);
-            drawDoor(0, 0.65, 45, 80);
-            drawDoor(0.4, 0.65, 45, 80);
-        } else if (camera.type !== 'admin' && camera.type !== 'reactor') {
-            drawDoor(0, 0.85, 38, 65);
-        }
-
-        // Floor with perspective grid
         const floorGrad = ctx.createLinearGradient(0, horizonY, 0, floorBottom);
         if (camMode === 'night') { floorGrad.addColorStop(0, '#040804'); floorGrad.addColorStop(1, '#081008'); }
         else if (camMode === 'xray') { floorGrad.addColorStop(0, '#040410'); floorGrad.addColorStop(1, '#081030'); }
-        else { floorGrad.addColorStop(0, '#080812'); floorGrad.addColorStop(1, '#0e0e1a'); }
+        else { floorGrad.addColorStop(0, '#080812'); floorGrad.addColorStop(1, '#141422'); }
         ctx.fillStyle = floorGrad;
         ctx.fillRect(0, horizonY, W, floorBottom - horizonY);
 
-        // Floor grid — vertical perspective lines
-        const gridColor = camMode === 'night' ? 'rgba(0,255,0,0.06)' : camMode === 'xray' ? 'rgba(0,100,255,0.06)' : 'rgba(0,255,200,0.04)';
+        const gridColor = camMode === 'night' ? 'rgba(0,255,0,0.08)' : camMode === 'xray' ? 'rgba(0,100,255,0.08)' : 'rgba(255,255,255,0.03)';
         ctx.strokeStyle = gridColor;
-        ctx.lineWidth = 1;
-        for (let i = -6; i <= 6; i++) {
-            const x = vpX + i * (W * 0.1);
-            ctx.beginPath();
-            ctx.moveTo(x, floorBottom);
-            ctx.lineTo(vpX + i * 6, horizonY);
-            ctx.stroke();
+        for (let i = -8; i <= 8; i++) {
+            const x1 = vpX + i * (W * 0.15);
+            ctx.beginPath(); ctx.moveTo(x1, floorBottom); ctx.lineTo(vpX + i * 5, horizonY); ctx.stroke();
         }
-        // Floor grid — horizontal perspective lines
-        for (let z = 0.05; z < 1; z += 0.07) {
+        for (let z = 0.05; z < 1; z += 0.05) {
             const y = horizonY + (floorBottom - horizonY) * (1 - z) * (1 - z);
-            ctx.globalAlpha = (1 - z) * 0.12;
-            ctx.beginPath();
-            ctx.moveTo(0, y); ctx.lineTo(W, y);
-            ctx.stroke();
+            ctx.globalAlpha = (1 - z) * 0.2;
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
         }
         ctx.globalAlpha = 1;
+    }
 
-        // Sector-specific content
-        if (camera.type === 'containment') {
+    function drawLights() {
+        const lights = [0.25, 0.5, 0.75];
+        lights.forEach(lx => {
+            const flicker = 0.7 + Math.sin(frame * 0.04 + lx * 10) * 0.15 + (Math.random() < 0.03 ? -0.4 : 0);
+            const fc = Math.max(0.3, flicker);
+            let lc = [200, 230, 255];
+            if (camMode === 'night') lc = [0, 255, 0];
+            if (camMode === 'thermal') lc = [255, 200, 0];
+            if (camMode === 'xray') lc = [0, 150, 255];
+            
+            ctx.beginPath();
+            ctx.moveTo(lx * W - 10, 10);
+            ctx.lineTo(lx * W + 10, 10);
+            ctx.lineTo(lx * W + W*0.2, floorBottom);
+            ctx.lineTo(lx * W - W*0.2, floorBottom);
+            ctx.closePath();
+            const beamGrad = ctx.createLinearGradient(0, 0, 0, floorBottom);
+            beamGrad.addColorStop(0, `rgba(${lc[0]},${lc[1]},${lc[2]},${0.08 * fc})`);
+            beamGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = beamGrad;
+            ctx.fill();
+
+            ctx.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${0.8 * fc})`;
+            ctx.fillRect(lx * W - 15, 2, 30, 6);
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = `rgba(${lc[0]},${lc[1]},${lc[2]},${0.6 * fc})`;
+            ctx.fillRect(lx * W - 15, 2, 30, 6);
+            ctx.shadowBlur = 0;
+        });
+
+        if (entityAlert) {
+            const pulse = 0.5 + Math.sin(frame * 0.15) * 0.5;
+            ctx.fillStyle = `rgba(255,0,0,${0.1 * pulse})`;
+            ctx.fillRect(0, 0, W, H);
+            
+            ctx.fillStyle = `rgba(255,0,0,${0.8 * pulse})`;
+            ctx.beginPath(); ctx.arc(W * 0.85, horizonY * 0.6, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 20; ctx.shadowColor = `rgba(255,0,0,${pulse})`; ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function drawRoomDetails() {
+        if (camera.type === 'cells') {
+            [-0.4, 0, 0.4].forEach(dx => {
+                const p = project(dx, 0.7);
+                const dw = 50 * p.scale, dh = 80 * p.scale;
+                ctx.fillStyle = '#0c0c14';
+                ctx.fillRect(p.x - dw/2, p.y - dh, dw, dh);
+                ctx.fillStyle = '#ffaa00';
+                for(let i=0; i<4; i++) ctx.fillRect(p.x - dw/2, p.y - dh + i * 20 * p.scale, dw, 5 * p.scale);
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(p.x - 5 * p.scale, p.y - dh * 0.5, 10 * p.scale, 10 * p.scale);
+            });
+        } else if (camera.type === 'lab') {
+            const p = project(0, 0.3);
+            const tw = 100 * p.scale, th = 40 * p.scale;
+            ctx.fillStyle = '#1a1a24';
+            ctx.fillRect(p.x - tw/2, p.y - th, tw, th);
+            ctx.fillStyle = 'rgba(0,255,200,0.3)';
+            ctx.fillRect(p.x - 20 * p.scale, p.y - th - 15 * p.scale, 10 * p.scale, 15 * p.scale);
+            ctx.fillStyle = 'rgba(255,100,0,0.4)';
+            ctx.beginPath(); ctx.arc(p.x + 15 * p.scale, p.y - th - 8 * p.scale, 8 * p.scale, 0, Math.PI * 2); ctx.fill();
+        } else if (camera.type === 'admin') {
+            [-0.3, 0.3].forEach(dx => {
+                const p = project(dx, 0.6);
+                const rw = 40 * p.scale, rh = 90 * p.scale;
+                ctx.fillStyle = '#08080c';
+                ctx.fillRect(p.x - rw/2, p.y - rh, rw, rh);
+                for(let i=0; i<10; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#00ff00' : '#ff0000';
+                    ctx.fillRect(p.x - rw/4, p.y - rh + i * 8 * p.scale, 4 * p.scale, 2 * p.scale);
+                }
+            });
+        } else if (camera.type === 'containment') {
             drawAcidPool();
             drawEntity();
-        }
-        if (camera.type === 'reactor' && camera.status !== 'offline') {
+        } else if (camera.type === 'reactor' && camera.status !== 'offline') {
             drawReactorCore();
-        }
-        if (camera.type === 'lab') {
-            drawLabEquipment();
-        }
-
-        // Walkers (depth-sorted)
-        walkers.sort((a, b) => b.z - a.z).forEach(drawWalker);
-
-        // Ambient particles (dust motes)
-        drawParticles();
-
-        // Effects
-        drawNoise();
-        drawScanline();
-        applyModeFilter();
-        
-        frame++;
-        const animId = requestAnimationFrame(drawScene);
-        camAnimations.push(animId);
-        if (camAnimations.length > 200) camAnimations.splice(0, 100);
-    }
-
-    function drawDoor(x, z, w, h) {
-        const p = project(x, z);
-        const dw = w * p.scale, dh = h * p.scale;
-        const dx = p.x - dw / 2, dy = p.y - dh;
-        const dc = camMode === 'night' ? '#0a1a0a' : camMode === 'xray' ? '#0a0a20' : '#0a0a14';
-        ctx.fillStyle = dc;
-        ctx.fillRect(dx, dy, dw, dh);
-        ctx.strokeStyle = camMode === 'night' ? 'rgba(0,255,0,0.1)' : camMode === 'xray' ? 'rgba(0,100,255,0.1)' : 'rgba(0,255,200,0.08)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(dx, dy, dw, dh);
-        // Door handle
-        ctx.fillStyle = camMode === 'night' ? 'rgba(0,255,0,0.4)' : 'rgba(0,255,200,0.3)';
-        ctx.fillRect(dx + dw - 4 * p.scale, dy + dh * 0.5, 2 * p.scale, 4 * p.scale);
-        // Door light (small indicator above)
-        const dlFlicker = 0.5 + Math.sin(frame * 0.05 + x * 10) * 0.3;
-        ctx.fillStyle = camMode === 'night' ? 'rgba(0,255,0,' + (dlFlicker * 0.4) + ')' : 'rgba(0,255,200,' + (dlFlicker * 0.3) + ')';
-        ctx.fillRect(dx + dw * 0.4, dy - 3 * p.scale, dw * 0.2, 2 * p.scale);
-    }
-
-    function drawWalker(w) {
-        w.x += w.speed;
-        if (w.x > 1.3) w.x = -0.3;
-        const p = project(w.x, w.z);
-        const s = p.scale;
-        const bodyH = 38 * s;
-        const headR = 5 * s;
-        const px = p.x, py = p.y;
-        const cc = camMode === 'night' ? 'rgba(0,255,0,0.6)' : camMode === 'thermal' ? 'rgba(255,150,0,0.7)' : camMode === 'xray' ? 'rgba(0,150,255,0.5)' : 'rgba(' + w.color[0] + ',' + w.color[1] + ',' + w.color[2] + ',0.7)';
-        
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.beginPath(); ctx.ellipse(px, py, 10 * s, 2.5 * s, 0, 0, Math.PI * 2); ctx.fill();
-        
-        // Body
-        ctx.fillStyle = cc;
-        ctx.fillRect(px - 3.5 * s, py - bodyH, 7 * s, bodyH);
-        
-        // Head
-        ctx.beginPath(); ctx.arc(px, py - bodyH - headR, headR, 0, Math.PI * 2); ctx.fill();
-        
-        // Arms (swinging)
-        const armPhase = Math.sin(frame * 0.12 + w.x * 8);
-        ctx.strokeStyle = cc; ctx.lineWidth = 2 * s;
-        ctx.beginPath();
-        ctx.moveTo(px - 3 * s, py - bodyH * 0.7);
-        ctx.lineTo(px - 3 * s + armPhase * 5 * s, py - bodyH * 0.3);
-        ctx.moveTo(px + 3 * s, py - bodyH * 0.7);
-        ctx.lineTo(px + 3 * s - armPhase * 5 * s, py - bodyH * 0.3);
-        ctx.stroke();
-        
-        // Legs (walking animation)
-        const legPhase = Math.sin(frame * 0.18 + w.x * 8);
-        ctx.beginPath();
-        ctx.moveTo(px, py - bodyH * 0.3); ctx.lineTo(px + legPhase * 5 * s, py);
-        ctx.moveTo(px, py - bodyH * 0.3); ctx.lineTo(px - legPhase * 5 * s, py);
-        ctx.stroke();
-    }
-
-    function drawEntity() {
-        const z = 0.55;
-        const p = project(0, z);
-        const s = p.scale;
-        const bodyH = 55 * s;
-        const px = p.x, py = p.y;
-        const ec = camMode === 'thermal' ? 'rgba(255,50,0,0.8)' : camMode === 'xray' ? 'rgba(100,100,255,0.6)' : '#050508';
-        
-        // Shadow in acid
-        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-        ctx.beginPath(); ctx.ellipse(px, py, 18 * s, 4 * s, 0, 0, Math.PI * 2); ctx.fill();
-        
-        // Body — organic shape
-        ctx.fillStyle = ec;
-        ctx.beginPath();
-        ctx.ellipse(px, py - bodyH * 0.5, 14 * s, bodyH * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Head with horns/ears
-        ctx.beginPath();
-        ctx.arc(px, py - bodyH - 5 * s, 8 * s, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Spikes along back
-        ctx.strokeStyle = ec; ctx.lineWidth = 2 * s;
-        for (let i = 0; i < 5; i++) {
-            const sy = py - bodyH * (0.2 + i * 0.15);
-            ctx.beginPath();
-            ctx.moveTo(px + 10 * s, sy);
-            ctx.lineTo(px + 16 * s, sy - 4 * s);
-            ctx.stroke();
-        }
-        
-        // Alert glow + eyes
-        if (entityAlert) {
-            const pulse = 0.4 + Math.sin(frame * 0.1) * 0.3;
-            const glowColor = camMode === 'thermal' ? '255,100,0' : '255,40,40';
-            const glowGrad = ctx.createRadialGradient(px, py - bodyH * 0.6, 5, px, py - bodyH * 0.6, 50 * s);
-            glowGrad.addColorStop(0, 'rgba(' + glowColor + ',' + (pulse * 0.35) + ')');
-            glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = glowGrad;
-            ctx.beginPath(); ctx.arc(px, py - bodyH * 0.6, 50 * s, 0, Math.PI * 2); ctx.fill();
-            
-            // Glowing eyes
-            ctx.fillStyle = 'rgba(' + glowColor + ',' + pulse + ')';
-            ctx.beginPath();
-            ctx.arc(px - 4 * s, py - bodyH - 5 * s, 2 * s, 0, Math.PI * 2);
-            ctx.arc(px + 4 * s, py - bodyH - 5 * s, 2 * s, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Alert text
-            ctx.fillStyle = 'rgba(255,50,50,' + pulse + ')';
-            ctx.font = Math.max(8, 10 * s) + 'px monospace';
-            ctx.fillText('TARGET LOCKED', px - 35 * s, py - bodyH - 15 * s);
         }
     }
 
     function drawAcidPool() {
-        const acidY = horizonY + (floorBottom - horizonY) * 0.45;
-        const acidColor = camMode === 'night' ? 'rgba(0,100,0,' : camMode === 'thermal' ? 'rgba(100,200,0,' : camMode === 'xray' ? 'rgba(0,200,100,' : 'rgba(0,255,80,';
-        
-        // Acid surface gradient
-        const acidGrad = ctx.createLinearGradient(0, acidY, 0, floorBottom);
-        acidGrad.addColorStop(0, acidColor + '0.08)');
-        acidGrad.addColorStop(0.5, acidColor + '0.15)');
-        acidGrad.addColorStop(1, acidColor + '0.1)');
+        const acidY = horizonY + (floorBottom - horizonY) * 0.5;
+        const acidGrad = ctx.createLinearGradient(0, acidY - 20, 0, floorBottom);
+        acidGrad.addColorStop(0, 'rgba(0,255,100,0)');
+        acidGrad.addColorStop(0.2, 'rgba(0,255,100,0.2)');
+        acidGrad.addColorStop(1, 'rgba(0,255,100,0.4)');
         ctx.fillStyle = acidGrad;
+        ctx.fillRect(0, acidY - 20, W, floorBottom - acidY + 20);
+        
+        ctx.fillStyle = 'rgba(0,50,20,0.8)';
         ctx.fillRect(0, acidY, W, floorBottom - acidY);
         
-        // Bubbles
-        for (let i = 0; i < 12; i++) {
-            const bx = ((frame * 0.5 + i * 70) % (W + 40)) - 20;
-            const by = acidY + 15 + Math.sin(frame * 0.05 + i) * 18;
-            const br = 1.5 + Math.sin(frame * 0.1 + i * 2) * 1.5;
-            ctx.fillStyle = acidColor + (0.15 + Math.sin(frame * 0.08 + i) * 0.1) + ')';
-            ctx.beginPath(); ctx.arc(bx, by, Math.max(0.5, br), 0, Math.PI * 2); ctx.fill();
+        for (let i = 0; i < 20; i++) {
+            const bx = ((frame * 0.8 + i * 50) % (W + 40)) - 20;
+            const by = acidY + 10 + Math.sin(frame * 0.1 + i) * 25;
+            const br = 2 + Math.sin(frame * 0.15 + i * 3) * 3;
+            ctx.fillStyle = 'rgba(150,255,180,0.6)';
+            ctx.beginPath(); ctx.arc(bx, by, Math.max(1, br), 0, Math.PI * 2); ctx.fill();
         }
         
-        // Wavy surface line
-        ctx.strokeStyle = acidColor + '0.15)';
-        ctx.lineWidth = 1;
+        for(let i=0; i<10; i++) {
+            const fx = (Math.sin(frame*0.01 + i)*W/3) + W/2;
+            const fy = acidY - (frame*0.5 + i*30) % 100;
+            const fs = 10 + Math.sin(frame*0.05+i)*5;
+            ctx.fillStyle = `rgba(100,255,150,${Math.max(0, 0.05 - (fy - acidY)/2000)})`;
+            ctx.beginPath(); ctx.arc(fx, fy, fs, 0, Math.PI*2); ctx.fill();
+        }
+    }
+
+    function drawEntity() {
+        const z = entityZ;
+        const p = project(entityX, z);
+        const s = p.scale;
+        const bodyH = 60 * s;
+        const px = p.x, py = p.y;
+        
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.beginPath(); ctx.ellipse(px, py, 25 * s, 5 * s, 0, 0, Math.PI * 2); ctx.fill();
+        
+        ctx.fillStyle = camMode === 'thermal' ? 'rgba(255,50,0,0.9)' : '#030305';
         ctx.beginPath();
-        for (let x = 0; x < W; x += 3) {
-            const y = acidY + Math.sin(x * 0.04 + frame * 0.05) * 2 + Math.sin(x * 0.1 + frame * 0.03) * 1;
-            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+        ctx.moveTo(px - 15*s, py);
+        ctx.bezierCurveTo(px - 25*s, py - bodyH*0.5, px - 10*s, py - bodyH, px, py - bodyH - 10*s);
+        ctx.bezierCurveTo(px + 10*s, py - bodyH, px + 25*s, py - bodyH*0.5, px + 15*s, py);
+        ctx.fill();
         
-        // Acid glow at edges
-        const edgeGrad = ctx.createLinearGradient(0, acidY - 5, 0, acidY + 5);
-        edgeGrad.addColorStop(0, 'rgba(0,0,0,0)');
-        edgeGrad.addColorStop(0.5, acidColor + '0.2)');
-        edgeGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = edgeGrad;
-        ctx.fillRect(0, acidY - 5, W, 10);
+        ctx.strokeStyle = camMode === 'thermal' ? '#ff8800' : '#111';
+        ctx.lineWidth = 2 * s;
+        for(let i=0; i<6; i++) {
+            const sy = py - bodyH * (0.3 + i*0.1);
+            ctx.beginPath(); ctx.moveTo(px + 15*s, sy); ctx.lineTo(px + 25*s, sy - 8*s); ctx.stroke();
+        }
+        
+        if (camMode !== 'thermal') {
+            ctx.strokeStyle = `rgba(255,0,0,${0.3 + Math.sin(frame*0.1)*0.2})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(px - 10*s, py - 10*s);
+            ctx.quadraticCurveTo(px, py - bodyH*0.5, px + 5*s, py - bodyH*0.8);
+            ctx.stroke();
+        }
+
+        if (entityAlert) {
+            const pulse = 0.5 + Math.sin(frame * 0.15) * 0.5;
+            ctx.fillStyle = `rgba(255,0,0,${pulse})`;
+            ctx.shadowBlur = 15; ctx.shadowColor = '#ff0000';
+            ctx.beginPath(); ctx.arc(px - 5*s, py - bodyH - 5*s, 2.5*s, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(px + 5*s, py - bodyH - 5*s, 2.5*s, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            ctx.strokeStyle = `rgba(255,0,0,${pulse})`;
+            ctx.lineWidth = 2;
+            const bw = 60*s, bh = bodyH + 20*s;
+            const bx = px - bw/2, by = py - bh;
+            ctx.strokeRect(bx, by, bw, bh);
+            const cl = 10;
+            ctx.beginPath();
+            ctx.moveTo(bx, by+cl); ctx.lineTo(bx, by); ctx.lineTo(bx+cl, by);
+            ctx.moveTo(bx+bw-cl, by); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by+cl);
+            ctx.moveTo(bx+bw, by+bh-cl); ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx+bw-cl, by+bh);
+            ctx.moveTo(bx+cl, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+bh-cl);
+            ctx.stroke();
+            
+            ctx.fillStyle = `rgba(255,0,0,${pulse})`;
+            ctx.font = `${Math.max(10, 12*s)}px monospace`;
+            ctx.fillText('TARGET ACQUIRED', px - 40*s, by - 5);
+        }
     }
 
     function drawReactorCore() {
-        const cx = W / 2, cy = H * 0.5;
-        const pulse = 0.5 + Math.sin(frame * 0.05) * 0.2;
-        // Core glow
-        const coreGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, 80);
-        const cc = camMode === 'thermal' ? '255,200,0' : camMode === 'xray' ? '0,200,255' : '0,200,255';
-        coreGrad.addColorStop(0, 'rgba(' + cc + ',' + pulse + ')');
-        coreGrad.addColorStop(0.5, 'rgba(' + cc + ',' + (pulse * 0.3) + ')');
+        const p = project(0, 0.5);
+        const px = p.x, py = p.y;
+        const s = p.scale;
+        
+        ctx.fillStyle = '#111';
+        ctx.fillRect(px - 40*s, py - 10*s, 80*s, 10*s);
+        
+        const pulse = 0.5 + Math.sin(frame * 0.08) * 0.5;
+        const coreGrad = ctx.createRadialGradient(px, py - 40*s, 5, px, py - 40*s, 50*s);
+        coreGrad.addColorStop(0, `rgba(0,200,255,${0.8 * pulse})`);
+        coreGrad.addColorStop(0.5, `rgba(0,100,255,${0.3 * pulse})`);
         coreGrad.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = coreGrad;
-        ctx.beginPath(); ctx.arc(cx, cy, 80, 0, Math.PI * 2); ctx.fill();
-        // Core ring
-        ctx.strokeStyle = 'rgba(' + cc + ',0.3)';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2); ctx.stroke();
-        // Rotating energy lines
-        ctx.strokeStyle = 'rgba(' + cc + ',0.2)';
-        for (let i = 0; i < 4; i++) {
-            const angle = frame * 0.02 + (i * Math.PI / 2);
-            ctx.beginPath();
-            ctx.arc(cx, cy, 40 + i * 8, angle, angle + 0.5);
-            ctx.stroke();
+        ctx.fillRect(px - 50*s, py - 90*s, 100*s, 100*s);
+        
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 2 * s;
+        ctx.beginPath();
+        ctx.ellipse(px, py - 40*s, 30*s, 10*s, frame * 0.02, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(px, py - 40*s, 30*s, 10*s, -frame * 0.02 + Math.PI/2, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        for(let i=0; i<8; i++) {
+            const a = frame * 0.05 + i * Math.PI/4;
+            const ex = px + Math.cos(a) * 30 * s;
+            const ey = py - 40*s + Math.sin(a) * 10 * s;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(ex, ey, 2*s, 0, Math.PI*2); ctx.fill();
         }
     }
 
-    function drawLabEquipment() {
-        // Draw a lab table with equipment
-        const p = project(0, 0.6);
+    function drawWalker(w) {
+        w.x += w.speed;
+        if (w.x > 1.5) w.x = -0.5;
+        const p = project(w.x, w.z);
         const s = p.scale;
-        const tw = 60 * s, th = 25 * s;
-        const tx = p.x - tw / 2, ty = p.y - th;
-        // Table
-        ctx.fillStyle = camMode === 'night' ? '#0a1a0a' : '#0c0c18';
-        ctx.fillRect(tx, ty, tw, th);
-        ctx.strokeStyle = 'rgba(0,255,200,0.1)';
-        ctx.strokeRect(tx, ty, tw, th);
-        // Equipment on table (flask with glowing liquid)
-        const fx = tx + tw * 0.5, fy = ty - 12 * s;
-        const flaskPulse = 0.5 + Math.sin(frame * 0.06) * 0.3;
-        const fc = camMode === 'thermal' ? '255,100,0' : camMode === 'xray' ? '0,200,255' : '0,255,200';
-        ctx.fillStyle = 'rgba(' + fc + ',' + flaskPulse + ')';
+        const bodyH = 40 * s;
+        const px = p.x, py = p.y;
+        
+        let cc = camMode === 'night' ? 'rgba(0,255,0,0.7)' : camMode === 'thermal' ? 'rgba(255,150,0,0.8)' : `rgba(${w.color[0]},${w.color[1]},${w.color[2]},0.85)`;
+        
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath(); ctx.ellipse(px, py, 12 * s, 3 * s, 0, 0, Math.PI * 2); ctx.fill();
+        
+        const legPhase = Math.sin(frame * 0.2 + w.x * 10);
+        ctx.strokeStyle = cc; ctx.lineWidth = 3 * s;
         ctx.beginPath();
-        ctx.moveTo(fx - 3 * s, fy);
-        ctx.lineTo(fx - 6 * s, fy + 10 * s);
-        ctx.lineTo(fx + 6 * s, fy + 10 * s);
-        ctx.lineTo(fx + 3 * s, fy);
-        ctx.closePath();
-        ctx.fill();
-        // Glow
-        const fGrad = ctx.createRadialGradient(fx, fy + 5 * s, 2, fx, fy + 5 * s, 15 * s);
-        fGrad.addColorStop(0, 'rgba(' + fc + ',' + (flaskPulse * 0.3) + ')');
-        fGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = fGrad;
-        ctx.fillRect(fx - 15 * s, fy - 5 * s, 30 * s, 25 * s);
+        ctx.moveTo(px, py - bodyH * 0.4); ctx.lineTo(px + legPhase * 6 * s, py);
+        ctx.moveTo(px, py - bodyH * 0.4); ctx.lineTo(px - legPhase * 6 * s, py);
+        ctx.stroke();
+        
+        ctx.fillStyle = cc;
+        ctx.beginPath();
+        ctx.moveTo(px - 6 * s, py - bodyH * 0.4);
+        ctx.lineTo(px + 6 * s, py - bodyH * 0.4);
+        ctx.lineTo(px + 4 * s, py - bodyH);
+        ctx.lineTo(px - 4 * s, py - bodyH);
+        ctx.closePath(); ctx.fill();
+        
+        const armPhase = Math.sin(frame * 0.2 + w.x * 10);
+        ctx.lineWidth = 2 * s;
+        ctx.beginPath();
+        ctx.moveTo(px - 5 * s, py - bodyH * 0.8); ctx.lineTo(px - 5 * s + armPhase * 4 * s, py - bodyH * 0.4);
+        ctx.moveTo(px + 5 * s, py - bodyH * 0.8); ctx.lineTo(px + 5 * s - armPhase * 4 * s, py - bodyH * 0.4);
+        ctx.stroke();
+        
+        ctx.beginPath(); ctx.arc(px, py - bodyH - 4 * s, 4.5 * s, 0, Math.PI * 2); ctx.fill();
     }
 
     function drawParticles() {
-        const pc = camMode === 'night' ? '0,255,0' : camMode === 'thermal' ? '255,200,0' : '200,200,220';
-        particles.forEach(p => {
-            p.x += p.vx; p.y += p.vy;
-            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-            ctx.fillStyle = 'rgba(' + pc + ',' + p.alpha + ')';
-            ctx.fillRect(p.x, p.y, p.size, p.size);
+        particles.forEach(pt => {
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            if (pt.x < 0) pt.x = W; if (pt.x > W) pt.x = 0;
+            if (pt.y < 0) pt.y = H; if (pt.y > H) pt.y = 0;
+            
+            const s = project(0, pt.z).scale;
+            ctx.fillStyle = camMode === 'thermal' ? `rgba(255,200,0,${pt.alpha})` : `rgba(200,220,255,${pt.alpha})`;
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size * s, 0, Math.PI * 2); ctx.fill();
         });
     }
 
-    function drawNoise() {
-        for (let i = 0; i < 40; i++) {
-            ctx.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.04) + ')';
-            ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+    function drawHUD() {
+        ctx.strokeStyle = 'rgba(0,255,200,0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W/2 - 20, H/2); ctx.lineTo(W/2 - 5, H/2);
+        ctx.moveTo(W/2 + 5, H/2); ctx.lineTo(W/2 + 20, H/2);
+        ctx.moveTo(W/2, H/2 - 20); ctx.lineTo(W/2, H/2 - 5);
+        ctx.moveTo(W/2, H/2 + 5); ctx.lineTo(W/2, H/2 + 20);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(0,255,200,0.7)';
+        ctx.font = '10px monospace';
+        ctx.fillText('PTZ: 1.0x', 10, H - 15);
+        ctx.fillText('IR: ' + (camMode === 'night' ? 'ON' : 'OFF'), 10, H - 30);
+        
+        const ts = new Date().toLocaleTimeString('en-US', {hour12: false}) + ':' + String(new Date().getMilliseconds()).padStart(3, '0').substring(0,2);
+        ctx.fillText(ts, W - 80, H - 15);
+        
+        if (entityAlert && Math.floor(frame / 30) % 2 === 0) {
+            ctx.fillStyle = 'rgba(255,0,0,0.8)';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText('!! MOTION DETECTED !!', W/2 - 70, 20);
         }
     }
 
-    function drawScanline() {
-        const sy = (frame * 2) % H;
-        const sc = camMode === 'night' ? '0,255,0' : '0,255,200';
-        const sg = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
-        sg.addColorStop(0, 'rgba(' + sc + ',0)');
-        sg.addColorStop(0.5, 'rgba(' + sc + ',0.08)');
-        sg.addColorStop(1, 'rgba(' + sc + ',0)');
-        ctx.fillStyle = sg;
-        ctx.fillRect(0, sy - 3, W, 6);
+    function drawScene() {
+        ctx.clearRect(0, 0, W, H);
+        drawRoom();
+        drawLights();
+        drawRoomDetails();
+        
+        walkers.sort((a, b) => b.z - a.z).forEach(drawWalker);
+        
+        drawParticles();
+        applyModeFilter();
+        applyLensFX();
+        drawHUD();
+        
+        frame++;
+        const animId = requestAnimationFrame(drawScene);
+        if (isFullscreen) {
+            if (typeof window !== 'undefined' && typeof camFsAnimId !== 'undefined') window.camFsAnimId = animId;
+        } else {
+            if (typeof window !== 'undefined' && typeof camAnimations !== 'undefined') {
+                camAnimations.push(animId);
+                if (camAnimations.length > 200) camAnimations.splice(0, 100);
+            }
+        }
     }
 
     drawScene();
 }
-
-// ===== TERMINAL COMMAND SYSTEM (100+ commands) =====
-let termHistory = [];
-let termHistoryIdx = -1;
 
 function termPrint(text, cls) {
     const out = document.getElementById('termOutput');
