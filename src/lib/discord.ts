@@ -22,30 +22,41 @@ function getAdminUsernames(): string[] {
  * Looks up a guild member's Discord user ID by username or display name.
  * Requires the "Server Members Intent" enabled in the Discord Developer Portal
  * for the search endpoint to return results.
+ * Note: The search endpoint may not be available in all API versions. 
+ * Falls back to full member list fetch if search fails.
  */
 async function findMemberIdByUsername(username: string): Promise<string | null> {
   const token = getBotToken();
   const guildId = getGuildId();
   if (!token || !guildId) return null;
 
-  const res = await fetch(
-    `${DISCORD_API}/guilds/${guildId}/members/search?query=${encodeURIComponent(username)}&limit=10`,
-    { headers: { Authorization: `Bot ${token}` } }
-  );
+  // Try the search endpoint first (requires Server Members Intent)
+  try {
+    const res = await fetch(
+      `${DISCORD_API}/guilds/${guildId}/members/search?query=${encodeURIComponent(username)}&limit=10`,
+      { headers: { Authorization: `Bot ${token}` } }
+    );
 
-  if (!res.ok) {
-    console.error(`[discord] member search failed for "${username}": ${res.status} ${await res.text().catch(() => '')}`);
-    return null;
+    if (res.ok) {
+      const members: Array<{ user: { id: string; username: string }; nick?: string | null }> = await res.json();
+      const match = members.find(
+        (m) =>
+          m.user.username.toLowerCase() === username.toLowerCase() ||
+          (m.nick && m.nick.toLowerCase() === username.toLowerCase())
+      );
+
+      if (match?.user.id) return match.user.id;
+    }
+  } catch (err) {
+    console.warn(`[discord] member search failed, falling back to full list: ${err}`);
   }
 
-  const members: Array<{ user: { id: string; username: string }; nick?: string | null }> = await res.json();
-  const match = members.find(
-    (m) =>
-      m.user.username.toLowerCase() === username.toLowerCase() ||
-      (m.nick && m.nick.toLowerCase() === username.toLowerCase())
+  // Fallback: fetch all members and search manually
+  const allMembers = await getAllGuildMembers();
+  const match = allMembers.find(
+    (m) => m.name.toLowerCase() === username.toLowerCase() || m.displayName.toLowerCase() === username.toLowerCase()
   );
-
-  return match?.user.id ?? null;
+  return match?.userId ?? null;
 }
 
 /** Opens (or reuses) a DM channel with a user and sends them a message. */

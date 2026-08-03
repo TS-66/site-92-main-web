@@ -22,6 +22,29 @@ const TOOL_TTLS: Record<string, number> = {
   calculate: 300000, generate_document: 0,
 };
 
+const MAX_TOOL_CACHE_SIZE = 200;
+const MAX_WIKI_CACHE_SIZE = 50;
+const MAX_RESPONSE_CACHE_SIZE = 100;
+
+// ---- Cache eviction helpers ----
+function evictExpiredCache<K extends string, V extends { ts: number }>(cache: Map<K, V>, maxAge: number, maxSize: number) {
+  const now = Date.now();
+  // First remove expired entries
+  for (const [k, v] of cache.entries()) {
+    if (now - v.ts > maxAge) {
+      cache.delete(k);
+    }
+  }
+  // Then remove oldest if still over size limit
+  if (cache.size > maxSize) {
+    const entries = Array.from(cache.entries()).sort((a, b) => a[1].ts - b[1].ts);
+    const toDelete = entries.slice(0, cache.size - maxSize);
+    for (const [k] of toDelete) {
+      cache.delete(k);
+    }
+  }
+}
+
 
 
 // ---- Caching helpers ----
@@ -36,12 +59,29 @@ function setCachedToolResult(toolName: string, argsStr: string, result: string) 
   const ttl = TOOL_TTLS[toolName];
   if (ttl <= 0) return;
   toolCache.set(`${toolName}:${argsStr}`, { result, ts: Date.now() });
-  if (toolCache.size > 200) {
-    const now = Date.now();
-    for (const [k, v] of toolCache) {
-      if (now - v.ts > 300000) toolCache.delete(k);
-    }
-  }
+  evictExpiredCache(toolCache, Math.max(...Object.values(TOOL_TTLS)), MAX_TOOL_CACHE_SIZE);
+}
+
+function getCachedWiki(scpId: string): string | null {
+  const entry = wikiCache.get(scpId);
+  if (entry && Date.now() - entry.ts < WIKI_CACHE_TTL) return entry.text;
+  return null;
+}
+
+function setCachedWiki(scpId: string, text: string) {
+  wikiCache.set(scpId, { text, ts: Date.now() });
+  evictExpiredCache(wikiCache, WIKI_CACHE_TTL, MAX_WIKI_CACHE_SIZE);
+}
+
+function getCachedResponse(prompt: string): string | null {
+  const entry = responseCache.get(prompt);
+  if (entry && Date.now() - entry.ts < CACHE_TTL_RESPONSE) return entry.reply;
+  return null;
+}
+
+function setCachedResponse(prompt: string, reply: string) {
+  responseCache.set(prompt, { reply, ts: Date.now() });
+  evictExpiredCache(responseCache, CACHE_TTL_RESPONSE, MAX_RESPONSE_CACHE_SIZE);
 }
 
 // ---- SCP Database ----
@@ -610,7 +650,7 @@ async function getScpContext(prompt: string): Promise<string> {
     const local = all.find((s: { scpId: string }) => s.scpId.toLowerCase() === scpId.toLowerCase());
     if (local) {
       const result = `\n\nLOCAL DB MATCH for ${scpId}: ${local.name} — ${local.objectClass} — threat ${local.threat} — ${local.zone} zone. Description: ${local.description}`;
-      wikiCache.set(cacheKey, { text: result, ts: Date.now() });
+      setCachedWiki(scpId, result);
       return result;
     }
     // External wiki lookup via z-ai page_reader (routes through z-ai API).
@@ -627,7 +667,7 @@ async function getScpContext(prompt: string): Promise<string> {
         text = text.length > WIKI_MAX_CHARS ? text.substring(0, WIKI_MAX_CHARS) + ' [...]' : text;
         if (text.length > 50) {
           const ctx = `\n\nEXTERNAL WIKI DATA for ${scpId} (source: ${wikiUrl}):\n${text}`;
-          wikiCache.set(cacheKey, { text: ctx, ts: Date.now() });
+          setCachedWiki(scpId, ctx);
           return ctx;
         }
       }
@@ -635,7 +675,7 @@ async function getScpContext(prompt: string): Promise<string> {
       console.error('[SCiPNET] getScpContext page_reader failed:', e);
     }
     const notFound = `\n\nNote: ${scpId} was not found in the local database or the external wiki. Do not fabricate details — say you have no record of it and suggest the user request it be added.`;
-    wikiCache.set(cacheKey, { text: notFound, ts: Date.now() });
+    setCachedWiki(scpId, notFound);
     return notFound;
   } catch (e) {
     console.error('[SCiPNET] getScpContext failed:', e);
