@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// Hardcoded fallback admin credential — works without any database setup.
-// Same pattern as the terminal login's hardcoded TEST/AGENT/ADMIN fallbacks.
+// Admin credentials should be set via environment variables in production.
+// Hardcoded fallback is for development/testing only.
 const HARDCODED_ADMIN = {
-  username: 'admin-0157',
-  password: 'WCdyh4U0CBNMRbV5',
+  username: process.env.ADMIN_USERNAME || 'admin-0157',
+  password: process.env.ADMIN_PASSWORD || '',
 };
 
 export async function POST(request: NextRequest) {
@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (username === HARDCODED_ADMIN.username && password === HARDCODED_ADMIN.password) {
+    // Only use hardcoded admin if ADMIN_PASSWORD is set (explicit opt-in)
+    if (HARDCODED_ADMIN.password && username === HARDCODED_ADMIN.username && password === HARDCODED_ADMIN.password) {
       return NextResponse.json({
         success: true,
         token: 'site92-admin-authenticated',

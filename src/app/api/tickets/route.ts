@@ -4,7 +4,9 @@ import { verifyCode } from '@/lib/verification';
 import { dmAdmins } from '@/lib/discord';
 
 function generateTicketId(): string {
-  return 'TKT-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `TKT-${timestamp}-${random}`;
 }
 
 // POST: Create a new ticket (verifies code first)
