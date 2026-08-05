@@ -1546,19 +1546,112 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div class="pg-sec" id="page-personnel">
-<div class="page-head"><h1>Personnel</h1><p>All members and their roles</p></div>
-<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-<input type="text" id="perSearch" placeholder="Search by name or role..." style="flex:1;min-width:200px;padding:10px 14px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;letter-spacing:.5px;border-radius:2px;box-sizing:border-box">
-<select id="perRoleFilter" style="padding:10px 14px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;border-radius:2px">
-<option value="">ALL ROLES</option>
+<div class="page-head"><h1>Personnel</h1><p>Site-92 staff directory — ranked by clearance tier</p></div>
+
+<!-- Stats summary -->
+<div class="per-stats" id="perStats"></div>
+
+<!-- Search + filter -->
+<div class="per-toolbar">
+<div class="per-search-wrap">
+<iconify-icon icon="lucide:search" class="per-search-icon"></iconify-icon>
+<input type="text" id="perSearch" class="per-search" placeholder="Search personnel by name or role...">
+</div>
+<select id="perRoleFilter" class="per-filter">
+<option value="">ALL TIERS</option>
 </select>
 </div>
-<div class="table-wrap"><table class="tbl" id="perTable">
-<thead><tr><th>Member</th><th>Highest Role</th><th>All Roles</th></tr></thead>
-<tbody><tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Loading personnel...</td></tr></tbody>
-</table></div>
-<div id="perCount" style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-top:10px;text-align:right"></div>
+
+<!-- Table -->
+<div class="table-wrap per-table-wrap">
+<table class="tbl per-tbl" id="perTable">
+<thead>
+<tr>
+<th style="width:40px">#</th>
+<th>Member</th>
+<th style="width:90px">Tier</th>
+<th>Highest Role</th>
+<th>All Roles</th>
+</tr>
+</thead>
+<tbody><tr><td colspan="5" class="per-loading">Loading personnel...</td></tr></tbody>
+</table>
 </div>
+<div id="perCount" class="per-count"></div>
+</div>
+
+<style>
+/* Personnel page styles */
+.per-stats{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.per-stat{flex:1;min-width:120px;padding:14px 16px;background:var(--b3);border:1px solid var(--bd2);border-radius:3px;border-left:3px solid var(--ac);transition:transform .2s,border-color .2s}
+.per-stat:hover{transform:translateY(-2px);border-color:var(--ac)}
+.per-stat-num{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--ac);text-shadow:0 0 10px rgba(0,255,204,.3)}
+.per-stat-label{font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-top:4px}
+
+.per-toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.per-search-wrap{position:relative;flex:1;min-width:240px}
+.per-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px;pointer-events:none}
+.per-search{width:100%;padding:12px 14px 12px 42px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;letter-spacing:.5px;border-radius:3px;box-sizing:border-box;transition:border-color .2s,box-shadow .2s}
+.per-search:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,255,204,.1)}
+.per-filter{padding:12px 14px;background:var(--b3);border:1px solid var(--bd2);color:var(--t1);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;border-radius:3px;cursor:pointer;min-width:140px}
+.per-filter:focus{border-color:var(--ac)}
+
+.per-table-wrap{max-height:600px;overflow-y:auto;border:1px solid var(--bd2);border-radius:3px}
+.per-tbl{width:100%;border-collapse:collapse}
+.per-tbl thead{position:sticky;top:0;z-index:2;background:var(--b2)}
+.per-tbl th{padding:12px 14px;text-align:left;font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--bd2);font-weight:700}
+.per-tbl td{padding:12px 14px;border-bottom:1px solid var(--b3);font-size:12px;vertical-align:middle}
+.per-tbl tbody tr{cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.per-tbl tbody tr:hover{background:var(--gl2)}
+.per-tbl tbody tr:last-child td{border-bottom:none}
+.per-loading{text-align:center;color:var(--t3);padding:30px!important}
+
+.per-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;border:2px solid var(--bd2);background:var(--b4)}
+.per-avatar-fallback{width:32px;height:32px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ac);border:2px solid var(--bd2);vertical-align:middle}
+.per-name{vertical-align:middle;margin-left:10px;color:var(--t1);font-weight:600;font-size:13px}
+.per-handle{font-size:10px;color:var(--t3);margin-left:10px;vertical-align:middle}
+
+.per-tier{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;border:2px solid currentColor}
+.per-role-badge{display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:600;border:1px solid;letter-spacing:.3px}
+.per-role-mini{display:inline-block;padding:2px 7px;border-radius:2px;font-size:9px;border:1px solid;margin:1px;opacity:.85}
+.per-count{font-size:10px;color:var(--t3);letter-spacing:1.5px;margin-top:12px;text-align:right;text-transform:uppercase}
+
+/* Personnel modal */
+.per-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100001;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.per-modal.open{display:flex}
+.per-modal-box{background:var(--b2);border:1px solid var(--bd2);max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:0;border-radius:4px;box-shadow:0 0 60px rgba(0,0,0,.8),0 0 30px rgba(0,255,204,.1);animation:scaleIn .25s cubic-bezier(.2,.8,.2,1) forwards}
+.per-modal-header{position:relative;padding:24px 24px 20px;border-bottom:1px solid var(--bd2);background:linear-gradient(135deg,rgba(0,255,204,.05),transparent)}
+.per-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border:1px solid var(--bd2);background:var(--b3);color:var(--t3);display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:3px;transition:all .2s}
+.per-modal-close:hover{color:var(--rd);border-color:var(--rd)}
+.per-modal-id{display:flex;gap:16px;align-items:center}
+.per-modal-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--bd2);background:var(--b4);object-fit:cover}
+.per-modal-avatar-fallback{width:72px;height:72px;border-radius:50%;background:var(--b4);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--ac);border:3px solid var(--bd2)}
+.per-modal-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--t1);margin-bottom:4px}
+.per-modal-handle{font-size:12px;color:var(--t3);letter-spacing:.5px}
+.per-modal-body{padding:20px 24px 24px}
+.per-modal-section{margin-bottom:18px}
+.per-modal-section:last-child{margin-bottom:0}
+.per-modal-section-label{font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.per-modal-tier-display{display:flex;align-items:center;gap:12px}
+.per-modal-tier-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;border:3px solid currentColor;flex-shrink:0}
+.per-modal-tier-info{flex:1}
+.per-modal-tier-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.per-modal-tier-desc{font-size:10px;color:var(--t3);letter-spacing:.5px}
+.per-modal-roles{display:flex;flex-wrap:wrap;gap:6px}
+.per-modal-role{display:inline-block;padding:4px 12px;border-radius:3px;font-size:11px;font-weight:600;border:1px solid}
+.per-modal-empty{color:var(--t3);font-size:12px;font-style:italic}
+.per-modal-actions{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--bd2)}
+
+@media(max-width:768px){
+  .per-stats{gap:6px}
+  .per-stat{min-width:80px;padding:10px 12px}
+  .per-stat-num{font-size:18px}
+  .per-tbl th,.per-tbl td{padding:8px 10px;font-size:11px}
+  .per-name{font-size:12px}
+  .per-handle{display:none}
+  .per-modal-box{max-width:100%;max-height:90vh}
+}
+</style>
 
 <div class="pg-sec" id="page-departments">
 <div class="page-head"><h1>Departments</h1><p>How we're organized</p></div>
@@ -3161,9 +3254,21 @@ let personnelCache = [];
 let _perSearchQuery = '';
 let _perRoleFilter = '';
 
+// Tier descriptions for the modal
+const TIER_INFO = {
+    0: { name: 'The Administrator', desc: 'Highest authority — full site control' },
+    1: { name: 'Developer', desc: 'Builds and maintains SCiPNET systems' },
+    2: { name: 'Server Management', desc: 'Manages Discord server and infrastructure' },
+    3: { name: 'Faction Leader', desc: 'Leads an in-character faction' },
+    4: { name: 'Partnership Affiliate', desc: 'Manages external partnerships' },
+    5: { name: 'UCSO Representative', desc: 'Represents the UCSO division' },
+    6: { name: 'VIP', desc: 'Distinguished community member' },
+    7: { name: 'Foundation Personnel', desc: 'Standard operational staff' },
+};
+
 async function fetchPersonnel() {
     const tbody = document.querySelector('#perTable tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Loading personnel...</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="per-loading">Loading personnel...</td></tr>';
 
     let rankData = {};
     let rankMap = {};
@@ -3171,6 +3276,7 @@ async function fetchPersonnel() {
     const defaultTier = 7;
     const defaultColor = '#5a706b';
 
+    // Fetch the Site-92 hierarchy ranks
     try {
         const rr = await fetch('/api/public/personnel-ranks');
         rankData = await rr.json();
@@ -3182,24 +3288,28 @@ async function fetchPersonnel() {
         }
     } catch(e) { rankMap = {}; }
 
-    // Build role filter dropdown
-    const roleSet = new Set();
-    roleSet.add(defaultRole);
+    // Build tier filter dropdown (grouped by tier, not individual roles)
+    const tierSet = new Set();
     for (const [, val] of Object.entries(rankMap)) {
-        if (val && val.role) roleSet.add(val.role);
+        if (val && val.tier !== undefined) tierSet.add(val.tier);
     }
+    tierSet.add(defaultTier);
     const filterEl = document.getElementById('perRoleFilter');
     if (filterEl) {
         const current = filterEl.value;
-        filterEl.innerHTML = '<option value="">ALL ROLES</option>' + [...roleSet].sort().map(r => '<option value="' + r + '"' + (r === current ? ' selected' : '') + '>' + r + '</option>').join('');
+        const sortedTiers = [...tierSet].sort((a, b) => a - b);
+        filterEl.innerHTML = '<option value="">ALL TIERS</option>' + sortedTiers.map(t => {
+            const info = TIER_INFO[t] || { name: 'Tier ' + t };
+            return '<option value="' + t + '"' + (t.toString() === current ? ' selected' : '') + '>T' + t + ' — ' + escHtml(info.name) + '</option>';
+        }).join('');
     }
 
     try {
         const res = await fetch('/api/personnel');
         const data = await res.json();
 
-        if(data.length === 0 || !data[0].members || data[0].members.length === 0) {
-            // Fallback: show ranked members only
+        if (data.length === 0 || !data[0].members || data[0].members.length === 0) {
+            // Fallback: show ranked members only (Discord not configured)
             if (Object.keys(rankMap).length > 0) {
                 const fallback = Object.entries(rankMap).sort((a, b) => a[1].tier - b[1].tier);
                 personnelCache = fallback.map(([name, r]) => ({
@@ -3209,12 +3319,12 @@ async function fetchPersonnel() {
                 }));
             } else {
                 personnelCache = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Could not connect to Discord.</td></tr>';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="per-loading">No personnel data available.</td></tr>';
+                renderPersonnelStats();
                 return;
             }
         } else {
             const members = data[0].members;
-            // Show ALL members. Site-92 hierarchy role is the "highest".
             personnelCache = members.map(m => {
                 const nameLower = (m.name || '').toLowerCase();
                 const displayLower = (m.displayName || '').toLowerCase();
@@ -3236,7 +3346,7 @@ async function fetchPersonnel() {
             });
         }
 
-        // Sort by tier (0 = highest first)
+        // Sort by tier (0 = highest first), then alphabetically
         personnelCache.sort((a, b) => {
             const ta = a.highestRole ? a.highestRole.tier : 7;
             const tb = b.highestRole ? b.highestRole.tier : 7;
@@ -3244,6 +3354,7 @@ async function fetchPersonnel() {
             return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '');
         });
 
+        renderPersonnelStats();
         renderPersonnel();
     } catch (err) {
         // Fallback to ranks only
@@ -3254,11 +3365,41 @@ async function fetchPersonnel() {
                 highestRole: { name: r.role, color: r.color || defaultColor, tier: r.tier },
                 allRoles: [{ name: r.role, color: r.color || defaultColor }]
             }));
+            renderPersonnelStats();
             renderPersonnel();
         } else {
-            if (tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">Could not connect to Discord.</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="per-loading">Could not connect to Discord.</td></tr>';
         }
     }
+}
+
+function renderPersonnelStats() {
+    const statsEl = document.getElementById('perStats');
+    if (!statsEl) return;
+    const total = personnelCache.length;
+    if (total === 0) { statsEl.innerHTML = ''; return; }
+
+    // Count per tier
+    const tierCounts = {};
+    personnelCache.forEach(m => {
+        const t = m.highestRole ? m.highestRole.tier : 7;
+        tierCounts[t] = (tierCounts[t] || 0) + 1;
+    });
+
+    // Show top 4 tiers as stats + total
+    const tiers = Object.keys(tierCounts).map(Number).sort((a, b) => a - b).slice(0, 4);
+    const stats = [{ num: total, label: 'Total Personnel', color: 'var(--ac)' }];
+    tiers.forEach(t => {
+        const info = TIER_INFO[t] || { name: 'Tier ' + t };
+        stats.push({ num: tierCounts[t], label: info.name, color: personnelCache.find(m => m.highestRole && m.highestRole.tier === t)?.highestRole?.color || 'var(--ac)' });
+    });
+
+    statsEl.innerHTML = stats.map(s =>
+        '<div class="per-stat" style="border-left-color:' + s.color + '">' +
+        '<div class="per-stat-num" style="color:' + s.color + '">' + s.num + '</div>' +
+        '<div class="per-stat-label">' + escHtml(s.label) + '</div>' +
+        '</div>'
+    ).join('');
 }
 
 function renderPersonnel() {
@@ -3278,28 +3419,35 @@ function renderPersonnel() {
         });
     }
     if (_perRoleFilter) {
-        filtered = filtered.filter(m => m.highestRole && m.highestRole.name === _perRoleFilter);
+        filtered = filtered.filter(m => m.highestRole && m.highestRole.tier === parseInt(_perRoleFilter));
     }
 
-    if (countEl) countEl.textContent = filtered.length + ' MEMBER' + (filtered.length !== 1 ? 'S' : '');
+    if (countEl) countEl.textContent = filtered.length + ' MEMBER' + (filtered.length !== 1 ? 'S' : '') + ' SHOWN';
 
     if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--t3);padding:20px">No members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="per-loading">No members found.</td></tr>';
         return;
     }
 
     tbody.innerHTML = filtered.map((m) => {
         const idx = personnelCache.indexOf(m);
-        const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
+        const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b', tier: 7 };
         const roles = m.allRoles || [hr];
+        const initial = (m.displayName || m.name || '?').charAt(0).toUpperCase();
         const avatarHtml = m.avatar
-            ? '<img src="' + m.avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle" onerror="this.style.display=\'none\'">'
-            : '<div style="width:28px;height:28px;border-radius:50%;background:var(--b4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ac)">' + (m.name || '?').charAt(0).toUpperCase() + '</div>';
-        const roleBadges = roles.map(r => '<span style="display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44;margin:1px">' + escHtml(r.name) + '</span>').join(' ');
-        return '<tr style="cursor:pointer" onclick="openPersonnelModal(' + idx + ')">' +
-            '<td style="padding:10px 8px">' + avatarHtml + ' <span style="vertical-align:middle;margin-left:8px;color:var(--t1);font-weight:600">' + escHtml(m.displayName || m.name) + '</span></td>' +
-            '<td style="padding:10px 8px"><span style="display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:600;background:' + hr.color + '22;color:' + hr.color + ';border:1px solid ' + hr.color + '44">' + escHtml(hr.name) + '</span></td>' +
-            '<td style="padding:10px 8px">' + roleBadges + '</td>' +
+            ? '<img src="' + escAttr(m.avatar) + '" class="per-avatar" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline-flex\'">' +
+              '<div class="per-avatar-fallback" style="display:none">' + escHtml(initial) + '</div>'
+            : '<div class="per-avatar-fallback">' + escHtml(initial) + '</div>';
+        const roleBadges = roles.slice(0, 5).map(r =>
+            '<span class="per-role-mini" style="background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border-color:' + (r.color || '#5a706b') + '44">' + escHtml(r.name) + '</span>'
+        ).join('') + (roles.length > 5 ? '<span class="per-role-mini" style="color:var(--t3);border-color:var(--bd2)">+' + (roles.length - 5) + '</span>' : '');
+
+        return '<tr onclick="openPersonnelModal(' + idx + ')" style="border-left-color:' + hr.color + '">' +
+            '<td style="color:var(--t3);font-family:\'Orbitron\',sans-serif;font-weight:700;font-size:11px">' + (hr.tier !== undefined ? 'T' + hr.tier : '-') + '</td>' +
+            '<td>' + avatarHtml + '<span class="per-name">' + escHtml(m.displayName || m.name) + '</span></td>' +
+            '<td><span class="per-tier" style="color:' + hr.color + '">' + (hr.tier !== undefined ? hr.tier : 7) + '</span></td>' +
+            '<td><span class="per-role-badge" style="background:' + hr.color + '22;color:' + hr.color + ';border-color:' + hr.color + '44">' + escHtml(hr.name) + '</span></td>' +
+            '<td>' + roleBadges + '</td>' +
             '</tr>';
     }).join('');
 }
@@ -3307,23 +3455,63 @@ function renderPersonnel() {
 function openPersonnelModal(idx) {
     const m = personnelCache[idx];
     if (!m) return;
-    document.getElementById('pmAvatar').src = m.avatar || '';
-    document.getElementById('pmAvatar').onerror = function() { this.style.display = 'none'; };
-    document.getElementById('pmAvatar').style.display = '';
-    document.getElementById('pmName').textContent = m.displayName || m.name;
+
+    // Avatar
+    const avatarImg = document.getElementById('pmAvatar');
+    const avatarFallback = document.getElementById('pmAvatarFallback');
+    const initial = (m.displayName || m.name || '?').charAt(0).toUpperCase();
+    if (m.avatar) {
+        avatarImg.src = m.avatar;
+        avatarImg.style.display = '';
+        avatarFallback.style.display = 'none';
+        avatarImg.onerror = function() {
+            this.style.display = 'none';
+            avatarFallback.textContent = initial;
+            avatarFallback.style.display = 'flex';
+        };
+    } else {
+        avatarImg.style.display = 'none';
+        avatarFallback.textContent = initial;
+        avatarFallback.style.display = 'flex';
+    }
+
+    // Name + handle
+    document.getElementById('pmName').textContent = m.displayName || m.name || 'Unknown';
     document.getElementById('pmHandle').textContent = '@' + (m.name || '');
-    const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b' };
+
+    // Tier display
+    const hr = m.highestRole || { name: 'Foundation Personnel', color: '#5a706b', tier: 7 };
+    const tierInfo = TIER_INFO[hr.tier] || { name: hr.name, desc: 'Tier ' + hr.tier + ' personnel' };
+    const tierCircle = document.getElementById('pmTierCircle');
+    tierCircle.textContent = hr.tier !== undefined ? hr.tier : 7;
+    tierCircle.style.color = hr.color;
+    document.getElementById('pmTierName').textContent = tierInfo.name;
+    document.getElementById('pmTierDesc').textContent = tierInfo.desc;
+
+    // Highest role badge
     const hrEl = document.getElementById('pmHighestRole');
     hrEl.textContent = hr.name;
     hrEl.style.background = hr.color + '22';
     hrEl.style.color = hr.color;
     hrEl.style.border = '1px solid ' + hr.color + '44';
+
+    // All roles
     const allEl = document.getElementById('pmAllRoles');
     const roles = m.allRoles || [hr];
-    allEl.innerHTML = roles.map(r => '<span style="display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border:1px solid ' + (r.color || '#5a706b') + '44">' + escHtml(r.name) + '</span>').join(' ') || '<span style="color:var(--t3);font-size:11px">No roles assigned</span>';
+    if (roles.length === 0) {
+        allEl.innerHTML = '<span class="per-modal-empty">No roles assigned</span>';
+    } else {
+        allEl.innerHTML = roles.map(r =>
+            '<span class="per-modal-role" style="background:' + (r.color || '#5a706b') + '22;color:' + (r.color || '#5a706b') + ';border-color:' + (r.color || '#5a706b') + '44">' + escHtml(r.name) + '</span>'
+        ).join('');
+    }
+
     document.getElementById('personnelModal').classList.add('open');
 }
-function closePersonnelModal() { document.getElementById('personnelModal').classList.remove('open'); }
+
+function closePersonnelModal() {
+    document.getElementById('personnelModal').classList.remove('open');
+}
 
 // Search + filter listeners
 document.addEventListener('DOMContentLoaded', () => {
@@ -6157,21 +6345,43 @@ async function saveSiteStatus() {
 </div>
 
 <!-- Personnel detail modal -->
-<div class="scp-detail-modal" id="personnelModal">
-  <div class="scp-detail-box" style="max-width:420px">
-    <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
-      <img id="pmAvatar" src="" alt="" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--bd2);background:var(--b3)">
-      <div>
-        <div id="pmName" style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--t1)"></div>
-        <div id="pmHandle" style="font-size:11px;color:var(--t3)"></div>
+<div class="per-modal" id="personnelModal">
+  <div class="per-modal-box">
+    <div class="per-modal-header">
+      <button class="per-modal-close" onclick="closePersonnelModal()" aria-label="Close">
+        <iconify-icon icon="lucide:x"></iconify-icon>
+      </button>
+      <div class="per-modal-id">
+        <img id="pmAvatar" class="per-modal-avatar" src="" alt="" style="display:none">
+        <div id="pmAvatarFallback" class="per-modal-avatar-fallback">?</div>
+        <div>
+          <div id="pmName" class="per-modal-name"></div>
+          <div id="pmHandle" class="per-modal-handle"></div>
+        </div>
       </div>
     </div>
-    <div style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">HIGHEST ROLE</div>
-    <div id="pmHighestRole" style="display:inline-block;padding:4px 12px;border-radius:3px;font-size:12px;font-weight:600;margin-bottom:16px"></div>
-    <div style="font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">ALL ROLES</div>
-    <div id="pmAllRoles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px"></div>
-    <div class="scp-detail-actions">
-      <button class="admin-btn" style="background:var(--b4)" onclick="closePersonnelModal()">CLOSE</button>
+    <div class="per-modal-body">
+      <div class="per-modal-section">
+        <div class="per-modal-section-label">Clearance Tier</div>
+        <div class="per-modal-tier-display">
+          <div id="pmTierCircle" class="per-modal-tier-circle">7</div>
+          <div class="per-modal-tier-info">
+            <div id="pmTierName" class="per-modal-tier-name">Foundation Personnel</div>
+            <div id="pmTierDesc" class="per-modal-tier-desc">Standard operational staff</div>
+          </div>
+        </div>
+      </div>
+      <div class="per-modal-section">
+        <div class="per-modal-section-label">Highest Role</div>
+        <div id="pmHighestRole" class="per-modal-role"></div>
+      </div>
+      <div class="per-modal-section">
+        <div class="per-modal-section-label">All Roles</div>
+        <div id="pmAllRoles" class="per-modal-roles"></div>
+      </div>
+      <div class="per-modal-actions">
+        <button class="admin-btn" onclick="closePersonnelModal()">CLOSE</button>
+      </div>
     </div>
   </div>
 </div>
