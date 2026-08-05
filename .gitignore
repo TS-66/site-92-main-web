@@ -20,3 +20,7 @@ test-*.png
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
+# Sandbox skill files — DO NOT push
+/skills/
+/start-dev.sh
